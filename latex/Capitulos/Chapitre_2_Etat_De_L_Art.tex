@@ -95,7 +95,7 @@ Freqtrade \citep{githubFreqtrade} & Bot de trading crypto avec backtesting et hy
 \end{table}
 
 Ces plateformes montrent qu'un système agentique sérieux doit s'appuyer sur des composants quantitatifs non génératifs. Le calcul d'un score factoriel, d'une volatilité ex ante, d'une contribution au risque ou d'un coût de transaction ne doit pas être laissé au LLM. Le LLM peut expliquer, vérifier, synthétiser et coordonner, mais le calcul financier doit rester reproductible.
-\section{Fiches techniques des briques retenues}
+\section{Fiches techniques des briques étudiées}
 
 Les trois briques retenues pour le prototype couvrent des fonctions différentes et ne doivent pas être présentées comme interchangeables.
 
@@ -170,5 +170,13 @@ Aucune des solutions examinées ne couvre seule les besoins d'un desk régulé. 
 Cette absence de solution intégrée n'est pas seulement une limite logicielle : elle détermine la méthode de conception. Les composants doivent être traités comme des briques complémentaires. Le moteur factoriel, l'optimiseur, les contrôles de risque et le calcul des coûts forment un socle déterministe. Les agents peuvent exploiter ce socle pour rechercher des informations, comparer des scénarios, détecter une incohérence, expliquer une sortie ou préparer une décision. Ils ne doivent pas pouvoir modifier silencieusement les paramètres calculés ni contourner une limite.
 
 La comparaison des critères observables conduit ainsi à privilégier une architecture composée plutôt qu'un produit unique. LangGraph est retenu pour son contrôle du workflow et de l'état ; les plateformes comme Qlib, Lean et OpenBB servent de références pour les données et le backtesting ; les projets TradingAgents, FinRobot et FinMem éclairent le découpage des rôles et la mémoire. Ce choix est cohérent avec le prototype : l'évaluation porte sur la séparation des responsabilités et la traçabilité, non sur une promesse de performance commerciale.
+
+Le manque identifie est donc architectural et methodologique. Dans le perimetre de la revue, aucune solution examinee ne reunit simultanement un socle quantitatif reproductible, une orchestration agentique supervisee, des permissions non contournables et un journal de decision exploitable. Le prototype ne cherche pas a proposer un nouveau modele d alpha ; il teste l integration controlee de ces responsabilites et distingue les fonctions executees des fonctions seulement envisagees.
+
+\section{Hiérarchie des sources}
+
+La selection des references suit une hierarchie adaptee a une demarche de memoire. Les articles evalues par les pairs et leurs versions de travail servent a etayer les concepts et les resultats financiers. Les textes reglementaires et referentiels officiels servent a fixer les contraintes de gouvernance. Les prepublications sont utilisees pour les travaux recents, en indiquant explicitement leur statut. Les depots GitHub et leurs documentations servent uniquement a verifier les fonctionnalites, l activite, les licences et les possibilites d integration ; ils ne remplacent pas une preuve academique. Les documentations de fournisseurs servent a documenter la provenance et les limites des donnees.
+
+Google Scholar, ScienceDirect et JSTOR sont des outils de reperage ou d acces. La reference bibliographique renvoie autant que possible a l article original, a son DOI ou a une version legale deposee par les auteurs ou une institution.
 
 % Texte d'exemple du template conservé hors compilation.

@@ -1,0 +1,15 @@
+citation;title;type;local_file;status;source_or_provenance;usage
+famaFrench1993;Common risk factors in the returns on stocks and bonds;article;fama_french_1993.pdf;version legale locale;Hillsdale Investment Management open PDF of the cited article;modele factoriel
+carhart1997;On Persistence in Mutual Fund Performance;article;carhart_1997.pdf;copie academique locale;https://r.jordan.im/download/investing/carhart1997.pdf;momentum
+lewis2020rag;Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks;preprint;lewis_2020_rag.pdf;arXiv local;arXiv:2005.11401;generation augmentee
+yao2023react;ReAct Synergizing Reasoning and Acting in Language Models;preprint;yao_2023_react.pdf;arXiv local;arXiv:2210.03629;raisonnement et outils
+schick2023toolformer;Toolformer Language Models Can Teach Themselves to Use Tools;preprint;schick_2023_toolformer.pdf;arXiv local;arXiv:2302.04761;appel d outils
+shinn2023reflexion;Reflexion Language Agents with Verbal Reinforcement Learning;preprint;shinn_2023_reflexion.pdf;arXiv local;arXiv:2303.11366;reflexion
+wu2023autogen;AutoGen Enabling Next-Gen LLM Applications via Multi-Agent Conversation;preprint;wu_2023_autogen.pdf;arXiv local;arXiv:2308.08155;multi-agent
+fingpt2023;FinGPT Open-Source Financial Large Language Models;preprint;yang_2023_fingpt.pdf;arXiv local;arXiv:2306.06031;LLM financier
+finmem2023;FinMem A Performance-Enhanced LLM Trading Agent;preprint;yu_2023_finmem.pdf;arXiv local;arXiv:2311.13743;memoire agentique
+finrlx2026;FinRL-X An AI-Native Modular Infrastructure for Quantitative Trading;preprint;yang_2026_finrlx.pdf;arXiv local;arXiv:2603.21330;infrastructure quantitative
+nistAirmf2023;Artificial Intelligence Risk Management Framework AI RMF 1.0;referentiel;tabassi_2023_nist_ai_rmf.pdf;document officiel local;NIST;gouvernance IA
+mifidArticle17;MiFID II Article 17 Algorithmic trading;reglement;eu_2014_mifid2_directive_fr.pdf;document officiel local;EUR-Lex;trading algorithmique
+dora2022;Regulation EU 2022/2554 DORA;reglement;eu_2022_dora_regulation_fr.pdf;document officiel local;EUR-Lex;resilience numerique
+euAiAct2024;Regulation EU 2024/1689 AI Act;reglement;eu_2024_ai_act_fr.pdf;document officiel local;EUR-Lex;gouvernance IA
