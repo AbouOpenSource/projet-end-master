@@ -1,0 +1,52 @@
+\chapter{Conclusion}\label{cap:conclusion}
+%--------------------------------------
+
+\section{Réponse à la problématique}
+
+Ce mémoire cherchait à déterminer comment utiliser une approche agentique dans un trading multifactoriel sans transformer l'aide à la décision en boîte noire opérationnelle. Les résultats de l'état de l'art et du prototype conduisent à trois réponses complémentaires.
+
+\subsection{Les tâches pour lesquelles les agents sont utiles}
+
+Les agents sont utiles pour traiter l'information hétérogène et préparer une décision : recherche documentaire, veille de marché, synthèse de nouvelles, comparaison de scénarios, contrôle de cohérence, coordination des outils et rédaction d'une note. Leur intérêt est particulièrement visible lorsque plusieurs sources et plusieurs responsabilités doivent être reliées dans un même workflow.
+
+La démonstration LangGraph des 30 novembre et 31 décembre 2025 illustre ce rôle. L'agent lit des rendements et un turnover déjà calculés, les reformule, met en évidence les contributions favorables ou défavorables et rappelle la validation humaine nécessaire. Il apporte donc une valeur d'orchestration et d'interprétation sans devenir le moteur financier.
+
+\subsection{Les tâches qui doivent rester déterministes}
+
+Le calcul des facteurs, des rendements, des pondérations, des coûts, du risque, des contraintes et du drawdown doit rester dans des fonctions versionnées, testables et rejouables. Le moteur de risque doit pouvoir rejeter une allocation indépendamment du texte produit par un agent. Les permissions d'exécution doivent également être codées en dehors du LLM et ne pas dépendre d'une instruction conversationnelle.
+
+Cette séparation ne signifie pas que les composants déterministes sont infaillibles. Elle rend leurs hypothèses visibles, facilite les tests et permet une validation indépendante. Elle évite surtout de confondre la qualité d'une explication avec la robustesse du calcul qu'elle décrit.
+
+\subsection{Les mécanismes de traçabilité et de contrôle}
+
+Un système crédible doit conserver l'état du workflow, les versions des données et du code, les appels d'outils, les sources, les sorties numériques, les avis divergents, les alertes et la décision humaine. Les permissions doivent suivre le principe du moindre privilège. Les conditions d'escalade, les seuils de monitoring et le mode de repli doivent être définis avant tout usage sensible.
+
+Le journal JSON et les métriques agentiques proposées rendent ces contrôles observables : citations valides, échecs d'outils, désaccords, interventions humaines, temps de réponse et coût par décision. La gouvernance ne repose donc pas uniquement sur une consigne générale de prudence ; elle est matérialisée par des états, des règles et des traces.
+
+\section{Résultats du prototype}
+
+Le prototype fournit une validation limitée mais reproductible du socle quantitatif. Sur la période février 2015-décembre 2025, la combinaison équipondérée de VLUE, MTUM, QUAL et USMV, utilisée comme ensemble de proxies factoriels, obtient un rendement annualisé de 12,10\,\% avec 10 points de base de coûts, contre 13,95\,\% pour \texttt{SPY}. La volatilité est de 14,17\,\% contre 14,96\,\%, tandis que le ratio de Sharpe reste inférieur pour le portefeuille multifactoriel.
+
+Le contrôle hors échantillon sur 2021-2025 confirme la prudence de l'interprétation : le multifactoriel obtient 11,45\,\% annualisés contre 14,60\,\% pour SPY, avec un Sharpe de 0,816 contre 0,965. L'expérience ne prouve pas une capacité à générer de l'alpha. Elle montre que les calculs, les coûts, les sorties de risque et la couche agentique peuvent être reliés dans un workflow documenté.
+
+\section{Limites}
+
+Les ETF utilisés sont des proxies investissables et non une reconstruction titre par titre des facteurs. Le protocole ne modélise pas encore de manière institutionnelle le slippage, l'impact de marché, la liquidité, les corporate actions, le survivorship bias ou les contraintes détaillées d'exposition. L'univers et la période restent limités, et l'évaluation agentique repose sur deux démonstrations manuelles.
+
+Le prototype ne comprend pas de validation indépendante en production, de stress tests complets, de comparaison entre plusieurs modèles LLM, ni d'évaluation statistique de la fidélité des réponses sur un grand jeu de cas. Les règles réglementaires, les licences et les dépendances doivent être revérifiées à chaque évolution du périmètre.
+
+\section{Perspectives}
+
+Les prolongements prioritaires sont les suivants :
+
+\begin{itemize}
+    \item reconstruire les facteurs titre par titre sur un univers point-in-time, avec données de publication, coûts de marché et stress tests ;
+    \item évaluer plusieurs modèles et plusieurs prompts sur un jeu de décisions annotées afin de mesurer fidélité, complétude, respect des permissions et capacité d'escalade ;
+    \item brancher un moteur de risque indépendant et tester systématiquement les boucles de rejet ;
+    \item définir un schéma de journal d'audit compatible avec les processus risque, conformité, juridique et IT ;
+    \item mesurer le gain de productivité et les erreurs résiduelles avant tout élargissement de l'autonomie.
+\end{itemize}
+
+La conclusion générale est qu'une architecture agentique peut rendre le processus d'investissement plus structuré et mieux documenté, à condition de rester hybride. Les agents assistent, expliquent et escaladent ; les moteurs déterministes calculent et bloquent ; l'humain valide les décisions qui engagent le portefeuille.
+
+% Texte d'exemple du template conservé hors compilation.

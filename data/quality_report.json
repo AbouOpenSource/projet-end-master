@@ -1,0 +1,47 @@
+{
+  "source": "Yahoo Finance via yfinance",
+  "downloaded_at_utc": "2026-08-30T10:04:27.044707+00:00",
+  "tickers": [
+    "VLUE",
+    "MTUM",
+    "QUAL",
+    "USMV",
+    "SPY"
+  ],
+  "start_requested": "2015-01-01",
+  "end_requested_exclusive": "2026-01-01",
+  "first_observation": "2015-01-02",
+  "last_observation": "2025-12-31",
+  "rows": 2766,
+  "duplicate_dates": 0,
+  "missing_values_by_ticker": {
+    "VLUE": 0,
+    "MTUM": 0,
+    "QUAL": 0,
+    "USMV": 0,
+    "SPY": 0
+  },
+  "non_positive_values_by_ticker": {
+    "VLUE": 0,
+    "MTUM": 0,
+    "QUAL": 0,
+    "USMV": 0,
+    "SPY": 0
+  },
+  "maximum_calendar_gap_days": 4,
+  "calendar_gaps_over_7_days": [],
+  "daily_return_flags_over_25pct": {
+    "VLUE": 0,
+    "MTUM": 0,
+    "QUAL": 0,
+    "USMV": 0,
+    "SPY": 0
+  },
+  "bias_controls": {
+    "corporate_actions": "cours auto-ajustes par yfinance ; verification institutionnelle encore necessaire",
+    "look_ahead_bias": "rendements mensuels calcules apres la cloture de la periode ; aucun parametre ajuste sur les rendements futurs",
+    "survivorship_bias": "non elimine dans ce prototype ETF ; un univers historique point-in-time est requis pour une etude titres",
+    "liquidity_and_slippage": "non modelises separement ; les scenarios 10 et 30 pb sont des proxys de couts tout compris"
+  },
+  "rows_after_complete_case": 2766
+}

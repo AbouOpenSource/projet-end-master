@@ -1,0 +1,41 @@
+\documentclass[border=6pt]{standalone}
+\usepackage{fontspec}
+\setmainfont{TeX Gyre Termes}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,fit,backgrounds}
+\definecolor{navy}{HTML}{16324F}
+\definecolor{blue}{HTML}{2F6690}
+\definecolor{green}{HTML}{3A7D44}
+\definecolor{orange}{HTML}{D17A22}
+\definecolor{red}{HTML}{A23E48}
+\definecolor{lightblue}{HTML}{EAF3F8}
+\definecolor{lightgreen}{HTML}{EAF5EC}
+\definecolor{lightorange}{HTML}{FFF2DF}
+\definecolor{lightred}{HTML}{FBEAEC}
+\tikzset{
+  box/.style={draw=navy, very thick, rounded corners=2pt, align=center, font=\small, inner sep=5pt, minimum height=0.9cm},
+  data/.style={box, fill=lightblue, text width=2.25cm},
+  calc/.style={box, fill=lightgreen, text width=2.25cm},
+  agent/.style={box, fill=lightorange, text width=2.5cm},
+  control/.style={box, fill=lightred, text width=2.5cm},
+  arrow/.style={-{Latex[length=2.5mm]}, very thick, draw=navy},
+  danger/.style={-{Latex[length=2.5mm]}, very thick, draw=red, dashed},
+  label/.style={font=\scriptsize, align=center, fill=white, inner sep=2pt},
+  participant/.style={box, fill=lightblue, text width=2.3cm, minimum height=0.75cm},
+  zone/.style={box, minimum height=1.1cm, text width=4.1cm},
+  smallbox/.style={box, font=\scriptsize, text width=3.5cm, minimum height=0.7cm}
+}
+
+\begin{document}
+\begin{tikzpicture}[node distance=4mm and 3mm]
+\node[data] (a) {Cours ajustés\\2015-2025};
+\node[data, right=of a] (b) {Contrôle qualité\\2 766 observations};
+\node[calc, right=of b] (c) {Rendements\\mensuels};
+\node[calc, right=of c] (d) {Portefeuille\\équipondéré};
+\node[calc, right=of d] (e) {Coûts\\0, 10, 30 pb};
+\node[control, right=of e] (f) {Comparaison\\avec SPY};
+\node[control, below=of f] (g) {Contrôle hors échantillon\\2021-2025};
+\foreach \u/\v in {a/b,b/c,c/d,d/e,e/f,f/g} {\draw[arrow] (\u) -- (\v);}
+\draw[danger] (g.south) to[bend right=35] node[label,below]{robustesse temporelle} (c.south);
+\end{tikzpicture}
+\end{document}

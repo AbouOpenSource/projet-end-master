@@ -1,0 +1,45 @@
+\chapter{Checklist de gouvernance d'un agent de trading}\label{annexe:checklist}
+
+\section{Avant expérimentation}
+
+\begin{enumerate}
+    \item Définir le mandat : univers, instruments, horizon, contraintes, benchmark et limites.
+    \item Identifier les données autorisées et leurs fournisseurs.
+    \item Versionner le code, les données, les prompts, les modèles et les paramètres.
+    \item Définir les rôles agents et leurs permissions d'outils.
+    \item Interdire l'accès direct à l'exécution pour les agents de recherche.
+    \item Préparer un jeu de tests historiques et des scénarios de stress.
+\end{enumerate}
+
+\section{Pendant le backtesting}
+
+\begin{enumerate}
+    \item Séparer entraînement, validation et test hors échantillon.
+    \item Intégrer coûts, slippage, contraintes de liquidité et turnover.
+    \item Comparer la stratégie à des benchmarks simples.
+    \item Journaliser chaque recommandation produite par les agents.
+    \item Vérifier les sources citées par les agents.
+    \item Mesurer les erreurs agentiques : hallucinations, appels d'outils échoués, contradictions, refus ou sorties incomplètes.
+\end{enumerate}
+
+\section{Avant passage en observation}
+
+\begin{enumerate}
+    \item Faire valider le modèle par une fonction indépendante.
+    \item Définir des seuils d'alerte : drawdown, volatilité, exposition, concentration, erreurs de données.
+    \item Tester le plan de repli en cas d'indisponibilité du LLM ou des données.
+    \item Vérifier la conformité des licences open source et des fournisseurs de données.
+    \item Mettre en place une revue périodique des logs et des décisions.
+\end{enumerate}
+
+\section{Avant toute exécution réelle}
+
+\begin{enumerate}
+    \item Exiger une validation humaine explicite.
+    \item Imposer des limites de risque codées hors LLM.
+    \item Bloquer automatiquement tout ordre hors mandat ou hors limite.
+    \item Conserver une piste d'audit complète et exportable.
+    \item Documenter les incidents, corrections et changements de modèle.
+\end{enumerate}
+
+% Texte d'exemple du template conservé hors compilation.

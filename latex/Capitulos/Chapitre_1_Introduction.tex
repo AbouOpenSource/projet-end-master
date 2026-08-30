@@ -1,0 +1,48 @@
+\chapter{Introduction et problématique}\label{cap:introduction}
+%--------------------------------------
+
+\section{Contexte général}
+
+Le trading multifactoriel consiste à construire des décisions d'investissement à partir de plusieurs familles de signaux : valorisation, momentum, qualité, faible volatilité, liquidité, portage, révisions d'analystes, signaux macroéconomiques ou signaux issus de nouvelles. Cette logique prolonge la tradition académique des modèles factoriels, depuis les facteurs de marché, taille et valeur de \citet{famaFrench1993} jusqu'au facteur momentum formalisé par \citet{carhart1997}. Dans un contexte professionnel, ces facteurs ne suffisent pas à eux seuls : ils doivent être nettoyés, normalisés, neutralisés, testés hors échantillon, combinés avec des contraintes de risque, puis traduits en ordres compatibles avec la liquidité et le mandat du portefeuille.
+
+Les avancées récentes des grands modèles de langage ont introduit une nouvelle brique dans cette chaîne. Un agent ne se limite pas à produire du texte : il peut appeler des outils, lire des documents, interroger une base de données, déléguer des tâches à d'autres agents et enregistrer les raisons d'une décision. Les travaux sur ReAct \citep{yao2023react}, Toolformer \citep{schick2023toolformer}, Reflexion \citep{shinn2023reflexion} et AutoGen \citep{wu2023autogen} ont montré que le raisonnement, l'utilisation d'outils et l'interaction multi-agents peuvent être assemblés en workflows plus robustes qu'un simple prompt isolé.
+
+Pour un desk de trading, cette évolution ouvre des cas d'usage concrets : veille de marché, qualification de nouvelles, synthèse de recherche, génération de scénarios, préparation de revues de risque, documentation des décisions, contrôle de cohérence d'une stratégie et assistance au backtesting. En revanche, elle ne supprime pas les exigences fondamentales de la finance de marché : contrôle du risque, séparation des responsabilités, validation indépendante, explicabilité, auditabilité et surveillance continue.
+
+\section{Problématique}
+
+La question centrale de ce rapport est la suivante : comment utiliser une approche agentique dans un environnement de trading multifactoriel sans transformer un outil d'aide à la décision en boîte noire opérationnelle ? Cette question est plus exigeante que la simple automatisation d'un script de trading. Un agent fondé sur un LLM peut produire une justification plausible sans que cette justification soit causalement liée au signal réellement utilisé. Il peut aussi confondre une corrélation historique avec une relation exploitable, ignorer une limite de risque ou synthétiser une nouvelle de marché sans mesurer son impact probabiliste.
+
+Le domaine est fortement réglementé. En Europe, les exigences relatives au trading algorithmique imposent des systèmes résilients, des contrôles de risque et des limites permettant d'éviter des conditions de marché désordonnées \citep{mifidArticle17}. Le règlement DORA renforce les obligations liées au risque informatique et à la résilience opérationnelle des entités financières \citep{dora2022}. Les cadres de gestion des risques liés à l'IA, comme le NIST AI Risk Management Framework, insistent sur la gouvernance, la mesure, la cartographie des risques et le monitoring \citep{nistAirmf2023}. Même lorsque l'usage n'entre pas automatiquement dans une catégorie d'IA à haut risque au sens de l'AI Act \citep{euAiAct2024}, les principes de contrôle, de documentation et de surveillance restent indispensables dans une institution financière.
+
+La problématique peut donc être formulée ainsi : quelles architectures agentiques disponibles aujourd'hui, notamment sur GitHub, peuvent contribuer à un desk de trading multifactoriel explicable, rationnel et monitorable, et quelles limites empêchent encore leur déploiement autonome en production ?
+
+\section{Objectifs du rapport}
+
+Ce rapport poursuit cinq objectifs :
+\begin{enumerate}
+    \item établir un état de l'art des architectures agentiques pertinentes pour la finance de marché ;
+    \item recenser les projets GitHub qui peuvent être mobilisés pour analyser l'état actuel des architectures agentiques en finance de marché ;
+    \item comparer ces projets selon des critères observables : gestion de l'état, persistance, supervision humaine, permissions d'outils, reprise après incident, mémoire, backtesting et traçabilité ;
+    \item proposer une architecture cible dans laquelle les agents assistent la décision sans remplacer les contrôles quantitatifs et humains nécessaires ;
+    \item expérimenter un socle quantitatif et une couche agentique supervisée afin d'évaluer la reproductibilité des calculs, la fidélité des synthèses et le respect des permissions.
+\end{enumerate}
+
+\section{Périmètre}
+
+Le rapport se concentre sur les actions liquides, ETF, futures et crypto-actifs comme univers d'étude pour les solutions ouvertes. Les produits complexes, l'optimisation fiscale, le trading haute fréquence et les infrastructures propriétaires d'exécution ne sont pas étudiés en détail.
+
+Le travail ne vise pas à construire une plateforme de trading prête pour la production, à démontrer une capacité à générer de l'alpha ou à proposer un dispositif réglementaire complet. Il valide certains principes architecturaux à travers un prototype expérimental : séparation entre calcul et interprétation, contrôle hors échantillon, journalisation structurée, permissions limitées et validation humaine. Les résultats financiers sont donc des résultats de démonstration et non une recommandation d'investissement.
+
+L'analyse distingue trois niveaux :
+\begin{description}
+    \item[Agents généralistes :] frameworks permettant de coordonner des rôles, outils, mémoires et workflows.
+    \item[Briques quantitatives :] bibliothèques de données, backtesting, recherche factorielle, apprentissage par renforcement et exécution simulée.
+    \item[Applications financières agentiques :] dépôts combinant LLM, analyse financière et décision d'investissement.
+\end{description}
+
+\section{Organisation du rapport}
+
+Le chapitre~\ref{cap:etat-art} présente l'état de l'art et la cartographie des solutions GitHub. Le chapitre~\ref{cap:methodologie} décrit la méthode de sélection et d'évaluation. Le chapitre~\ref{cap:architecture} propose une architecture cible multi-agents adaptée au trading multifactoriel. Le chapitre~\ref{cap:discussion} discute les risques, les limites et les conditions de mise en production. Le chapitre~\ref{cap:conclusion} conclut et propose des pistes d'approfondissement.
+
+% Texte d'exemple du template conservé hors compilation.

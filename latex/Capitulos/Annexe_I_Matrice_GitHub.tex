@@ -1,0 +1,103 @@
+\chapter{Matrice des solutions GitHub}\label{annexe:github}
+
+\section{Solutions recommandées pour l'étude comparative}
+
+Cette annexe synthétise les dépôts les plus directement exploitables pour transformer l'état de l'art en cartographie exploitable. Les URLs et licences doivent être revérifiées avant tout usage institutionnel.
+
+\begin{table}[H]
+\centering
+\caption{Matrice de sélection des dépôts GitHub.}
+\label{tab:annexe-github}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.17\textwidth}p{0.20\textwidth}p{0.31\textwidth}p{0.26\textwidth}}
+\toprule
+\textbf{Dépôt} & \textbf{Rôle} & \textbf{Usage conseillé} & \textbf{Précaution} \\
+\midrule
+LangGraph & Orchestration & Construire le graphe d'étapes : ingestion, calcul, analyse, risque, conformité, supervision. & Versionner les états et imposer des sorties structurées. \\
+AutoGen & Collaboration multi-agents & Prototyper des conversations entre agents analystes et contrôleurs. & Encadrer strictement les permissions d'outils. \\
+CrewAI & Agents par rôles & Démontrer rapidement un workflow de recherche financière. & Ajouter logs, contrôles et tests avant usage sérieux. \\
+Semantic Kernel & Intégration entreprise & Connecter agents, fonctions et plugins dans un environnement Microsoft. & Ne fournit pas de modèle financier prêt à l'emploi. \\
+Qlib & Recherche quantitative & Calculer signaux, entraîner modèles, backtester des stratégies. & Adapter données, coûts et contraintes au mandat réel. \\
+Lean & Backtesting et exécution & Simuler et exécuter des stratégies multi-actifs. & Garder l'exécution sous règles déterministes. \\
+OpenBB & Données et recherche & Alimenter un agent de veille et de synthèse financière. & Vérifier les licences des fournisseurs de données. \\
+FinRL / FinRL-Meta & Agents RL financiers & Comparer LLM agents et RL sur environnements de marché. & Risque fort de surapprentissage. \\
+TradingAgents & Multi-agents trading & Inspirer l'équipe d'agents : analystes, trader, risque. & Prototype de recherche, non suffisant pour production régulée. \\
+FinRobot & Agents financiers LLM & Automatiser recherche actions et valorisation. & Compléter par un moteur quantitatif et des contrôles. \\
+FinMem & Mémoire agentique & Étudier l'impact d'une mémoire structurée sur les décisions. & Valider empiriquement la robustesse hors échantillon. \\
+AI Hedge Fund & Démonstrateur pédagogique & Montrer la division des rôles dans un fonds simulé. & Preuve de concept, pas outil de trading réel. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+\section{Due diligence des dépôts au 30 août 2026}
+
+Les informations ci-dessous ont été relevées sur les dépôts publics et l'API GitHub le 30 août 2026. La date de dernier push renseigne l'activité observée, mais ne garantit ni la maintenance ni l'aptitude à un usage institutionnel. Le propriétaire public est indiqué ; le nombre de mainteneurs actifs n'est pas assimilé au nombre de contributeurs.
+
+\begin{table}[H]
+\centering
+\caption{Grille de due diligence des briques sélectionnées.}
+\label{tab:due-diligence}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.14\textwidth}p{0.13\textwidth}p{0.14\textwidth}p{0.20\textwidth}p{0.16\textwidth}p{0.18\textwidth}}
+\toprule
+\textbf{Dépôt} & \textbf{Licence} & \textbf{Dernier push} & \textbf{Docs et tests} & \textbf{Sécurité} & \textbf{Avis provisoire} \\
+\midrule
+LangGraph \citep{githubLangGraph} & MIT & 30/08/2026 & README, docs ; tests à inspecter & Politique présente & Orchestration active ; audit dépendances. \\
+Qlib \citep{githubQlib} & MIT & 23/07/2026 & docs, tests & SECURITY.md & Brique quantitative documentée. \\
+Lean \citep{githubLean} & Apache-2.0 & 28/08/2026 & README, Tests & À vérifier & Moteur actif ; audit des données. \\
+OpenBB \citep{githubOpenBB} & AGPLv3* & 30/07/2026 & README, pytest.ini & SECURITY.md & Licence à valider juridiquement. \\
+TradingAgents \citep{githubTradingAgents} & Apache-2.0 & 30/08/2026 & README, tests & À vérifier & Prototype multi-agents. \\
+FinRobot \citep{githubFinRobot} & Apache-2.0 & 23/08/2026 & README, test\_module.py & À vérifier & Démonstrateur financier. \\
+FinRL \citep{githubFinRL} & MIT & 13/07/2026 & docs, unit\_tests & À vérifier & RL ; surapprentissage à contrôler. \\
+Freqtrade \citep{githubFreqtrade} & GPL-3.0 & 27/08/2026 & docs, tests & À vérifier & Bot crypto ; périmètre différent. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\noindent * Le README OpenBB déclare AGPLv3, tandis que l'API GitHub renvoie \texttt{NOASSERTION}; une vérification juridique est donc obligatoire. Le fichier structuré complet est archivé dans \texttt{github\_due\_diligence.json}.
+
+
+\section{Statut d'utilisation dans le mémoire}
+
+La due diligence est complétée par un statut d'utilisation. Cette distinction indique si une brique a été exécutée dans le prototype, utilisée comme référence pour la conception ou seulement étudiée dans la cartographie.
+
+\begin{table}[H]
+\centering
+\caption{Statut des solutions dans le travail réalisé.}
+\label{tab:statut-utilisation}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.22\textwidth}p{0.23\textwidth}p{0.43\textwidth}}
+\toprule
+\textbf{Dépôt} & \textbf{Statut} & \textbf{Rôle dans le travail} \\
+\midrule
+LangGraph & Utilisé dans le prototype & Workflow déterministe de lecture des sorties quantitatives, génération des notes et contrôle des permissions. \\
+Qlib & Référence étudiée & Comparaison pour la recherche quantitative et le backtesting ; non branché au calcul final. \\
+Lean & Référence comparative & Exemple de moteur multi-actifs pour une évolution future du socle. \\
+OpenBB & Référence étudiée & Brique étudiée pour la veille et la provenance des données ; non branchée au prototype. \\
+TradingAgents & Étudié, non exécuté & Référence pour la séparation des rôles dans une architecture multi-agents financière. \\
+FinRobot & Étudié, non exécuté & Référence pour les assistants de recherche et d'analyse financière. \\
+FinRL & Étudié, non retenu & Solution RL documentée, hors périmètre du prototype ETF équipondéré. \\
+Freqtrade & Étudié, hors périmètre principal & Brique crypto utile pour comparaison, mais non adaptée au protocole retenu. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\section{Combinaison minimale}
+
+Pour une étude de master réaliste, la combinaison suivante est suffisante :
+\begin{itemize}
+    \item LangGraph pour imposer un workflow auditable ;
+    \item Qlib ou Lean pour calculer et backtester les signaux ;
+    \item OpenBB pour alimenter la veille et les données financières ;
+    \item un agent de synthèse pour produire la note de décision ;
+    \item un registre JSON ou base SQL pour stocker chaque appel d'outil, donnée et validation.
+\end{itemize}
+
+Cette combinaison évite de dépendre d'un seul dépôt. Elle permet aussi de remplacer progressivement les composants : un moteur de risque interne peut remplacer une bibliothèque open source, un modèle LLM privé peut remplacer un modèle externe, et les règles de conformité peuvent être intégrées sous forme de fonctions déterministes.
+
+% Texte d'exemple du template conservé hors compilation.

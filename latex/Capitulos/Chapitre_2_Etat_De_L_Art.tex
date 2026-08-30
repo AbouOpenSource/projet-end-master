@@ -1,0 +1,174 @@
+\chapter{État de l'art et solutions GitHub}\label{cap:etat-art}
+%--------------------------------------
+
+\section{Définir l'approche agentique}
+
+Dans ce rapport, une architecture agentique désigne un système dans lequel un ou plusieurs agents combinent quatre capacités : compréhension du contexte, raisonnement, appel d'outils et mémoire. Un agent peut donc lire une nouvelle de marché, interroger une base de prix, calculer un indicateur, demander une vérification à un autre agent, puis produire une trace de décision. Cette définition est plus restrictive qu'un simple chatbot et plus large qu'un algorithme quantitatif classique.
+
+Les architectures récentes s'appuient sur plusieurs idées issues de la littérature :
+\begin{itemize}
+    \item le raisonnement et l'action alternés, illustrés par ReAct, où le modèle explicite une étape de raisonnement avant d'appeler un outil \citep{yao2023react} ;
+    \item l'utilisation d'outils externes, popularisée par Toolformer et les frameworks d'agents modernes \citep{schick2023toolformer} ;
+    \item la génération augmentée par récupération, qui force le modèle à s'appuyer sur une base documentaire ou une source de données plutôt que sur sa seule mémoire paramétrique \citep{lewis2020rag} ;
+    \item la réflexion et l'amélioration itérative, où un agent critique sa propre sortie ou celle d'un autre agent \citep{shinn2023reflexion} ;
+    \item la collaboration multi-agents, où plusieurs rôles spécialisés dialoguent pour résoudre une tâche complexe \citep{wu2023autogen}.
+\end{itemize}
+
+Ces idées sont pertinentes pour le trading multifactoriel, mais elles ne doivent pas être confondues avec une validation financière. Un agent peut améliorer la productivité de recherche sans prouver la robustesse d'un signal. La preuve d'une stratégie reste empirique : données propres, protocole de backtesting, prise en compte des coûts, stabilité hors échantillon, stress tests et limites de risque.
+
+\section{État des lieux synthétique du domaine}
+
+Le diagnostic fait apparaître un domaine encore fragmenté. Les solutions agentiques progressent rapidement, mais la plupart restent des cadres de coordination ou des démonstrateurs. Les briques quantitatives sont plus matures pour les calculs, les données et le backtesting, mais elles ne couvrent pas la gouvernance propre aux agents LLM. Les solutions les plus proches du trading agentique financier montrent des architectures intéressantes, mais leur niveau de contrôle, de documentation et de validation reste insuffisant pour une institution régulée.
+
+\begin{enumerate}
+    \item \textbf{Maturité agentique :} les frameworks généralistes sont utiles pour organiser des rôles et des workflows, mais ils demandent une forte spécialisation métier.
+    \item \textbf{Maturité quantitative :} les plateformes de backtesting et de recherche disposent de bases solides, mais leur intégration avec des agents explicables reste partielle.
+    \item \textbf{Maturité réglementaire :} les dépôts ouverts traitent rarement la traçabilité, les droits par rôle, la validation indépendante et le suivi continu avec le niveau attendu en finance de marché.
+    \item \textbf{Maturité documentaire :} la littérature académique décrit les mécanismes de raisonnement, de mémoire et de collaboration, tandis que les dépôts GitHub illustrent surtout des usages exploratoires.
+\end{enumerate}
+
+Cet état des lieux conduit à étudier les solutions comme des briques complémentaires plutôt que comme des produits prêts à déployer. La question pertinente devient donc moins \og quel outil installer ? \fg{} que \og quelle combinaison de briques permettrait de respecter les exigences de contrôle, de risque et de preuve ? \fg{}
+
+\section{Trading multifactoriel : chaîne quantitative de référence}
+
+Une chaîne multifactorielle standard comporte plusieurs étapes. D'abord, l'univers d'investissement est défini : actions liquides, ETF, futures, devises ou crypto-actifs. Ensuite, les données sont collectées : prix, volumes, fondamentaux, nouvelles, données macroéconomiques et éventuellement signaux alternatifs. Les facteurs sont calculés, winsorisés, normalisés, neutralisés par secteur ou par bêta, puis combinés dans un score agrégé. Le portefeuille est construit sous contraintes : exposition nette, volatilité, tracking error, turnover, liquidité, concentration, coûts et restrictions du mandat.
+
+Dans cette chaîne, les agents peuvent jouer trois rôles utiles :
+\begin{enumerate}
+    \item \textbf{assistance à la recherche}, en synthétisant des publications, en proposant des hypothèses de facteurs ou en détectant des ruptures de régime ;
+    \item \textbf{orchestration de workflow}, en lançant des scripts de calcul, en contrôlant la présence des données, en comparant les résultats et en générant un journal ;
+    \item \textbf{supervision explicable}, en résumant pourquoi une allocation est proposée, quels facteurs contribuent au signal et quelles limites de risque sont proches d'être atteintes.
+\end{enumerate}
+
+Le rôle le plus risqué est la génération automatique d'ordres. Dans un cadre régulé, l'agent ne doit pas être l'unique décideur. Il doit produire une recommandation traçable, soumise à des règles déterministes et à une validation humaine ou algorithmique indépendante.
+
+\section{Frameworks généralistes d'agents}
+
+Les frameworks généralistes ne sont pas propres à la finance, mais ils fournissent les mécanismes d'orchestration nécessaires : définition de rôles, graphes d'étapes, appels d'outils, mémoire, validation de sorties et supervision humaine.
+
+\begin{table}[H]
+\centering
+\caption{Frameworks agentiques généralistes disponibles sur GitHub.}
+\label{tab:frameworks-agents}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.24\textwidth}p{0.30\textwidth}p{0.24\textwidth}}
+\toprule
+\textbf{Projet GitHub} & \textbf{Positionnement} & \textbf{Intérêt pour un desk multifactoriel} & \textbf{Limites principales} \\
+\midrule
+LangGraph \citep{githubLangGraph} & Workflows d'agents sous forme de graphes, avec état persistant et contrôle fin des transitions. & Adapté aux processus audités : ingestion, calcul de facteurs, revue de risque, validation, journalisation. & Nécessite de développer les outils quantitatifs et les contrôles métier autour du graphe. \\
+AutoGen \citep{githubAutoGen} & Conversations multi-agents et orchestration d'équipes d'agents. & Utile pour comparer des rôles de recherche, analyste, contrôleur de risque et superviseur. & Les conversations libres doivent être fortement contraintes pour un usage régulé. \\
+CrewAI \citep{githubCrewAI} & Agents orientés rôles, tâches et processus. & Simple pour construire une équipe d'agents de recherche de marché et de reporting. & Moins adapté seul aux workflows critiques nécessitant des états vérifiables et des garde-fous stricts. \\
+Semantic Kernel \citep{githubSemanticKernel} & SDK Microsoft pour connecter modèles, plugins, fonctions et mémoire. & Intéressant dans un environnement d'entreprise déjà Microsoft, avec intégration possible à des services internes. & L'architecture de trading reste à construire ; le framework ne fournit pas de modèle financier. \\
+CAMEL \citep{githubCamel} & Environnements et méthodes pour sociétés multi-agents. & Pertinent pour expérimenter des interactions entre analystes spécialisés. & Plus orienté recherche agentique que production financière. \\
+OpenAI Swarm \citep{githubSwarm} & Exemple éducatif de routage entre agents. & Montre clairement la logique de transfert entre rôles. & Projet expérimental, insuffisant pour une architecture de production. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+La conclusion de cette première famille est claire : ces outils permettent d'orchestrer des agents, mais ils ne fournissent ni données financières robustes, ni moteur de backtesting, ni calcul de risque, ni conformité métier. Leur valeur réside dans la coordination et la traçabilité du workflow, à condition de les connecter à des briques quantitatives vérifiées.
+
+\section{Plateformes quantitatives et briques de trading ouvertes}
+
+La seconde famille regroupe les projets open source qui traitent réellement les données de marché, les portefeuilles, le backtesting ou l'exécution simulée. Ces projets ne sont pas forcément agentiques, mais ils constituent le socle déterministe auquel les agents doivent se connecter.
+
+\begin{table}[H]
+\centering
+\caption{Briques quantitatives GitHub utiles pour une étude multifactorielle.}
+\label{tab:github-quant}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.25\textwidth}p{0.32\textwidth}p{0.21\textwidth}}
+\toprule
+\textbf{Projet GitHub} & \textbf{Fonction principale} & \textbf{Apport dans l'architecture cible} & \textbf{Point d'attention} \\
+\midrule
+Qlib \citep{githubQlib} & Plateforme Microsoft orientée recherche quantitative, données, modèles et backtesting. & Bon socle pour tester des facteurs, pipelines de données et modèles prédictifs. & Adaptation nécessaire aux données internes et aux contraintes de portefeuille réelles. \\
+FinRL \citep{githubFinRL} et FinRL-Meta \citep{githubFinRLMeta} & Apprentissage par renforcement pour trading automatisé et environnements de marché. & Utile pour comparer une approche agentique LLM avec des agents RL plus classiques. & Le RL financier souffre fortement du surapprentissage et des coûts de transaction mal modélisés. \\
+FinRL-X \citep{finrlx2026} & Infrastructure modulaire récente pour trading quantitatif natif IA. & Intéressant comme direction d'évolution vers une infrastructure plus intégrée. & Projet récent : maturité opérationnelle à vérifier avant usage critique. \\
+QuantConnect Lean \citep{githubLean} & Moteur open source de backtesting et trading algorithmique multi-actifs. & Brique robuste pour simuler et exécuter des stratégies dans un cadre contrôlé. & L'agent doit rester au-dessus du moteur, sans contourner les règles d'exécution. \\
+OpenBB \citep{githubOpenBB} & Plateforme ouverte d'accès aux données et analyses financières. & Source pratique pour créer un agent de recherche et de veille. & La qualité dépend des fournisseurs de données configurés et de leurs licences. \\
+Freqtrade \citep{githubFreqtrade} & Bot de trading crypto avec backtesting et hyperoptimisation. & Utile pour une étude sur crypto-actifs, où l'accès aux données et exchanges est simple. & Domaine crypto moins représentatif des contraintes actions institutionnelles. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+Ces plateformes montrent qu'un système agentique sérieux doit s'appuyer sur des composants quantitatifs non génératifs. Le calcul d'un score factoriel, d'une volatilité ex ante, d'une contribution au risque ou d'un coût de transaction ne doit pas être laissé au LLM. Le LLM peut expliquer, vérifier, synthétiser et coordonner, mais le calcul financier doit rester reproductible.
+\section{Fiches techniques des briques retenues}
+
+Les trois briques retenues pour le prototype couvrent des fonctions différentes et ne doivent pas être présentées comme interchangeables.
+
+\subsection{LangGraph : orchestration et état}
+
+LangGraph représente le workflow sous la forme d'un graphe d'états et de transitions. Chaque nœud peut lire une entrée structurée, appeler un outil contrôlé et produire une sortie validable avant de transmettre l'état au nœud suivant \citep{githubLangGraph}. Cette organisation facilite les arrêts sur anomalie, la reprise après incident, la supervision humaine et la conservation d'une trace. Elle ne fournit toutefois ni données de marché, ni facteur financier, ni limite de risque : ces fonctions doivent rester dans des outils déterministes.
+
+\subsection{Qlib : recherche quantitative et backtesting}
+
+Qlib constitue une brique de recherche quantitative : préparation des données, création de signaux, entraînement de modèles et backtesting \citep{githubQlib}. Son intérêt pour le rapport réside dans la séparation entre pipeline de recherche et orchestration agentique. Dans une architecture réelle, les données point-in-time, les coûts, les contraintes de portefeuille et la validation hors échantillon doivent être contrôlés indépendamment du modèle utilisé.
+
+\subsection{OpenBB : accès aux données et veille}
+
+OpenBB peut alimenter une couche de recherche et de veille par l'accès à plusieurs fournisseurs de données \citep{githubOpenBB}. Le choix d'un fournisseur, sa licence, sa disponibilité historique et ses conditions d'utilisation doivent être enregistrés avec chaque sortie. OpenBB peut donc fournir un outil à un agent de recherche, mais ne constitue pas à lui seul une preuve de qualité des données ni un moteur de décision.
+
+
+\section{Projets GitHub spécifiquement agentiques en finance}
+
+La troisième famille est la plus proche du sujet : des dépôts qui utilisent directement des LLM ou des agents pour l'analyse financière, la recherche actions ou la décision de trading.
+
+\begin{table}[H]
+\centering
+\caption{Solutions GitHub orientées agents financiers.}
+\label{tab:github-finance-agents}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.18\textwidth}p{0.27\textwidth}p{0.31\textwidth}p{0.20\textwidth}}
+\toprule
+\textbf{Projet GitHub} & \textbf{Principe} & \textbf{Ce qu'il apporte au sujet} & \textbf{Limite pour un desk régulé} \\
+\midrule
+TradingAgents \citep{githubTradingAgents} & Framework multi-agents imitant une société de trading avec analystes spécialisés, trader et gestion du risque. & C'est l'un des dépôts les plus proches de l'idée d'équipe multi-agents appliquée au trading. & À analyser comme démonstrateur de recherche ; il faut ajouter validation des données, limites de risque, audit et contrôle humain. \\
+FinRobot \citep{githubFinRobot} & Plateforme d'agents LLM pour applications financières, notamment recherche actions, analyse et valorisation. & Utile pour automatiser des tâches d'analyste financier et produire des synthèses structurées. & Plus orienté analyse et reporting que génération robuste d'ordres multifactoriels. \\
+FinMem \citep{finmem2023,githubFinMem} & Agent de trading fondé sur mémoire stratifiée et profils de décision. & Montre l'intérêt de la mémoire long terme pour contextualiser les décisions de trading. & Les performances expérimentales ne suffisent pas à prouver une robustesse exploitable en production. \\
+AI Hedge Fund \citep{githubAiHedgeFund} & Démonstrateur open source d'un fonds simulé composé d'agents d'investissement. & Bon support pédagogique pour comprendre la division des rôles entre analystes et gestionnaire. & Le dépôt se présente comme preuve de concept, pas comme outil de trading réel. \\
+FinGPT \citep{fingpt2023,githubFinGPT} & Écosystème de modèles de langage financiers open source. & Peut servir de base de modèle ou de fine-tuning pour des agents spécialisés finance. & Un modèle financier n'est pas une architecture de décision ; il faut ajouter outils, gouvernance et backtesting. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+Ces projets démontrent la faisabilité technique d'une approche multi-agents, mais leur maturité varie fortement. Les plus intéressants pour ce rapport ne sont pas ceux qui promettent une performance de trading, mais ceux qui rendent explicites les rôles : analyste fondamental, analyste technique, analyste sentiment, contrôleur du risque, trader et superviseur. Cette séparation facilite l'audit, car chaque agent peut être évalué sur une tâche précise.
+
+\section{Critères observables et statut dans le mémoire}
+
+Les tableaux précédents décrivent le positionnement général des outils. Pour rendre la comparaison vérifiable, l'analyse retient aussi des éléments observables : gestion de l'état et persistance, supervision humaine, permissions d'outils, reprise après incident, mémoire, backtesting, traçabilité, documentation et tests. Le statut de chaque brique est explicité afin de distinguer ce qui a été exécuté de ce qui a seulement été étudié.
+
+\begin{table}[H]
+\centering
+\caption{Critères observables et statut des principales solutions.}
+\label{tab:criteres-statut}
+\scriptsize
+\begin{adjustbox}{width=\textwidth}
+\begin{tabular}{p{0.16\textwidth}p{0.36\textwidth}p{0.18\textwidth}p{0.24\textwidth}}
+\toprule
+\textbf{Brique} & \textbf{Éléments observables} & \textbf{Statut} & \textbf{Rôle dans le mémoire} \\
+\midrule
+LangGraph & État, transitions, persistance, arrêts, supervision humaine, permissions et trace des sorties. & Utilisée dans le prototype & Orchestration de la démonstration agentique et génération des notes. \\
+Qlib & Pipeline de données, recherche factorielle, backtesting, reproductibilité des expériences. & Référence étudiée & Comparaison du socle quantitatif ; non utilisé dans le calcul final. \\
+Lean & Backtesting multi-actifs, contraintes, simulation de l'exécution et extensibilité. & Référence comparative & Option d'évolution pour un moteur de simulation plus complet. \\
+OpenBB & Accès à des fournisseurs, provenance des données, disponibilité historique et licences. & Référence étudiée & Exemple de brique pour un agent de veille ; non branchée au prototype. \\
+TradingAgents et FinRobot & Découpage des rôles, mémoire, synthèse, appels d'outils et décision multi-agents. & Étudiés, non exécutés & Comparaison des architectures financières agentiques. \\
+FinRL et Freqtrade & Environnements de backtesting, apprentissage ou exécution simulée. & Étudiés, non retenus & Solutions utiles dans d'autres périmètres, mais non nécessaires au prototype ETF. \\
+\bottomrule
+\end{tabular}
+\end{adjustbox}
+\end{table}
+
+\section{Lecture critique de l'état de l'art}
+
+Aucune des solutions examinées ne couvre seule les besoins d'un desk régulé. Les frameworks généralistes savent gérer des états, des transitions ou des appels d'outils, mais ils ne fournissent pas un modèle de risque ni une preuve de qualité des données. Les plateformes quantitatives calculent et backtestent avec davantage de reproductibilité, mais elles ne résolvent pas la supervision d'un agent, la justification d'une synthèse ou la gouvernance des permissions. Les applications financières agentiques rapprochent ces deux dimensions, sans fournir pour autant le niveau de validation, de résilience et d'audit attendu en production.
+
+Cette absence de solution intégrée n'est pas seulement une limite logicielle : elle détermine la méthode de conception. Les composants doivent être traités comme des briques complémentaires. Le moteur factoriel, l'optimiseur, les contrôles de risque et le calcul des coûts forment un socle déterministe. Les agents peuvent exploiter ce socle pour rechercher des informations, comparer des scénarios, détecter une incohérence, expliquer une sortie ou préparer une décision. Ils ne doivent pas pouvoir modifier silencieusement les paramètres calculés ni contourner une limite.
+
+La comparaison des critères observables conduit ainsi à privilégier une architecture composée plutôt qu'un produit unique. LangGraph est retenu pour son contrôle du workflow et de l'état ; les plateformes comme Qlib, Lean et OpenBB servent de références pour les données et le backtesting ; les projets TradingAgents, FinRobot et FinMem éclairent le découpage des rôles et la mémoire. Ce choix est cohérent avec le prototype : l'évaluation porte sur la séparation des responsabilités et la traçabilité, non sur une promesse de performance commerciale.
+
+% Texte d'exemple du template conservé hors compilation.

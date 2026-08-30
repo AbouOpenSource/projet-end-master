@@ -1,0 +1,100 @@
+%==============================================================================
+% Template PROYECTO DE TITULO UCM
+% Autor: Marco Quiroz
+%        Escuela de Ing Civil
+%        Departamento de Obras Civiles
+%        Universidad Católica del Maule
+%==============================================================================
+\def\Presentation@Version{2.0}
+\typeout{Marco Quiroz, Universidad Catolica del Maule, Talca, 2026/04/16}
+
+%Paquetes a Utiizar
+\renewcommand{\baselinestretch}{1.5}
+\usepackage[french]{babel}
+\usepackage[letterpaper]{geometry}
+\geometry{top=2.5cm, bottom=2.5cm, left=3cm, right=3cm}
+\usepackage{fontspec}
+\IfFontExistsTF{Times New Roman}
+  {\setmainfont{Times New Roman}}
+  {\setmainfont{TeX Gyre Termes}}
+%\setmainfont{Calibri}
+\usepackage{lipsum}
+\usepackage{blindtext}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    urlcolor=blue,
+    breaklinks=true,
+    pdftitle={L'approche agentique dans un contexte de trading multifactoriel},
+    pdfpagemode=FullScreen,
+    citecolor=blue,
+}
+
+\usepackage{fancyhdr}
+%\pagestyle{fancyplain}% <- use fancyplain instead fancy
+%\pagestyle{myheadings}% <- use fancyplain instead fancy
+\fancyhf{}
+
+\fancyhf{}
+%\fancyhead[L]{\nouppercase{\rightmark}}
+\fancyhead[R]{\nouppercase{\leftmark}}
+%\fancyfoot[R]{\thepage}
+
+%\markright{\chaptermark}
+%\fancyhead[R]{\chaptermark} %\thepage
+%\fancyhead[L]{\chaptermark}
+\fancyfoot[R]{\thepage}
+%\rhead{\chaptermark}
+%\rfoot{\thepage}
+\renewcommand{\headrulewidth}{0pt}
+
+% change plain style (eg. used on chapter pages)
+\fancypagestyle{plain}{%
+  \fancyhf{}
+  \fancyfoot[R]{\thepage}
+}
+
+%\usepackage[nottoc]{tocbibind}% LoF and LoT should get a ToC entry
+
+
+% Anexos
+\addto\captionsfrench{\renewcommand{\appendixname}{Annexe}}
+\usepackage{appendix}
+\renewcommand{\appendixtocname}{Annexes}
+\renewcommand{\appendixpagename}{Annexes}
+
+\addto\captionsfrench{\renewcommand{\contentsname}{Table des matières}}
+\addto\captionsfrench{\renewcommand{\listfigurename}{Liste des figures}}
+\addto\captionsfrench{\renewcommand{\listtablename}{Liste des tableaux}}
+
+%Bibliografia
+\usepackage{natbib}
+
+\usepackage{amssymb}
+\usepackage{amsmath}
+
+\newcommand*\wildcard[2][7cm]{\vspace*{0.75cm}\parbox{#1}{\hrulefill\vspace*{-0.25cm}\par#2}}
+\setlength{\headheight}{15pt}
+\usepackage{float}
+\usepackage[skip=0.5pt]{caption}
+
+\addtocontents{toc}{\protect\raggedright\protect\sloppy}
+\addtocontents{toc}{\protect\hfill{\protect\bfseries Page}\\}
+\addtocontents{lof}{\protect\raggedright\protect\sloppy}
+\addtocontents{lof}{\protect\hfill{\protect\bfseries Page}\\}
+\addtocontents{lot}{\protect\raggedright\protect\sloppy}
+\addtocontents{lot}{\protect\hfill{\protect\bfseries Page}\\}
+\addtocontents{lop}{\protect\raggedright\protect\sloppy}
+\addtocontents{lop}{\protect\hfill{\protect\bfseries Page}\\}
+
+
+\usepackage{tabularray}
+\usepackage{adjustbox}
+\usepackage{booktabs}
+\usepackage{eurosym}
+\usepackage{hyperref}
+%\usepackage[acronym,nonumberlist,nopostdot,toc]
+\usepackage[toc,acronym]{glossaries}
+\makeglossaries

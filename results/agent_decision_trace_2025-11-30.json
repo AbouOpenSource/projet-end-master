@@ -1,0 +1,35 @@
+{
+  "workflow": "langgraph_deterministic_supervisor",
+  "date": "2025-11-30",
+  "quality_ok": true,
+  "quality_flags": [],
+  "risk_status": "a valider",
+  "risk_alerts": [
+    "validation humaine obligatoire",
+    "aucun moteur institutionnel de limites, liquidite ou slippage n'est connecte",
+    "aucune permission d'execution n'est exposee a ce workflow"
+  ],
+  "rebalance": {
+    "date": "2025-11-30",
+    "factor_returns": {
+      "Value": 0.0249981345118395,
+      "Momentum": -0.0156164272534176,
+      "Quality": 0.0090677798205325,
+      "Low volatility": 0.0230736302539755
+    },
+    "net_return": 0.0103672645244306,
+    "turnover": 0.0135148088017729,
+    "transaction_cost": 1.3514808801773e-05,
+    "target_weights": {
+      "VLUE": 0.25,
+      "MTUM": 0.25,
+      "QUAL": 0.25,
+      "USMV": 0.25
+    }
+  },
+  "permissions": {
+    "can_change_weights": false,
+    "can_send_orders": false,
+    "human_validation_required": true
+  }
+}

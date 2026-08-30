@@ -1,0 +1,134 @@
+%==============================================================================
+% Template PROYECTO DE TITULO UCM
+% Autor: Marco Quiroz
+%        Escuela de Ing Civil
+%        Departamento de Obras Civiles
+%        Universidad Católica del Maule
+%==============================================================================
+\documentclass[12pt,letterpaper]{report}
+\usepackage{UCM}
+\AtBeginDocument{\renewcommand*{\FrenchLabelItem}{\textnormal{-}}\renewcommand*{\Frlabelitemi}{\textnormal{-}}\renewcommand{\labelitemi}{\textnormal{-}}}
+\captionsetup{labelsep=period}
+\setlength{\emergencystretch}{3em}
+\begin{document}
+\pagestyle{empty}
+\begin{center}
+    \parbox[c][\textheight][t]{\textwidth}{
+        \begin{center}
+            \vspace*{1.5cm}
+            \includegraphics[width=0.42\textwidth]{logo/logo_cnam.png}\\
+            \vspace{0.8cm}
+            {\Large CONSERVATOIRE NATIONAL DES ARTS ET MÉTIERS}\\
+            \vspace{0.25cm}
+            {\large Master Finance de marché}\\
+            \vspace{2.2cm}
+            {\Large \bf L'approche agentique dans un contexte de trading multifactoriel}\\
+            \vspace{0.75cm}
+            {\large État de l'art, architectures ouvertes et exigences d'explicabilité}\\
+            \vspace{1.8cm}
+            {\normalsize \bf Nom et prénom : SANOU Abou Dramane}\\
+            {\normalsize \bf Encadrant : Bertrand DJEMBISSI}\\
+            \vfill
+            Rapport d'étude présenté dans le cadre du Master Finance de marché\\
+            \vspace{0.5cm}
+            Paris, juin 2026
+        \end{center}
+        }
+\end{center}
+
+\cleardoublepage
+%---------------------------------------------------------------------------
+% Preamble
+\pagenumbering{roman} 				% Begin Roman page numbering (i,ii,...)
+% Résumé
+\chapter*{Résumé}
+ \addcontentsline{toc}{chapter}{Résumé}
+Les desks de trading doivent industrialiser la recherche, le suivi des portefeuilles et la préparation des décisions tout en conservant un niveau élevé de contrôle, d'explicabilité et de traçabilité. Ce rapport étudie l'usage d'agents fondés sur des grands modèles de langage dans une architecture de trading multifactoriel, en distinguant ce qui peut être confié à un agent de ce qui doit rester déterministe.
+
+L'étude combine un état de l'art des frameworks et projets GitHub avec un prototype expérimental. Le socle quantitatif utilise quatre ETF comme proxies investissables des facteurs value, momentum, quality et low volatility : VLUE, MTUM, QUAL et USMV. Une allocation équipondérée est comparée à l'ETF \texttt{SPY} sur la période février 2015-décembre 2025, avec des scénarios de coûts de transaction de 0, 10 et 30 points de base ainsi qu'un contrôle hors échantillon sur 2021-2025. Sur l'échantillon complet, le portefeuille multifactoriel à 10 points de base obtient un rendement annualisé de 12,10\,\%, contre 13,95\,\% pour SPY ; hors échantillon, les rendements sont respectivement de 11,45\,\% et 14,60\,\%. Le prototype ne démontre donc pas une capacité à générer de l'alpha.
+
+La couche agentique est démontrée avec LangGraph sur deux dates de rééquilibrage, les 30 novembre et 31 décembre 2025. Elle lit les sorties structurées du moteur quantitatif, vérifie les contrôles, produit une note sourcée et demande une validation humaine. Elle ne recalcule pas les métriques, ne modifie pas les pondérations et ne peut pas envoyer d'ordre. Le résultat principal est architectural : les agents sont utiles pour l'orchestration, l'interprétation et la documentation, tandis que les facteurs, le risque, les permissions et la décision finale doivent rester contrôlés par des règles vérifiables.
+
+\vspace{1cm}
+\noindent \textbf{Mots-clés :} \\
+\noindent agents intelligents, trading multifactoriel, finance de marché, LLM, explicabilité, gouvernance des modèles, GitHub, backtesting, LangGraph.
+
+\clearpage
+% Abstract
+\chapter*{Abstract}
+ \addcontentsline{toc}{chapter}{Abstract}
+Trading desks seek to industrialize research, portfolio monitoring and decision preparation while preserving strong controls, explainability and auditability. This report studies large language model agents in a multifactor trading architecture and distinguishes tasks that may be delegated to an agent from tasks that must remain deterministic.
+
+The study combines a review of open-source frameworks and finance-oriented GitHub projects with an empirical prototype. The quantitative layer uses four exchange-traded funds as investable proxies for value, momentum, quality and low-volatility factors: VLUE, MTUM, QUAL and USMV. An equal-weighted portfolio is compared with \texttt{SPY} over February 2015-December 2025, under 0, 10 and 30 basis-point transaction-cost scenarios, with an out-of-sample check over 2021-2025. Over the full sample, the 10-basis-point multifactor portfolio achieves a 12.10\% annualized return versus 13.95\% for SPY; out of sample, the corresponding figures are 11.45\% and 14.60\%. The experiment therefore does not establish alpha generation.
+
+The agentic layer is demonstrated with LangGraph on two rebalancing dates, 30 November and 31 December 2025. It reads structured quantitative outputs, checks quality and risk gates, produces a traceable note and requests human validation. It does not recompute metrics, change portfolio weights or send orders. The main contribution is architectural: agents can support orchestration, interpretation and documentation, while factors, risk, permissions and final decisions must remain governed by verifiable rules.
+
+\vspace{1cm}
+\noindent \textbf{Keywords:} \\
+\noindent intelligent agents, multifactor trading, market finance, LLM, explainability, model governance, GitHub, backtesting, LangGraph.
+
+\clearpage
+% Remerciements
+\chapter*{Remerciements}
+\addcontentsline{toc}{chapter}{Remerciements}
+Je remercie mon encadrant, Bertrand DJEMBISSI, pour son accompagnement et ses orientations dans la préparation de ce rapport d'étude. Je remercie également l'équipe pédagogique du CNAM pour le cadre de formation fourni au sein du Master Finance de marché.
+
+\cleardoublepage
+%---------------------------------------------------------------------------
+%The table of contents is automatically generated by the template
+\setcounter{secnumdepth}{4}
+\setcounter{tocdepth}{4}            % Sets the number of section levels in the table of contents to 4
+\pagestyle{fancy}
+\tableofcontents                    % Creates the table of contents
+\cleardoublepage                    % Ends the current page
+
+\listoffigures
+\addcontentsline{toc}{chapter}{\listfigurename}
+%\cleardoublepage
+\listoftables
+\clearpage
+\addcontentsline{toc}{chapter}{\listtablename}
+%\cleardoublepage
+%---------------------------------------------------------------------------
+
+\input{Capitulos/Glossaire.tex}
+\cleardoublepage
+
+% Chapitres
+\pagestyle{fancy}               	% Fancy headings
+\pagenumbering{arabic}				% Begin arabic page numbering (1,2,...)
+\setlength{\parindent}{20pt}        % Sets default paragraph indentation to 20 pt
+
+\clearpage
+
+% Chapitres
+\input{Capitulos/Chapitre_1_Introduction.tex}
+
+\input{Capitulos/Chapitre_2_Etat_De_L_Art.tex}
+
+\input{Capitulos/Chapitre_3_Methodologie.tex}
+
+\input{Capitulos/Chapitre_4_Architecture_Cible.tex}
+
+\input{Capitulos/Chapitre_5_Discussion.tex}
+
+\input{Capitulos/Chapitre_6_Conclusion.tex}
+
+\newpage
+
+%---------------------------------------------------------------------------
+% Bibliographie
+\addcontentsline{toc}{chapter}{Bibliographie}
+\bibliographystyle{apalike} % Estilo APA
+\bibliography{biblio.bib}       % Carga las referencias desde el archivo biblio.bib y crea la sección de Bibliografía
+%---------------------------------------------------------------------------
+% Annexes
+\appendix
+\clearpage
+\addappheadtotoc
+\appendixpage
+\renewcommand{\thechapter}{\Roman{chapter}}
+\input{Capitulos/Annexe_I_Matrice_GitHub.tex}
+\input{Capitulos/Annexe_II_Checklist_Gouvernance.tex}
+%---------------------------------------------------------------------------
+\end{document}

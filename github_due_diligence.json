@@ -1,0 +1,111 @@
+{
+  "as_of": "2026-08-30",
+  "method": "Lecture des dépôts publics et de leurs fichiers racine, complétée par l'API GitHub publique. Les dates d'activité sont des dates de dernier push et ne constituent pas une garantie de maintenance.",
+  "maintainer_count_note": "Le propriétaire public est identifié ; le nombre de mainteneurs actifs n'est pas assimilé au nombre de contributeurs et doit faire l'objet d'une revue humaine.",
+  "repositories": [
+    {
+      "name": "LangGraph",
+      "url": "https://github.com/langchain-ai/langgraph",
+      "owner": "langchain-ai",
+      "declared_license": "MIT",
+      "github_api_license": "MIT",
+      "last_push_utc": "2026-08-30T00:53:55Z",
+      "open_issues": 726,
+      "documentation": "README.md et docs/",
+      "tests": "pas de dossier tests à la racine ; inspection des packages requise",
+      "security": "politique de sécurité présente sur le dépôt",
+      "provisional_assessment": "brique d'orchestration active ; audit des dépendances requis"
+    },
+    {
+      "name": "Qlib",
+      "url": "https://github.com/microsoft/qlib",
+      "owner": "microsoft",
+      "declared_license": "MIT",
+      "github_api_license": "MIT",
+      "last_push_utc": "2026-07-23T08:15:29Z",
+      "open_issues": 470,
+      "documentation": "README.md et docs/",
+      "tests": "tests/",
+      "security": "SECURITY.md",
+      "provisional_assessment": "socle quantitatif documenté ; validation des données requise"
+    },
+    {
+      "name": "Lean",
+      "url": "https://github.com/QuantConnect/Lean",
+      "owner": "QuantConnect",
+      "declared_license": "Apache-2.0",
+      "github_api_license": "Apache-2.0",
+      "last_push_utc": "2026-08-28T22:31:13Z",
+      "open_issues": 258,
+      "documentation": "readme.md et documentation du projet",
+      "tests": "Tests/",
+      "security": "aucun fichier SECURITY.md identifié à la racine",
+      "provisional_assessment": "moteur de backtesting actif ; sécurité et licences des données à auditer"
+    },
+    {
+      "name": "OpenBB",
+      "url": "https://github.com/OpenBB-finance/OpenBB",
+      "owner": "OpenBB-finance",
+      "declared_license": "AGPLv3 dans le README",
+      "github_api_license": "NOASSERTION",
+      "last_push_utc": "2026-07-30T17:33:42Z",
+      "open_issues": 108,
+      "documentation": "README.md et examples/",
+      "tests": "pytest.ini ; tests à inventorier par package",
+      "security": "SECURITY.md",
+      "provisional_assessment": "brique de données ; compatibilité AGPL à valider juridiquement"
+    },
+    {
+      "name": "TradingAgents",
+      "url": "https://github.com/TauricResearch/TradingAgents",
+      "owner": "TauricResearch",
+      "declared_license": "Apache-2.0",
+      "github_api_license": "Apache-2.0",
+      "last_push_utc": "2026-08-30T07:03:07Z",
+      "open_issues": 377,
+      "documentation": "README.md",
+      "tests": "tests/ et test.py",
+      "security": "aucun fichier SECURITY.md identifié à la racine",
+      "provisional_assessment": "prototype multi-agents ; pas de conclusion de production"
+    },
+    {
+      "name": "FinRobot",
+      "url": "https://github.com/AI4Finance-Foundation/FinRobot",
+      "owner": "AI4Finance-Foundation",
+      "declared_license": "Apache-2.0",
+      "github_api_license": "Apache-2.0",
+      "last_push_utc": "2026-08-23T12:06:08Z",
+      "open_issues": 74,
+      "documentation": "README.md et tutorials/",
+      "tests": "test_module.py",
+      "security": "aucun fichier SECURITY.md identifié à la racine",
+      "provisional_assessment": "démonstrateur financier ; revue des clés et dépendances indispensable"
+    },
+    {
+      "name": "FinRL",
+      "url": "https://github.com/AI4Finance-Foundation/FinRL",
+      "owner": "AI4Finance-Foundation",
+      "declared_license": "MIT",
+      "github_api_license": "MIT",
+      "last_push_utc": "2026-07-13T23:02:18Z",
+      "open_issues": 310,
+      "documentation": "README.md et docs/",
+      "tests": "unit_tests/",
+      "security": "aucun fichier SECURITY.md identifié à la racine",
+      "provisional_assessment": "cadre RL financier ; risque de surapprentissage à contrôler"
+    },
+    {
+      "name": "Freqtrade",
+      "url": "https://github.com/freqtrade/freqtrade",
+      "owner": "freqtrade",
+      "declared_license": "GPL-3.0",
+      "github_api_license": "GPL-3.0",
+      "last_push_utc": "2026-08-27T16:26:43Z",
+      "open_issues": 35,
+      "documentation": "README.md et docs/",
+      "tests": "tests/",
+      "security": "aucun fichier SECURITY.md identifié à la racine",
+      "provisional_assessment": "bot crypto actif ; périmètre différent d'un desk actions institutionnel"
+    }
+  ]
+}
