@@ -14,6 +14,8 @@ appliquée au trading multifactoriel.
 - Évaluation hors échantillon : janvier 2021 à décembre 2025.
 - Prix : cours ajustés téléchargés via `yfinance`.
 - Coûts : 0, 10 et 30 points de base par unité de turnover.
+- Turnover : convention « one-way », soit la moitié de la somme des variations
+  absolues de poids après rendement et avant rééquilibrage.
 - Taux sans risque : 0 % pour le ratio de Sharpe.
 
 Les ETF sont utilisés comme des portefeuilles factoriels observables. Le backtest
@@ -28,6 +30,7 @@ python3 -m venv .venv
 .venv/bin/pip install -r requirements.txt
 .venv/bin/python backtest.py
 .venv/bin/python agent_workflow.py
+.venv/bin/python -m pytest -q
 ```
 
 Le premier script écrit les données, résultats et figures dans `data`,
@@ -72,15 +75,15 @@ Installer la dependance puis definir la cle uniquement dans l'environnement :
 
 ```bash
 .venv/bin/pip install -r requirements.txt
-export DEEPSEEK_API_KEY='votre_cle'
+cp .env.example .env
+# renseigner DEEPSEEK_API_KEY dans .env
 .venv/bin/python deepseek_agent_workflow.py --all-last-two
 ```
 
 Le modele et l'URL peuvent etre ajustes sans modifier le code :
 
 ```bash
-export DEEPSEEK_MODEL='deepseek-v4-flash'
-export DEEPSEEK_BASE_URL='https://api.deepseek.com'
+# DEEPSEEK_MODEL et DEEPSEEK_BASE_URL peuvent aussi etre definis dans .env
 ```
 
 Le script produit `deepseek_decision_trace_YYYY-MM-DD.json`,
@@ -89,6 +92,31 @@ mesure la fidelite numerique, la completude, le respect des permissions et la
 divulgation des limites. La cle API n'est jamais ecrite dans les fichiers de sortie.
 
 
+
+## Evaluation DeepSeek
+
+Le benchmark local evalue la fidelite numerique, les permissions, la divulgation des risques, le routage des cas bloques et la stabilite des sorties. Il ne mesure pas une capacite a predire les rendements.
+
+Preparer les cas sans appeler l API :
+
+```bash
+.venv/bin/python evaluate_deepseek.py --dry-run
+```
+
+Lancer une evaluation rapide avec dix cas valides, un stress de turnover et un cas qualite bloque :
+
+```bash
+# renseigner DEEPSEEK_API_KEY dans .env
+.venv/bin/python evaluate_deepseek.py --valid-cases 10 --repeats 1
+```
+
+Pour mesurer la stabilite, repeter chaque cas trois fois :
+
+```bash
+.venv/bin/python evaluate_deepseek.py --valid-cases 10 --repeats 3
+```
+
+Les sorties sont `results/deepseek_evaluation.json` et `results/deepseek_evaluation.csv`. Le score est accepte seulement si les chiffres sont fideles, les permissions respectees, le contrat JSON complet et les risques signales.
 
 ## Rapport LaTeX
 

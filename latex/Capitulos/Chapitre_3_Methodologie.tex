@@ -128,7 +128,7 @@ Pour un mois $t$, le rendement net du portefeuille est calculé selon :
 \[
 r_t^{\mathrm{net}} = \sum_i w_{i,t-1}r_{i,t} - c\tau_t,
 \qquad
-\tau_t = \frac{1}{2}\sum_i\left|w_{i,t}-w_{i,t-1}\right|,
+\tau_t = \frac{1}{2}\sum_i\left|w^{\mathrm{cible}}_{i,t}-w^{\mathrm{après rendement}}_{i,t}\right|,
 \]
 où $c$ désigne le coût unitaire exprimé en fraction et $\tau_t$ le turnover au rebalancement. Sur $T$ rendements mensuels, les métriques principales sont :
 \[
@@ -136,9 +136,9 @@ R_{\mathrm{ann}} = \left(\prod_{t=1}^{T}(1+r_t)\right)^{12/T}-1,
 \qquad
 \sigma_{\mathrm{ann}} = \sqrt{12}\,\mathrm{sd}(r_t),
 \qquad
-S = \frac{R_{\mathrm{ann}}}{\sigma_{\mathrm{ann}}}.
+S = \sqrt{12}\,\frac{\mathrm{mean}(r_t)}{\mathrm{sd}(r_t)}.
 \]
-Le drawdown est obtenu à partir du rapport entre la valeur courante et le maximum historique de la valeur cumulée. Ces formules rendent explicite le traitement des coûts, du turnover et de l'annualisation.
+Le turnover est défini en convention « one-way » : il représente la valeur des achats (égale à celle des ventes dans un rééquilibrage neutre), et les coûts sont calculés comme $c\tau_t$. Le turnover annualisé est calculé par $12\sum_t\tau_t/T$. Le drawdown est obtenu à partir du rapport entre la valeur courante et le maximum historique de la valeur cumulée. Ces formules rendent explicite le traitement des coûts, du turnover et de l'annualisation.
 
 Le déroulement peut être résumé par le pseudo-code suivant :
 

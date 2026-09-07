@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-08-30T10:04:27.068012+00:00",
+  "generated_at_utc": "2026-09-06T20:29:21.239786+00:00",
   "protocol": {
     "factor_tickers": {
       "Value": "VLUE",
@@ -22,7 +22,9 @@
       0.001,
       0.003
     ],
-    "risk_free_rate": 0.0
+    "risk_free_rate": 0.0,
+    "turnover_definition": "one_way_half_sum_absolute_weight_changes",
+    "annualization": "monthly_periods_per_year_12"
   },
   "last_observation": "2025-12-31",
   "last_rebalance": {
@@ -31,7 +33,7 @@
       "VLUE": 0.028999962847862992,
       "MTUM": 0.0029496938411501805,
       "QUAL": 0.005803627253458066,
-      "USMV": -0.008181024316989305
+      "USMV": -0.008181024316989083
     },
     "target_weights": {
       "VLUE": 0.25,
@@ -39,15 +41,15 @@
       "QUAL": 0.25,
       "USMV": 0.25
     },
-    "turnover": 0.010724164526336455,
-    "transaction_cost": 1.0724164526336456e-05,
-    "net_return": 0.007382340741844147
+    "turnover": 0.005362082263168255,
+    "transaction_cost": 5.362082263168255e-06,
+    "net_return": 0.007387702824107537
   },
   "metrics": [
     {
       "strategy": "Benchmark SPY",
       "transaction_cost": 0.0,
-      "annualized_return": 0.1394698836,
+      "annualized_return": 0.1384139902,
       "annualized_volatility": 0.1496043566,
       "sharpe_zero_rf": 0.9456791766,
       "max_drawdown": -0.2392717883,
@@ -59,38 +61,38 @@
     {
       "strategy": "Multifactor",
       "transaction_cost": 0.0,
-      "annualized_return": 0.1211469188,
+      "annualized_return": 0.1202369454,
       "annualized_volatility": 0.1416784973,
       "sharpe_zero_rf": 0.8758706836,
       "max_drawdown": -0.2384464027,
       "total_return": 2.4538196017,
       "final_value_from_100": 345.3819601736,
-      "average_monthly_turnover": 0.0125582301,
-      "annualized_turnover": 0.1517764726
+      "average_monthly_turnover": 0.0062791151,
+      "annualized_turnover": 0.0753493807
     },
     {
       "strategy": "Multifactor",
       "transaction_cost": 0.001,
-      "annualized_return": 0.120977763,
-      "annualized_volatility": 0.1416808873,
-      "sharpe_zero_rf": 0.8747922596,
-      "max_drawdown": -0.2385690482,
-      "total_return": 2.4481754739,
-      "final_value_from_100": 344.817547387,
-      "average_monthly_turnover": 0.0125582301,
-      "annualized_turnover": 0.1517764726
+      "annualized_return": 0.1201530334,
+      "annualized_volatility": 0.1416796917,
+      "sharpe_zero_rf": 0.8753314704,
+      "max_drawdown": -0.2385077276,
+      "total_return": 2.4509963957,
+      "final_value_from_100": 345.0996395694,
+      "average_monthly_turnover": 0.0062791151,
+      "annualized_turnover": 0.0753493807
     },
     {
       "strategy": "Multifactor",
       "transaction_cost": 0.003,
-      "annualized_return": 0.1206395196,
-      "annualized_volatility": 0.1416856801,
-      "sharpe_zero_rf": 0.8726354414,
-      "max_drawdown": -0.2388142877,
-      "total_return": 2.4369145922,
-      "final_value_from_100": 343.691459218,
-      "average_monthly_turnover": 0.0125582301,
-      "annualized_turnover": 0.1517764726
+      "annualized_return": 0.1199852262,
+      "annualized_volatility": 0.1416820839,
+      "sharpe_zero_rf": 0.8742530513,
+      "max_drawdown": -0.2386303645,
+      "total_return": 2.4453568344,
+      "final_value_from_100": 344.5356834433,
+      "average_monthly_turnover": 0.0062791151,
+      "annualized_turnover": 0.0753493807
     }
   ],
   "period_metrics": [
@@ -98,7 +100,7 @@
       "period": "full_sample",
       "strategy": "Benchmark SPY",
       "transaction_cost": 0.0,
-      "annualized_return": 0.1394698836,
+      "annualized_return": 0.1384139902,
       "annualized_volatility": 0.1496043566,
       "sharpe_zero_rf": 0.9456791766,
       "max_drawdown": -0.2392717883,
@@ -111,46 +113,46 @@
       "period": "full_sample",
       "strategy": "Multifactor",
       "transaction_cost": 0.0,
-      "annualized_return": 0.1211469188,
+      "annualized_return": 0.1202369454,
       "annualized_volatility": 0.1416784973,
       "sharpe_zero_rf": 0.8758706836,
       "max_drawdown": -0.2384464027,
       "total_return": 2.4538196017,
       "final_value_from_100": 345.3819601736,
-      "average_monthly_turnover": 0.0125582301,
-      "annualized_turnover": 0.1517764726
+      "average_monthly_turnover": 0.0062791151,
+      "annualized_turnover": 0.0753493807
     },
     {
       "period": "full_sample",
       "strategy": "Multifactor",
       "transaction_cost": 0.001,
-      "annualized_return": 0.120977763,
-      "annualized_volatility": 0.1416808873,
-      "sharpe_zero_rf": 0.8747922596,
-      "max_drawdown": -0.2385690482,
-      "total_return": 2.4481754739,
-      "final_value_from_100": 344.817547387,
-      "average_monthly_turnover": 0.0125582301,
-      "annualized_turnover": 0.1517764726
+      "annualized_return": 0.1201530334,
+      "annualized_volatility": 0.1416796917,
+      "sharpe_zero_rf": 0.8753314704,
+      "max_drawdown": -0.2385077276,
+      "total_return": 2.4509963957,
+      "final_value_from_100": 345.0996395694,
+      "average_monthly_turnover": 0.0062791151,
+      "annualized_turnover": 0.0753493807
     },
     {
       "period": "full_sample",
       "strategy": "Multifactor",
       "transaction_cost": 0.003,
-      "annualized_return": 0.1206395196,
-      "annualized_volatility": 0.1416856801,
-      "sharpe_zero_rf": 0.8726354414,
-      "max_drawdown": -0.2388142877,
-      "total_return": 2.4369145922,
-      "final_value_from_100": 343.691459218,
-      "average_monthly_turnover": 0.0125582301,
-      "annualized_turnover": 0.1517764726
+      "annualized_return": 0.1199852262,
+      "annualized_volatility": 0.1416820839,
+      "sharpe_zero_rf": 0.8742530513,
+      "max_drawdown": -0.2386303645,
+      "total_return": 2.4453568344,
+      "final_value_from_100": 344.5356834433,
+      "average_monthly_turnover": 0.0062791151,
+      "annualized_turnover": 0.0753493807
     },
     {
       "period": "out_of_sample_2021_2025",
       "strategy": "Benchmark SPY",
       "transaction_cost": 0.0,
-      "annualized_return": 0.146020655,
+      "annualized_return": 0.1433509832,
       "annualized_volatility": 0.1513688915,
       "sharpe_zero_rf": 0.9646564371,
       "max_drawdown": -0.2392717883,
@@ -163,40 +165,40 @@
       "period": "out_of_sample_2021_2025",
       "strategy": "Multifactor",
       "transaction_cost": 0.0,
-      "annualized_return": 0.1146578731,
+      "annualized_return": 0.1125894089,
       "annualized_volatility": 0.1436513254,
       "sharpe_zero_rf": 0.8168120996,
       "max_drawdown": -0.2384464027,
       "total_return": 0.704804595,
       "final_value_from_100": 170.4804594977,
-      "average_monthly_turnover": 0.0152581692,
-      "annualized_turnover": 0.18628567
+      "average_monthly_turnover": 0.0076290846,
+      "annualized_turnover": 0.0915490151
     },
     {
       "period": "out_of_sample_2021_2025",
       "strategy": "Multifactor",
       "transaction_cost": 0.001,
-      "annualized_return": 0.1144519388,
-      "annualized_volatility": 0.143650855,
-      "sharpe_zero_rf": 0.8155401699,
-      "max_drawdown": -0.2385690482,
-      "total_return": 0.703257279,
-      "final_value_from_100": 170.325727897,
-      "average_monthly_turnover": 0.0152581692,
-      "annualized_turnover": 0.18628567
+      "annualized_return": 0.1124883872,
+      "annualized_volatility": 0.1436510897,
+      "sharpe_zero_rf": 0.8161761385,
+      "max_drawdown": -0.2385077276,
+      "total_return": 0.7040307648,
+      "final_value_from_100": 170.4030764847,
+      "average_monthly_turnover": 0.0076290846,
+      "annualized_turnover": 0.0915490151
     },
     {
       "period": "out_of_sample_2021_2025",
       "strategy": "Multifactor",
       "transaction_cost": 0.003,
-      "annualized_return": 0.114040173,
-      "annualized_volatility": 0.1436499256,
-      "sharpe_zero_rf": 0.8129962208,
-      "max_drawdown": -0.2388142877,
-      "total_return": 0.700166775,
-      "final_value_from_100": 170.0166774996,
-      "average_monthly_turnover": 0.0152581692,
-      "annualized_turnover": 0.18628567
+      "annualized_return": 0.1122863685,
+      "annualized_volatility": 0.1436506212,
+      "sharpe_zero_rf": 0.8149041938,
+      "max_drawdown": -0.2386303645,
+      "total_return": 0.7024841372,
+      "final_value_from_100": 170.2484137196,
+      "average_monthly_turnover": 0.0076290846,
+      "annualized_turnover": 0.0915490151
     }
   ],
   "data_quality": {

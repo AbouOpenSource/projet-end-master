@@ -34,6 +34,7 @@ START_DATE = "2015-01-01"
 END_DATE = "2026-01-01"  # borne supérieure exclusive : dernières années complètes
 OUT_OF_SAMPLE_START = "2021-01-01"
 TRANSACTION_COSTS = [0.0, 0.001, 0.003]  # 0, 10 et 30 points de base
+MONTHS_PER_YEAR = 12
 TARGET_WEIGHTS = pd.Series(0.25, index=list(FACTOR_TICKERS.values()), dtype=float)
 
 
@@ -141,7 +142,9 @@ def simulate_factor_portfolio(
     for date, row in factor_returns.iterrows():
         gross = float((weights * (1.0 + row)).sum())
         post_return_weights = weights * (1.0 + row) / gross
-        turnover = float((TARGET_WEIGHTS - post_return_weights).abs().sum())
+        # Turnover conventionnel « one-way » : valeur des achats (ou des ventes),
+        # soit la moitié du turnover brut aller-retour.
+        turnover = float(0.5 * (TARGET_WEIGHTS - post_return_weights).abs().sum())
         cost = transaction_cost * turnover
         net = gross - 1.0 - cost
 
@@ -176,12 +179,15 @@ def max_drawdown(returns: pd.Series) -> float:
 
 
 def metrics(returns: pd.Series, turnover: pd.Series | None = None) -> dict:
-    years = max((returns.index[-1] - returns.index[0]).days / 365.25, 1 / 12)
+    if returns.empty:
+        raise ValueError("Impossible de calculer les métriques sans rendement.")
+
+    periods = len(returns)
     wealth = float((1.0 + returns).prod())
-    annualized_return = wealth ** (1.0 / years) - 1.0
-    annualized_volatility = float(returns.std(ddof=1) * np.sqrt(12))
+    annualized_return = wealth ** (MONTHS_PER_YEAR / periods) - 1.0
+    annualized_volatility = float(returns.std(ddof=1) * np.sqrt(MONTHS_PER_YEAR))
     sharpe = (
-        float(returns.mean() / returns.std(ddof=1) * np.sqrt(12))
+        float(returns.mean() / returns.std(ddof=1) * np.sqrt(MONTHS_PER_YEAR))
         if returns.std(ddof=1) > 0
         else float("nan")
     )
@@ -195,7 +201,7 @@ def metrics(returns: pd.Series, turnover: pd.Series | None = None) -> dict:
     }
     if turnover is not None:
         result["average_monthly_turnover"] = float(turnover.mean())
-        result["annualized_turnover"] = float(turnover.sum() / years)
+        result["annualized_turnover"] = float(turnover.sum() * MONTHS_PER_YEAR / periods)
     return result
 
 
@@ -258,6 +264,8 @@ def main() -> None:
             "target_weights": TARGET_WEIGHTS.to_dict(),
             "transaction_costs": TRANSACTION_COSTS,
             "risk_free_rate": 0.0,
+            "turnover_definition": "one_way_half_sum_absolute_weight_changes",
+            "annualization": "monthly_periods_per_year_12",
         },
         "last_observation": returns.index[-1].date().isoformat(),
     }

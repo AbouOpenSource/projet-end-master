@@ -14,17 +14,17 @@ Le prototype présenté au chapitre~\ref{cap:methodologie} fournit une première
 \toprule
 \textbf{Scénario} & \textbf{Rend. ann.} & \textbf{Vol. ann.} & \textbf{Sharpe} & \textbf{Drawdown} & \textbf{Valeur finale} & \textbf{Turnover mensuel} \cr
 \midrule
-SPY & 13,95\,\% & 14,96\,\% & 0,946 & -23,93\,\% & 411,73 & - \cr
-Multifactoriel, 0 pb & 12,11\,\% & 14,17\,\% & 0,876 & -23,84\,\% & 345,38 & 1,26\,\% \cr
-Multifactoriel, 10 pb & 12,10\,\% & 14,17\,\% & 0,875 & -23,86\,\% & 344,82 & 1,26\,\% \cr
-Multifactoriel, 30 pb & 12,06\,\% & 14,17\,\% & 0,873 & -23,88\,\% & 343,69 & 1,26\,\% \cr
+SPY & 13,84\,\% & 14,96\,\% & 0,946 & -23,93\,\% & 411,73 & - \cr
+Multifactoriel, 0 pb & 12,02\,\% & 14,17\,\% & 0,876 & -23,84\,\% & 345,38 & 0,63\,\% \cr
+Multifactoriel, 10 pb & 12,02\,\% & 14,17\,\% & 0,875 & -23,85\,\% & 345,10 & 0,63\,\% \cr
+Multifactoriel, 30 pb & 12,00\,\% & 14,17\,\% & 0,874 & -23,86\,\% & 344,54 & 0,63\,\% \cr
 \bottomrule
 \end{tabular}
 \end{table}
 
 Sur cette période, le benchmark \texttt{SPY} obtient le rendement annualisé le plus élevé et le meilleur ratio de Sharpe. Le portefeuille multifactoriel présente toutefois une volatilité et un drawdown légèrement inférieurs. Les coûts de transaction modifient peu le résultat dans cette configuration, car le turnover mensuel moyen reste limité.
 
-Une vérification temporelle est également effectuée sur la période hors échantillon 2021-2025. À 10 points de base, le multifactoriel obtient un rendement annualisé de 11,45\,\%, une volatilité de 14,37\,%, un Sharpe de 0,816 et une valeur finale de 170,33. Sur la même période, SPY atteint 14,60\,%, 15,14\,%, 0,965 et 195,39. Cette comparaison confirme la prudence de l'interprétation : le prototype ne montre pas de supériorité du multifactoriel, mais fournit une base reproductible pour tester l'architecture.
+Une vérification temporelle est également effectuée sur la période hors échantillon 2021-2025. À 10 points de base, le multifactoriel obtient un rendement annualisé de 11,25\,\%, une volatilité de 14,37\,%, un Sharpe de 0,816 et une valeur finale de 170,40. Sur la même période, SPY atteint 14,34\,%, 15,14\,%, 0,965 et 195,39. Cette comparaison confirme la prudence de l'interprétation : le prototype ne montre pas de supériorité du multifactoriel, mais fournit une base reproductible pour tester l'architecture.
 
 \begin{table}[H]
 \centering
@@ -35,8 +35,8 @@ Une vérification temporelle est également effectuée sur la période hors éch
 \toprule
 \textbf{Scénario} & \textbf{Rend. ann.} & \textbf{Vol. ann.} & \textbf{Sharpe} & \textbf{Drawdown} & \textbf{Valeur finale} & \textbf{Turnover mensuel} \\
 \midrule
-SPY & 14,60\,\% & 15,14\,\% & 0,965 & -23,93\,\% & 195,39 & - \\
-Multifactoriel, 10 pb & 11,45\,\% & 14,37\,\% & 0,816 & -23,86\,\% & 170,33 & 1,53\,\% \\
+SPY & 14,34\,\% & 15,14\,\% & 0,965 & -23,93\,\% & 195,39 & - \\
+Multifactoriel, 10 pb & 11,25\,\% & 14,37\,\% & 0,816 & -23,85\,\% & 170,40 & 0,76\,\% \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -60,9 +60,9 @@ Ces résultats ne prouvent donc pas la supériorité financière de la stratégi
 
 \section{Démonstration de la couche agentique}
 
-Le module \texttt{agent\_workflow.py} exécute désormais ce scénario avec LangGraph. Les deux exemples du 30 novembre et du 31 décembre 2025 sont générés à partir des sorties structurées du rééquilibrage, sans nouvel appel de données et sans accès aux ordres. Le premier exemple correspond au 30 novembre 2025 : les rendements de VLUE, MTUM, QUAL et USMV sont respectivement de +2,50\,\%, -1,56\,\%, +0,91\,\% et +2,31\,\%. Le rendement net du portefeuille est de +1,04\,\% pour un turnover de 1,35\,\%. La note conclut que la hausse de VLUE et USMV compense la baisse de MTUM et recommande de conserver les pondérations cibles de 25\,\%, sous réserve d'une validation humaine.
+Le module \texttt{agent\_workflow.py} exécute désormais ce scénario avec LangGraph. Les deux exemples du 30 novembre et du 31 décembre 2025 sont générés à partir des sorties structurées du rééquilibrage, sans nouvel appel de données et sans accès aux ordres. Le premier exemple correspond au 30 novembre 2025 : les rendements de VLUE, MTUM, QUAL et USMV sont respectivement de +2,50\,\%, -1,56\,\%, +0,91\,\% et +2,31\,\%. Le rendement net du portefeuille est de +1,04\,\% pour un turnover de 0,68\,\%. La note conclut que la hausse de VLUE et USMV compense la baisse de MTUM et recommande de conserver les pondérations cibles de 25\,\%, sous réserve d'une validation humaine.
 
-Le second exemple correspond au 31 décembre 2025 : VLUE progresse de +2,90\,\%, MTUM de +0,29\,\%, QUAL de +0,58\,\% et USMV recule de -0,82\,\%. Le rendement net du portefeuille atteint +0,74\,\% pour un turnover de 1,07\,\%. La note identifie VLUE comme principal facteur favorable, signale la contribution négative de USMV et ne propose aucun ajustement exceptionnel.
+Le second exemple correspond au 31 décembre 2025 : VLUE progresse de +2,90\,\%, MTUM de +0,29\,\%, QUAL de +0,58\,\% et USMV recule de -0,82\,\%. Le rendement net du portefeuille atteint +0,74\,\% pour un turnover de 0,54\,\%. La note identifie VLUE comme principal facteur favorable, signale la contribution négative de USMV et ne propose aucun ajustement exceptionnel.
 
 Ces notes sont comparées aux fichiers de sortie du prototype selon quatre critères : fidélité aux chiffres, complétude, respect des permissions et explicitation des limites. Le résultat est observable sur les deux exécutions ; cette évaluation manuelle constitue une première vérification qualitative et non une mesure statistique de la qualité d'un agent.
 

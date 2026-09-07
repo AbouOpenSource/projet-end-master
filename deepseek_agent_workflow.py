@@ -21,6 +21,8 @@ from pathlib import Path
 from typing import Any, TypedDict
 
 import pandas as pd
+
+from dotenv import load_dotenv
 from langgraph.graph import END, START, StateGraph
 
 from agent_workflow import (
@@ -35,6 +37,7 @@ from agent_workflow import (
 
 ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = ROOT / "results"
+load_dotenv(ROOT / ".env")
 
 
 class DeepSeekState(WorkflowState, total=False):
@@ -237,15 +240,15 @@ def blocked_llm(state: DeepSeekState) -> dict[str, Any]:
 
 
 def persist_llm(state: DeepSeekState) -> dict[str, Any]:
-    date = state["date"]
+    date = state.get("date") or state.get("requested_date") or "date inconnue"
     trace = {
         "workflow": "langgraph_deepseek_supervised",
         "date": date,
         "quality_ok": state["quality_ok"],
         "quality_flags": state["quality_flags"],
-        "risk_status": state["risk_status"],
-        "risk_alerts": state["risk_alerts"],
-        "rebalance": state["rebalance"],
+        "risk_status": state.get("risk_status", "bloque"),
+        "risk_alerts": state.get("risk_alerts", []),
+        "rebalance": state.get("rebalance"),
         "llm_output": state["llm_output"],
         "llm_metadata": state["llm_metadata"],
         "evaluation": state["evaluation"],
@@ -268,7 +271,7 @@ def persist_llm(state: DeepSeekState) -> dict[str, Any]:
         json.dumps(trace, ensure_ascii=False, indent=2), encoding="utf-8"
     )
     (RESULTS_DIR / f"deepseek_decision_note_{date}.md").write_text(note, encoding="utf-8")
-    return {}
+    return {"trace": trace}
 
 
 def build_graph():

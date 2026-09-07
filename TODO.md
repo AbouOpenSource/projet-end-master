@@ -12,6 +12,7 @@
 - [x] Ajouter une période hors échantillon 2021--2025.
 - [x] Ajouter un workflow LangGraph déterministe avec garde qualité, garde risque, journal JSON et validation humaine obligatoire.
 - [x] Générer les notes de décision à partir des sorties structurées sans accès aux ordres.
+- [x] Ajouter des tests unitaires, des tests de parcours LangGraph et des tests de non-régression hors réseau.
 - [x] Integrer les resultats experimentaux au resume, a l abstract et aux objectifs.
 - [x] Ajouter une grille de scoring 0-3 et expliciter les statuts des solutions.
 - [x] Ajouter les schemas d architecture, la boucle de rejet, le journal JSON et le monitoring agentique.

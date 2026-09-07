@@ -9,8 +9,8 @@ La note est produite par un workflow LangGraph a partir de sorties quantitatives
 - Quality : +0.58 %
 - Low volatility : -0.82 %
 - Rendement net : +0.74 %
-- Turnover : +1.07 %
-- Cout de transaction : 0.00107 %
+- Turnover : +0.54 %
+- Cout de transaction : 0.00054 %
 
 **Avis du superviseur :** a valider. Aucune modification de poids ni aucun ordre ne sont generes.
 

@@ -13,13 +13,13 @@
     "date": "2025-11-30",
     "factor_returns": {
       "Value": 0.0249981345118395,
-      "Momentum": -0.0156164272534176,
+      "Momentum": -0.0156164272534177,
       "Quality": 0.0090677798205325,
       "Low volatility": 0.0230736302539755
     },
-    "net_return": 0.0103672645244306,
-    "turnover": 0.0135148088017729,
-    "transaction_cost": 1.3514808801773e-05,
+    "net_return": 0.0103740219288315,
+    "turnover": 0.0067574044008865,
+    "transaction_cost": 6.757404400886513e-06,
     "target_weights": {
       "VLUE": 0.25,
       "MTUM": 0.25,

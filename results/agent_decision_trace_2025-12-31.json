@@ -15,11 +15,11 @@
       "Value": 0.0289999628478629,
       "Momentum": 0.0029496938411501,
       "Quality": 0.005803627253458,
-      "Low volatility": -0.0081810243169893
+      "Low volatility": -0.008181024316989
     },
-    "net_return": 0.0073823407418441,
-    "turnover": 0.0107241645263364,
-    "transaction_cost": 1.0724164526336456e-05,
+    "net_return": 0.0073877028241075,
+    "turnover": 0.0053620822631682,
+    "transaction_cost": 5.362082263168255e-06,
     "target_weights": {
       "VLUE": 0.25,
       "MTUM": 0.25,
