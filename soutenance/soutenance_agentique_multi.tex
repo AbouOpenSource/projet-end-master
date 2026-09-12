@@ -13,7 +13,7 @@
 \subtitle{Synthèse LLM et allocation de portefeuille sous contraintes}
 \author[SANOU Abou Dramane]{SANOU Abou Dramane\\Master Finance de marché · CNAM\\Encadrant : Bertrand DJEMBISSI}
 \date{Septembre 2026}
-\titlegraphic{\includegraphics[height=1.15cm]{assets/logo\_cnam.png}}
+\titlegraphic{\includegraphics[height=1.15cm]{ressources/logo\_cnam.png}}
 \newcommand{\source}[1]{\par\vfill{\tiny\color{black!60}Source : #1\par}}
 \newcommand{\takeaway}[1]{\par\vspace{0.5em}{\color{wcprimary}\textbf{#1}\par}}
 \newcommand{\oral}[2]{\note{#1\par\medskip [Sources] #2 [/Sources]}}
@@ -254,11 +254,11 @@
     tick label style={font=\scriptsize},label style={font=\small},
     legend style={font=\scriptsize,at={(0.02,0.98)},anchor=north west,draw=none},
     every axis plot/.append style={line width=0.9pt,no marks}]
-    \addplot[color=wcprimary] table[x=date,y=equal_weight,col sep=comma]{assets/allocation_equity.csv};
+    \addplot[color=wcprimary] table[x=date,y=equal_weight,col sep=comma]{ressources/allocation_equity.csv};
     \addlegendentry{Équipondération}
-    \addplot[color=orange!85!black] table[x=date,y=inverse_volatility,col sep=comma]{assets/allocation_equity.csv};
+    \addplot[color=orange!85!black] table[x=date,y=inverse_volatility,col sep=comma]{ressources/allocation_equity.csv};
     \addlegendentry{Inverse volatilité}
-    \addplot[color=teal!80!black] table[x=date,y=deepseek_allocation,col sep=comma]{assets/allocation_equity.csv};
+    \addplot[color=teal!80!black] table[x=date,y=deepseek_allocation,col sep=comma]{ressources/allocation_equity.csv};
     \addlegendentry{DeepSeek}
   \end{axis}
   \end{tikzpicture}
@@ -408,10 +408,10 @@
 
 \begin{frame}{Annexe : richesse du backtest initial}
   \centering
-  \includegraphics[width=0.91\linewidth,height=0.64\textheight,keepaspectratio]{assets/cumulative\_wealth.png}
+  \includegraphics[width=0.91\linewidth,height=0.64\textheight,keepaspectratio]{ressources/cumulative\_wealth.png}
   \par\small\color{wcprimary}Base 100 : 411,73 pour SPY contre 345,10 pour le multifactoriel à 10 pb.
   \source{Figure du mémoire ; results/wealth.csv et results/metrics.csv.}
-  \oral{50 s. Commenter l'évolution d'ensemble et l'écart final. Les courbes multifactoriels aux trois coûts se superposent presque, en raison du faible turnover. La figure illustre une performance historique sous les hypothèses annoncées, sans prévision de rendement futur.}{latex/figures/cumulative\_wealth.png ; results/wealth.csv ; results/metrics.csv.}
+  \oral{50 s. Commenter l'évolution d'ensemble et l'écart final. Les courbes multifactoriels aux trois coûts se superposent presque, en raison du faible turnover. La figure illustre une performance historique sous les hypothèses annoncées, sans prévision de rendement futur.}{rapport/figures/cumulative\_wealth.png ; results/wealth.csv ; results/metrics.csv.}
 \end{frame}
 
 \begin{frame}{Annexe : contrôle temporel 2021--2025}
@@ -436,10 +436,10 @@
 
 \begin{frame}{Annexe · Les pertes maximales restent proches}
   \centering
-  \includegraphics[width=0.92\linewidth,height=0.66\textheight,keepaspectratio]{assets/drawdown.png}
+  \includegraphics[width=0.92\linewidth,height=0.66\textheight,keepaspectratio]{ressources/drawdown.png}
   \par\small\color{wcprimary}Drawdown maximal : $-23,85$\,\% à 10 pb contre $-23,93$\,\% pour SPY.
   \source{Figure du mémoire ; results/drawdowns.csv et results/metrics.csv.}
-  \oral{Annexe. Utiliser si le jury interroge la protection en phase de baisse. Le maximum drawdown est mesuré sur les valeurs mensuelles et ne décrit pas les pertes intramensuelles. La différence entre les portefeuilles est très faible.}{latex/figures/drawdown.png ; results/drawdowns.csv ; results/metrics.csv ; backtest.py.}
+  \oral{Annexe. Utiliser si le jury interroge la protection en phase de baisse. Le maximum drawdown est mesuré sur les valeurs mensuelles et ne décrit pas les pertes intramensuelles. La différence entre les portefeuilles est très faible.}{rapport/figures/drawdown.png ; results/drawdowns.csv ; results/metrics.csv ; backtest.py.}
 \end{frame}
 
 \begin{frame}{Annexe · Pourquoi le coût nul est accepté}

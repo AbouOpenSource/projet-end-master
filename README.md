@@ -1,5 +1,27 @@
 # projet-end-master
 
+## Organisation du projet
+
+| Dossier | Contenu |
+| --- | --- |
+| `rapport/` | Sources LaTeX et PDF final du mémoire. |
+| `rapport/chapitres/` | Chapitres, annexes et protocoles du mémoire. |
+| `rapport/references/` | Articles et textes de référence en PDF. |
+| `rapport/logos/` | Logo utilisé sur la couverture. |
+| `rapport/figures/` | Graphiques et schémas du mémoire. |
+| `rapport/archives/` | Version longue et sources historiques. |
+| `soutenance/` | Présentation, notes orales et archive des sources. |
+| `soutenance/ressources/` | Images et données utilisées dans les diapositives. |
+| `soutenance/graphiques/` | Graphiques fournis avec le modèle de présentation. |
+| `data/` | Données de marché et rapport de qualité. |
+| `results/` | Résultats, réponses archivées et audits des expériences. |
+| `figures/` | Graphiques produits par le backtest initial. |
+| `tests/` | Tests des workflows et des calculs. |
+| `experience/` | Environnement Python local utilisé pour les expériences. |
+
+Les liens GitHub du mémoire ciblent une version publiée des artefacts. Les
+archives historiques conservent leurs chemins d'origine.
+
 ## Expérience multifactorielle minimale
 
 Ce sous-projet constitue le prototype empirique du rapport sur l'approche agentique
@@ -120,11 +142,13 @@ Les sorties sont `results/deepseek_evaluation.json` et `results/deepseek_evaluat
 
 ## Rapport LaTeX
 
-Le rapport complet et ses figures sont dans `latex/`. Pour reconstruire le PDF :
+Le rapport complet et ses figures sont dans `rapport/`. Pour reconstruire le PDF :
 
 ```bash
-cd latex
+cd rapport
 latexmk -g -xelatex -interaction=nonstopmode -halt-on-error rapport_agentique_multi.tex
+makeglossaries rapport_agentique_multi
+latexmk -xelatex -interaction=nonstopmode -halt-on-error rapport_agentique_multi.tex
 ```
 
 
@@ -213,3 +237,13 @@ experience/.venv/bin/python analyze_allocation_results.py
 Ce contrôle écrit [l’analyse détaillée](results/allocation_experiment/ANALYSE.md),
 `AUDIT.json` et `yearly_returns.csv`. Les empreintes des fichiers antérieurs
 correspondent à l’état précédant cette extension.
+
+## Présentation de soutenance
+
+Le PDF et les notes orales sont dans `soutenance/`. Pour les reconstruire :
+
+```bash
+cd soutenance
+latexmk -xelatex -interaction=nonstopmode -halt-on-error soutenance_agentique_multi.tex
+latexmk -xelatex -interaction=nonstopmode -halt-on-error notes_orales.tex
+```

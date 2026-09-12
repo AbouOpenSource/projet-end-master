@@ -23,7 +23,7 @@ COMPILATION (depuis ce dossier ; XeLaTeX, latexmk, PGFPlots et Fira Sans requis)
 latexmk -xelatex -interaction=nonstopmode -halt-on-error soutenance_agentique_multi.tex
 latexmk -xelatex -interaction=nonstopmode -halt-on-error notes_orales.tex
 
-Les fichiers du thème et le dossier assets doivent rester avec les sources.
-Le graphique d'allocation se recalcule dans LaTeX depuis assets/allocation_equity.csv,
+Les fichiers du thème et le dossier ressources doivent rester avec les sources.
+Le graphique d'allocation se recalcule dans LaTeX depuis ressources/allocation_equity.csv,
 copie exacte du fichier results/allocation_experiment/deepseek/equity.csv.
 L'archive ZIP contient les sources, le thème, les données du graphique et les images.
