@@ -2,11 +2,15 @@
 \usetheme[pattern=network,color=nudarkblue,numbering=progressbar,sectionpage=none,agendastyle=plain]{wildcat}
 \usepackage[french]{babel}
 \usepackage{booktabs,tabularx}
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\pgfplotsset{compat=1.18}
+\newcommand{\ghfile}[2]{\href{https://github.com/AbouOpenSource/projet-end-master/blob/be691b42772e9d223b1304fae597ba13ac62d505/#1}{\nolinkurl{#2}}}
 \newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
 \renewcommand{\tabularxcolumn}[1]{>{\raggedright\arraybackslash}p{#1}}
 \pdfstringdefDisableCommands{\def\\{ }}
 \title[Approche agentique et trading multifactoriel]{L'approche agentique dans un\\contexte de trading multifactoriel}
-\subtitle{Prototype supervisé et évaluation d'une synthèse LLM}
+\subtitle{Synthèse LLM et allocation de portefeuille sous contraintes}
 \author[SANOU Abou Dramane]{SANOU Abou Dramane\\Master Finance de marché · CNAM\\Encadrant : Bertrand DJEMBISSI}
 \date{Septembre 2026}
 \titlegraphic{\includegraphics[height=1.15cm]{assets/logo\_cnam.png}}
@@ -29,36 +33,36 @@
 \begin{document}
 \begin{frame}
   \titlepage
-  \oral{30 s. Présenter le sujet : étudier comment un agent peut restituer des résultats financiers calculés ailleurs. La contribution porte sur l'intégration supervisée et l'évaluation critique du dispositif.}{Mémoire, couverture et résumé.}
+  \oral{25 s. Présenter les deux expériences : une synthèse à partir de calculs fixes, puis une proposition de poids qui peut modifier un portefeuille simulé. La contribution porte sur leurs contrôles et leur évaluation critique.}{Mémoire, couverture et résumé.}
 \end{frame}
 
-\section{Question et démarche}
-\begin{frame}{Une synthèse utile doit rester vérifiable}
+\begin{frame}{Synthèse et allocation sous contrôle}
+
   \begin{block}{Question de recherche}
-    Comment intégrer des agents LLM au trading multifactoriel tout en conservant des calculs reproductibles, des permissions explicites et une trace vérifiable ?
+    Comment utiliser les sorties d'un LLM dans une chaîne multifactorielle tout en pouvant vérifier ses chiffres, ses sources et ses décisions ?
   \end{block}
-  \vspace{0.5em}
   \begin{itemize}\raggedright
-    \item Le moteur quantitatif calcule les rendements et les poids.
-    \item La couche agentique restitue les résultats et les alertes.
-    \item La validation humaine reste requise.
+    \item \textbf{Synthèse :} restituer un état quantitatif déjà calculé.
+    \item \textbf{Allocation :} proposer des poids soumis aux contrôles Python.
+    \item \textbf{Évaluation :} comparer les notes, puis le PnL simulé.
   \end{itemize}
-  \takeaway{Le prototype évalue une aide à l'analyse supervisée.}
-  \source{Mémoire, introduction et principes de conception.}
-  \oral{50 s. Partir du besoin de l'analyste : relier une note aux chiffres qui la justifient. Une phrase plausible ne suffit pas à expliquer une décision. Le LLM n'a pas la main sur le portefeuille.}{Mémoire, chapitres 1 et 3.}
+  \takeaway{Le moteur déterministe conserve le calcul et le contrôle des positions.}
+  \source{Mémoire, introduction et architecture.}
+  \oral{45 s. Dans la première expérience, le LLM ne modifie pas le portefeuille. Dans la seconde, une proposition acceptée change les positions simulées. Aucun ordre réel n'est envoyé et aucune approbation humaine effective n'est enregistrée.}{Mémoire, introduction et architecture.}
 \end{frame}
 
-\begin{frame}{Trois étapes pour répondre à la question}
+\begin{frame}{Démarche de recherche}
+
   \begin{enumerate}
-    \item \textbf{Comparer les briques disponibles}\\
-      Revue documentaire : 17 fiches, dont 8 dépôts approfondis.
-    \item \textbf{Construire un prototype reproductible}\\
-      Quatre ETF factoriels, un benchmark et une synthèse supervisée.
-    \item \textbf{Évaluer les résultats et leurs limites}\\
-      Backtest, 33 réponses LLM, comparaison des notes et contre-exemples.
+    \item \textbf{Revue et choix des composants}\\
+      17 fiches documentaires, dont 8 dépôts approfondis.
+    \item \textbf{Synthèse de résultats financiers}\\
+      Backtest ETF, 33 réponses LLM et contre-exemples du validateur.
+    \item \textbf{Allocation sous contraintes}\\
+      56 propositions, deux règles de référence et replay hors réseau.
   \end{enumerate}
-  \source{Mémoire, méthodologie et résultats expérimentaux.}
-  \oral{40 s. Annoncer le parcours. Le travail associe une analyse documentaire à une expérimentation ; il ne se réduit ni à un benchmark de stratégie ni à une démonstration de chatbot.}{Mémoire, chapitres 3 et 5.}
+  \source{Mémoire, chapitres 2, 3 et 5.}
+  \oral{35 s. Annoncer les deux expériences et leurs critères propres. La qualité d'une restitution et la rentabilité d'une allocation sont évaluées séparément.}{Mémoire, chapitres 2, 3 et 5.}
 \end{frame}
 
 \begin{frame}{La revue sépare les responsabilités}
@@ -77,8 +81,7 @@
   \oral{45 s. Ces familles ne sont pas interchangeables. Le scoring documentaire porte sur sept critères et n'est pas une certification de production. Seuls les outils effectivement utilisés dans le prototype sont présentés comme implémentés.}{Mémoire, chapitres 2 et 3 ; annexe I.}
 \end{frame}
 
-\section{Prototype et protocole}
-\begin{frame}{Quatre expositions, une allocation fixe}
+\begin{frame}{Socle initial : quatre ETF équipondérés}
   \begin{columns}[T]
   \column{0.46\textwidth}
     \renewcommand{\arraystretch}{1.35}
@@ -95,7 +98,7 @@
   \column{0.49\textwidth}
     \begin{itemize}\raggedright
       \item Benchmark : \textbf{SPY}.
-      \item Rééquilibrage mensuel.
+      \item Rééquilibrage mensuel, coûts de 0, 10 et 30 pb.
       \item Cours ajustés via yfinance.
       \item Rendements : fév. 2015--déc. 2025.
       \item Contrôle temporel : 2021--2025.
@@ -106,61 +109,24 @@
   \oral{55 s. L'allocation est équipondérée et aucun paramètre n'est appris. Les ETF ne sont pas une reconstruction titre par titre des facteurs académiques. La période 2021--2025 est donc un contrôle temporel, pas un test complet de prédiction.}{Mémoire, chapitre 3 ; backtest.py.}
 \end{frame}
 
-\begin{frame}{Les coûts dépendent du rééquilibrage}
-  \[
-    r_t^{\mathrm{net}}=\sum_i w_{i,t-1}r_{i,t}-c\tau_t,
-    \qquad \tau_t=\frac{1}{2}\sum_i\left|w^{\mathrm{cible}}_{i,t}-w^{\mathrm{après}}_{i,t}\right|
-  \]
-  \begin{itemize}\raggedright
-    \item Trois coûts unitaires : \textbf{0, 10 et 30 points de base}.
-    \item Turnover « one-way » : achats ou ventes, sans double comptage.
-    \item Prix de fin de mois théoriques ; coût initial exclu.
-    \item Sharpe calculé avec un taux sans risque fixé à zéro.
-  \end{itemize}
-  \takeaway{Les hypothèses d'exécution limitent la portée du backtest.}
-  \source{Mémoire, équations et hypothèses du protocole expérimental.}
-  \oral{60 s. Expliquer le demi-somme : achats et ventes sont deux faces du même rééquilibrage. Un coût de 10 pb n'est pas retranché chaque mois au portefeuille entier. Le modèle ne simule ni bid-ask spread séparé ni impact de marché.}{Mémoire, chapitre 3 ; backtest.py.}
+\begin{frame}{Composants exécutés et architecture proposée}
+
+  \renewcommand{\arraystretch}{1.35}
+  \begin{tabularx}{\linewidth}{@{}L{0.23\linewidth}XX@{}}
+  \toprule
+  & \textbf{Synthèse} & \textbf{Allocation simulée}\\
+  \midrule
+  Rôle du LLM & Résumer les résultats & Proposer les poids cibles\\
+  Programme & LangGraph et superviseur déterministe & Module Python distinct\\
+  Contrôles & Qualité, chiffres, permissions déclarées & Poids, turnover, sources et exécution\\
+  Effet d'un rejet & Sortie rejetée et archivée & Conservation des quantités détenues\\
+  \bottomrule
+  \end{tabularx}\par
+  \takeaway{Les sept rôles de l'architecture cible ne sont pas tous exécutés.}
+  \source{Mémoire, chapitre 4 et protocole d’allocation.}
+  \oral{55 s. Le module d'allocation ne passe pas par LangGraph. Le stress de turnover de la synthèse produit une alerte, tandis que les contraintes d'allocation peuvent bloquer la transaction simulée. Les agents actualités et conformité restent proposés.}{Mémoire, chapitre 4 et protocole d’allocation.}
 \end{frame}
 
-\begin{frame}{Le LLM intervient après les calculs}
-  \begin{enumerate}
-    \item \textbf{Backtest déterministe} : rendements, poids, coûts, diagnostics.
-    \item \textbf{Workflow LangGraph} : lecture des fichiers, qualité et risque.
-    \item \textbf{Restitution} : note déterministe ou synthèse LLM en JSON.
-    \item \textbf{Vérification} : valeurs, structure et permissions déclarées.
-    \item \textbf{Sorties} : note de revue et trace JSON.
-  \end{enumerate}
-  \takeaway{Le programme n'expose aucun outil d'envoi d'ordres au LLM.}
-  \source{Mémoire, chapitre 4 ; workflows déterministe et DeepSeek.}
-  \oral{60 s. Suivre le flux réel. Le LLM reçoit un état structuré, pas les cours bruts ni des outils de recherche. Le contrôle qualité du workflow se situe après le backtest, avant la synthèse. Une réponse conforme ne peut pas devenir un ordre : cette capacité est absente du programme.}{Mémoire, chapitre 4 ; agent\_workflow.py ; deepseek\_agent\_workflow.py.}
-\end{frame}
-
-\begin{frame}{Le prototype a un périmètre explicite}
-  \begin{columns}[T]
-  \column{0.48\textwidth}
-    \begin{block}{Implémenté}
-    \begin{itemize}\raggedright
-      \item Calculs et diagnostics archivés.
-      \item Notes déterministes et option LLM.
-      \item Cas qualité bloqué avant appel LLM.
-      \item Alertes et permissions déclarées.
-    \end{itemize}
-    \end{block}
-  \column{0.48\textwidth}
-    \begin{alertblock}{À développer}
-    \begin{itemize}\raggedright
-      \item Moteur complet de limites et de liquidité.
-      \item Approbation humaine enregistrée.
-      \item Audit historique entièrement versionné.
-      \item Validation auprès d'analystes.
-    \end{itemize}
-    \end{alertblock}
-  \end{columns}
-  \source{Mémoire, architecture implémentée, limites et traçabilité.}
-  \oral{45 s. Ne pas assimiler architecture cible et prototype. Le stress de turnover déclenche une alerte, pas un blocage général du portefeuille. La note demande une validation humaine mais le prototype n'enregistre pas encore la décision effective d'un approbateur.}{Mémoire, chapitres 3, 4 et 5.}
-\end{frame}
-
-\section{Résultats}
 \begin{frame}{SPY conserve l'avantage sur 2015--2025}
   \renewcommand{\arraystretch}{1.4}
   \begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}Xrr@{}}
@@ -174,80 +140,29 @@
     Valeur finale, base 100 & 345,10 & 411,73\\
     \bottomrule
   \end{tabularx}\par
-  \takeaway{Une volatilité plus faible, sans supériorité financière démontrée.}
+  \takeaway{Sur 2021--2025, le classement reste le même : 11,25\,\% contre 14,34\,\%.}
   \source{results/metrics.csv ; mémoire, résultats du backtest.}
   \oral{65 s. Lire en priorité rendement et volatilité. Le drawdown est presque identique. Le résultat ne démontre pas d'alpha et ne peut être attribué au LLM : les règles du portefeuille sont fixes et le modèle ne les modifie pas.}{results/metrics.csv ; mémoire, chapitre 5.}
 \end{frame}
 
-\begin{frame}{L'écart de richesse se creuse dans le temps}
-  \centering
-  \includegraphics[width=0.91\linewidth,height=0.64\textheight,keepaspectratio]{assets/cumulative\_wealth.png}
-  \par\small\color{wcprimary}Base 100 : 411,73 pour SPY contre 345,10 pour le multifactoriel à 10 pb.
-  \source{Figure du mémoire ; results/wealth.csv et results/metrics.csv.}
-  \oral{50 s. Commenter l'évolution d'ensemble et l'écart final. Les courbes multifactoriels aux trois coûts se superposent presque, en raison du faible turnover. La figure illustre une performance historique sous les hypothèses annoncées, sans prévision de rendement futur.}{latex/figures/cumulative\_wealth.png ; results/wealth.csv ; results/metrics.csv.}
-\end{frame}
+\begin{frame}{Synthèse : 33 réponses passent les contrôles}
 
-\begin{frame}{Le contrôle temporel confirme le classement}
-  \begin{columns}[T]
-  \column{0.51\textwidth}
-    \begin{block}{2021--2025 : rendement annualisé}
-      \textbf{11,25\,\%} : multifactoriel à 10 pb\\[0.4em]
-      \textbf{14,34\,\%} : SPY
-    \end{block}
-  \column{0.44\textwidth}
-    \begin{itemize}\raggedright
-      \item Volatilité : 14,37\,\% contre 15,14\,\%.
-      \item Aucun paramètre entraîné avant 2021.
-      \item Le contrôle teste une autre période.
-    \end{itemize}
-  \end{columns}
+  \textbf{12 cas :} 10 dates, un stress de turnover et un cas qualité bloqué.\\[0.5em]
+  Les 11 cas non bloqués donnent 3 répétitions, soit \textbf{33 réponses}.\par
   \vspace{0.7em}
-  \textbf{Sensibilité aux coûts, 2015--2025 :} le rendement annualisé passe de 12,02\,\% à 12,00\,\% entre 0 et 30 pb.
-  \source{results/period\_metrics.csv et results/metrics.csv.}
-  \oral{55 s. Souligner le même classement sur 2021--2025. La faible sensibilité aux coûts tient au turnover mensuel moyen de 0,63 pour cent sur la période complète. Elle ne démontre pas qu'une stratégie plus active serait insensible aux coûts.}{results/period\_metrics.csv ; results/metrics.csv ; mémoire, chapitre 5.}
-\end{frame}
-
-\begin{frame}{L'évaluation LLM porte sur 12 cas}
-  \begin{columns}[T]
-  \column{0.48\textwidth}
-    \begin{itemize}\raggedright
-      \item 10 dates historiques.
-      \item 1 stress de turnover élevé.
-      \item 1 cas qualité bloqué sans appel API.
-    \end{itemize}
-  \column{0.48\textwidth}
-    \begin{block}{33 réponses archivées}
-      11 cas non bloqués\\
-      $\times$ 3 répétitions par cas
-    \end{block}
-  \end{columns}
-  \vspace{0.5em}
-  Modèle enregistré : \texttt{deepseek-v4-flash}.\\
-  Expérience archivée le 7 septembre 2026.
-  \takeaway{Les répétitions mesurent la variabilité sur les mêmes situations.}
-  \source{results/deepseek\_evaluation.json ; protocole du mémoire.}
-  \oral{55 s. Distinguer douze cas et trente-trois réponses : ce ne sont pas trente-trois situations indépendantes. Le cas qualité bloqué est géré localement. L'analyse complémentaire réutilise cette archive sans nouvel appel API.}{results/deepseek\_evaluation.json ; evaluate\_deepseek.py ; mémoire, chapitre 3.}
-\end{frame}
-
-\begin{frame}{Tous les contrôles passent, avec des limites}
-  \renewcommand{\arraystretch}{1.3}
+  \renewcommand{\arraystretch}{1.25}
   \begin{tabularx}{\linewidth}{@{}Xr@{}}
-    \toprule
-    \textbf{Mesure du protocole} & \textbf{Résultat}\\
-    \midrule
-    Conformité numérique à la tolérance fixée & 100\,\%\\
-    Conformité des booléens de permission & 100\,\%\\
-    Stabilité des chiffres normalisés et permissions & 100\,\%\\
-    Stabilité de l'ensemble exact des champs cités & 0\,\%\\
-    \bottomrule
+  \toprule
+  \textbf{Mesure automatisée} & \textbf{Résultat}\\
+  \midrule
+  Conformité numérique et booléens de permission & 100\,\%\\
+  Stabilité des chiffres normalisés et permissions & 100\,\%\\
+  Stabilité de l'ensemble exact des champs cités & 0\,\%\\
+  \bottomrule
   \end{tabularx}\par
-  \vspace{0.5em}
-  \begin{itemize}\raggedright
-    \item La sélection des citations varie pour chacun des 11 cas répétés.
-    \item Ces contrôles ne valident pas intégralement le texte libre.
-  \end{itemize}
-  \source{results/deepseek\_evaluation.json ; mémoire, évaluation automatisée.}
-  \oral{65 s. Insister sur le périmètre du cent pour cent : des champs structurés, une tolérance numérique et des marqueurs. Zéro pour cent de stabilité des ensembles de citations ne signifie pas que toutes les citations sont fausses. Transition : vérifier concrètement ce que les scores peuvent laisser passer.}{results/deepseek\_evaluation.json ; mémoire, chapitre 5.}
+  \takeaway{Ces scores couvrent les contrôles retenus, pas tout le texte libre.}
+  \source{\ghfile{results/deepseek_evaluation.json}{deepseek_evaluation.json}, archive du 7 septembre 2026.}
+  \oral{60 s. Le modèle enregistré est deepseek-v4-flash. Les répétitions concernent les mêmes situations. Zéro pour cent de stabilité des ensembles cités ne signifie pas que toutes les citations sont fausses. Le cas qualité bloqué ne déclenche aucun appel API.}{\ghfile{results/deepseek_evaluation.json}{deepseek_evaluation.json}, archive du 7 septembre 2026.}
 \end{frame}
 
 \begin{frame}{Même état, deux façons de le restituer}
@@ -269,26 +184,8 @@
     \end{block}
   \end{columns}
   \takeaway{Le LLM reformule ; ses qualificatifs n'ont pas de seuil défini.}
-  \source{results/note\_comparison.md ; mémoire, comparaison des notes.}
-  \oral{65 s. La date retenue est la dernière commune aux notes déterministes archivées et aux cas historiques ; la réponse est la première répétition. La sélection ne classe pas les réponses par qualité. Le LLM regroupe les signes des facteurs, mais n'établit aucune causalité économique. Montrer les mots modéré et très faible.}{results/note\_comparison.md ; results/complementary\_analysis.json.}
-\end{frame}
-
-\begin{frame}{L'utilité pour l'analyste reste à mesurer}
-  \renewcommand{\arraystretch}{1.3}
-  \begin{tabularx}{\linewidth}{@{}L{0.22\linewidth}X@{}}
-    \toprule
-    \textbf{Critère} & \textbf{Constat sur la comparaison}\\
-    \midrule
-    Exactitude & Valeurs structurées conformes aux contrôles.\\
-    Clarté & Reformulation lisible ; qualificatifs non calibrés.\\
-    Alertes & Présentes ; exhaustivité à vérifier.\\
-    Traçabilité & Sources disponibles, sélection des citations variable.\\
-    Valeur d'usage & Aucun test utilisateur, aucun gain de temps établi.\\
-    \bottomrule
-  \end{tabularx}\par
-  \takeaway{Une comparaison exploratoire, sans note globale de qualité.}
-  \source{Mémoire, grille critique et discussion de l'utilité ; comparaison sur une date.}
-  \oral{55 s. La grille est une lecture qualitative de l'auteur. Les autres répétitions montrent une variabilité de présentation. La note déterministe contient déjà les chiffres et alertes ; la nécessité du LLM n'est donc pas démontrée. Pour mesurer l'utilité, il faudra faire réaliser une même tâche à des lecteurs.}{Mémoire, section 5.4 ; results/complementary\_analysis.json.}
+  \source{\ghfile{results/note_comparison.md}{note_comparison.md} ; mémoire, comparaison des notes.}
+  \oral{65 s. La date retenue est la dernière commune aux notes déterministes archivées et aux cas historiques ; la réponse est la première répétition. La sélection ne classe pas les réponses par qualité. Le LLM regroupe les signes des facteurs, mais n'établit aucune causalité économique. Montrer les mots modéré et très faible.}{\ghfile{results/note_comparison.md}{note_comparison.md} ; \ghfile{results/complementary_analysis.json}{complementary_analysis.json}.}
 \end{frame}
 
 \begin{frame}{Trois erreurs construites passent le validateur}
@@ -304,42 +201,239 @@
   \end{tabularx}\par
   \vspace{0.6em}
   \textbf{Deux témoins rejetés :} permission d'ordre ; rendement net majoré de 1 point de pourcentage.\par\vspace{0.4em}
-  \small Essais manuels sur une réponse archivée ; aucune fréquence d'erreur estimée.
-  \source{results/complementary\_analysis.json ; analyze\_note\_comparison.py.}
-  \oral{75 s. Chaque essai part de la même réponse correcte et ne modifie qu'un champ. Ce sont des altérations manuelles, pas des erreurs spontanées des réponses DeepSeek. Elles ne donnent aucun taux d'erreur du modèle. Les témoins montrent que le validateur détecte certaines violations structurées. Aucun ordre réel ne peut être envoyé.}{results/complementary\_analysis.json ; analyze\_note\_comparison.py ; mémoire, section 5.5.}
+  \small Essais construits sur une réponse archivée ; aucune fréquence d'erreur estimée.
+  \source{\ghfile{results/complementary_analysis.json}{complementary_analysis.json} ; analyze\_note\_comparison.py.}
+  \oral{75 s. Chaque essai part de la même réponse correcte et ne modifie qu'un champ. Ce sont des altérations construites, pas des erreurs spontanées des réponses DeepSeek. Elles ne donnent aucun taux d'erreur du modèle. Les témoins montrent que le validateur détecte certaines violations structurées. Aucun ordre réel ne peut être envoyé.}{\ghfile{results/complementary_analysis.json}{complementary_analysis.json} ; analyze\_note\_comparison.py ; mémoire, section 5.5.}
 \end{frame}
 
-\section{Limites et perspectives}
-\begin{frame}{Trois améliorations prioritaires}
-  \begin{enumerate}
-    \item \textbf{Renforcer la validation des notes}\\
-      Tolérances par champ, chemins sources exacts, cohérence du texte libre.
-    \item \textbf{Compléter la traçabilité et la supervision}\\
-      Prompts et données versionnés, décision humaine enregistrée.
-    \item \textbf{Mesurer l'utilité en situation de travail}\\
-      Comparer temps, exactitude et détection d'alertes sur plusieurs dates.
-  \end{enumerate}
-  \source{Mémoire, analyse complémentaire, limites et conclusion.}
-  \oral{60 s. Relier les améliorations aux faiblesses constatées. Les métadonnées historiques n'incluent pas les empreintes du prompt, des données et du commit Git. Le code actuel prévoit des éléments supplémentaires pour de nouvelles traces, mais ne complète pas l'archive passée. Équilibrer l'ordre de lecture des notes dans un futur test utilisateur.}{Mémoire, chapitres 3, 5 et 6.}
-\end{frame}
+\begin{frame}{Allocation : 56 décisions mensuelles}
 
-\begin{frame}{Une contribution d'intégration et d'évaluation}
-  \begin{block}{Résultat principal}
-    Le prototype relie des calculs reproductibles à une synthèse supervisée et rend inspectables les limites de ses contrôles.
-  \end{block}
-  \vspace{0.5em}
   \begin{itemize}\raggedright
-    \item Le socle quantitatif ne démontre pas de surperformance.
-    \item Le LLM reformule ; son utilité reste à mesurer.
-    \item Les contre-exemples précisent les validations à renforcer.
+    \item \textbf{Mai 2021--décembre 2025.} Base 100 au 30 avril 2021, déjà investie à 25\,\% dans chaque ETF.
+    \item \textbf{Trois politiques :} équipondération, inverse volatilité et DeepSeek.
+    \item \textbf{Contraintes communes :} poids de 0 à 40\,\%, somme à 100\,\%, turnover maximal de 10\,\%.
+    \item \textbf{Exécution différée :} première clôture du mois suivant, frais de 10 pb par unité de turnover, valorisation quotidienne.
   \end{itemize}
-  \vspace{0.65em}
-  \centering\Large\color{wcprimary}Merci pour votre attention.
-  \oral{40 s. Reprendre la question initiale et les trois conclusions. La contribution est un prototype inspectable et une évaluation lucide, avec des pistes mesurables pour la suite. Inviter le jury à poser ses questions.}{Mémoire, conclusion et résultats expérimentaux.}
+  \takeaway{Un rejet conserve les quantités, sans nouvelle proposition ni transaction.}
+  \source{\ghfile{results/allocation_experiment/PROTOCOLE.md}{PROTOCOLE.md}, section 3.7 du mémoire.}
+  \oral{65 s. Le modèle reçoit les rendements sur 21, 63, 126 et 252 séances, la volatilité et le drawdown historiques, ainsi que les poids courants et les contraintes. Il ne reçoit aucun rendement futur. Le plafond vise les poids cibles, qui peuvent ensuite dériver avec les prix. Le moteur revérifie le turnover à l'exécution et finance les frais dans le portefeuille. Les coûts d'entrée et de liquidation finale sont exclus.}{\ghfile{results/allocation_experiment/PROTOCOLE.md}{PROTOCOLE.md}, section 3.7 du mémoire.}
+\end{frame}
+
+\begin{frame}{DeepSeek termine derrière les deux références}
+
+  \small Mai 2021--décembre 2025, après frais de transaction\par\vspace{0.6em}
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+  \toprule
+  \textbf{Indicateur} & \textbf{Équipondéré} & \textbf{Inverse vol.} & \textbf{DeepSeek}\\
+  \midrule
+  Capital final, base 100 & 153,55 & 152,26 & 148,39\\
+  PnL en unités & +53,55 & +52,26 & +48,39\\
+  Rendement annualisé & 9,62\,\% & 9,42\,\% & 8,82\,\%\\
+  Volatilité annualisée & 15,66\,\% & 15,08\,\% & 14,87\,\%\\
+  Sharpe, taux sans risque nul & 0,667 & 0,674 & 0,645\\
+  Drawdown maximal & $-24,20$\,\% & $-23,44$\,\% & $-23,50$\,\%\\
+  \bottomrule
+  \end{tabularx}\par
+  \takeaway{Écart avec l'équipondération : $-5,17$ unités pour 100 investies.}
+  \source{\ghfile{results/allocation_experiment/deepseek/metrics.csv}{metrics.csv}, tableau 5.7 du mémoire.}
+  \oral{65 s. Cette comparaison porte sur les trois politiques avec le même calendrier et les mêmes contraintes. Les 11,25 pour cent de l'ancien contrôle temporel concernent un autre protocole, janvier 2021 et des conventions mensuelles différentes. Ici, la volatilité plus faible de DeepSeek ne produit pas un meilleur Sharpe. Le capital final exclut les coûts API et humains.}{\ghfile{results/allocation_experiment/deepseek/metrics.csv}{metrics.csv}, tableau 5.7 du mémoire.}
+\end{frame}
+
+\begin{frame}{Trajectoires des trois portefeuilles}
+
+  \centering
+  \begin{tikzpicture}
+  \begin{axis}[
+    width=0.94\linewidth,height=0.64\textheight,
+    date coordinates in=x, date ZERO=2021-04-30,
+    xtick={2021-04-30,2022-01-03,2023-01-03,2024-01-02,2025-01-02},
+    xticklabels={Avr. 2021,2022,2023,2024,2025},
+    ymin=85,ymax=170,ytick={100,120,140,160},
+    ylabel={Capital, base 100},grid=major,grid style={black!10},
+    tick label style={font=\scriptsize},label style={font=\small},
+    legend style={font=\scriptsize,at={(0.02,0.98)},anchor=north west,draw=none},
+    every axis plot/.append style={line width=0.9pt,no marks}]
+    \addplot[color=wcprimary] table[x=date,y=equal_weight,col sep=comma]{assets/allocation_equity.csv};
+    \addlegendentry{Équipondération}
+    \addplot[color=orange!85!black] table[x=date,y=inverse_volatility,col sep=comma]{assets/allocation_equity.csv};
+    \addlegendentry{Inverse volatilité}
+    \addplot[color=teal!80!black] table[x=date,y=deepseek_allocation,col sep=comma]{assets/allocation_equity.csv};
+    \addlegendentry{DeepSeek}
+  \end{axis}
+  \end{tikzpicture}
+  \takeaway{Les rejets et la conservation des positions contribuent à cette trajectoire.}
+  \source{\ghfile{results/allocation_experiment/deepseek/equity.csv}{equity.csv}, valeurs quotidiennes après frais.}
+  \oral{45 s. Les trois politiques subissent les mêmes phases de marché. Le classement varie selon les années. Une seule trajectoire de réponses du LLM a été collectée. Le PnL mesure l'ensemble proposition, validation et repli. Les années ne sont pas des expériences indépendantes.}{\ghfile{results/allocation_experiment/deepseek/equity.csv}{equity.csv}, valeurs quotidiennes après frais.}
+\end{frame}
+
+\begin{frame}{34 propositions rejetées sur 56}
+
+  \textbf{22 propositions exécutées.} Les deux règles de référence passent les 56 contrôles.\par
+  \vspace{0.7em}
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\linewidth}{@{}Xr@{}}
+  \toprule
+  \textbf{Motif} & \textbf{Occurrences}\\
+  \midrule
+  Turnover proposé supérieur à 10\,\% à l'observation & \textbf{31}\\
+  Turnover supérieur à 10\,\% à l'exécution, après frais & 2\\
+  Somme des poids différente de 100\,\% & 1\\
+  Poids hors limites & 1\\
+  Référence à un champ absent des entrées & 1\\
+  \bottomrule
+  \end{tabularx}\par
+  \takeaway{36 motifs pour 34 rejets : une réponse peut cumuler plusieurs erreurs.}
+  \source{\ghfile{results/allocation_experiment/AUDIT.json}{AUDIT.json}, tableau 5.9 du mémoire.}
+  \oral{65 s. Toutes les réponses sont décodées en JSON. Le problème principal est le respect des contraintes numériques. Les deux rejets à l'exécution interviennent au cours effectivement simulé et après frais. En cas de rejet, les quantités restent inchangées, mais les poids évoluent avec les cours. Il n'y a pas de nouvelle tentative après un rejet économique.}{\ghfile{results/allocation_experiment/AUDIT.json}{AUDIT.json}, tableau 5.9 du mémoire.}
+\end{frame}
+
+\begin{frame}{Un turnover annoncé conforme vaut en réalité 20\,\%}
+
+  \small Proposition du 30 avril 2021, à partir de 25\,\% dans chaque ETF\par\vspace{0.4em}
+  \renewcommand{\arraystretch}{1.15}
+  \begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+  \toprule
+  \textbf{ETF} & \textbf{Initial} & \textbf{Proposé} & \textbf{Écart en points}\\
+  \midrule
+  VLUE & 25\,\% & 40\,\% & +15\\
+  MTUM & 25\,\% & 20\,\% & $-5$\\
+  QUAL & 25\,\% & 30\,\% & +5\\
+  USMV & 25\,\% & 10\,\% & $-15$\\
+  \bottomrule
+  \end{tabularx}\par
+  \[\tau=\frac{1}{2}(0{,}15+0{,}05+0{,}05+0{,}15)=20\,\%>10\,\%\]
+  \takeaway{La justification affirme respecter la limite. Python bloque la proposition.}
+  \source{\ghfile{results/allocation_experiment/deepseek/decisions.json}{decisions.json}, première décision.}
+  \oral{65 s. C'est une réponse réellement obtenue du modèle, contrairement aux altérations construites pour le validateur de synthèse. Le demi-somme correspond ici à 20 pour cent d'achats et 20 pour cent de ventes. La somme des poids et le plafond de concentration sont corrects, mais le turnover ne l'est pas. Ce rejet ne dit pas si les poids proposés auraient été rentables.}{\ghfile{results/allocation_experiment/deepseek/decisions.json}{decisions.json}, première décision.}
+\end{frame}
+
+\begin{frame}{Les calculs et le replay concordent}
+
+  \begin{itemize}\raggedright
+    \item \textbf{46 tests réussis}, dont 23 ajoutés pour l'allocation.
+    \item \textbf{56 décisions rejouées hors réseau}, sans appel API.
+    \item Fichiers de décisions, métriques et valorisations \textbf{identiques} au replay.
+    \item \textbf{3 519 valorisations quotidiennes contrôlées}, soit 1 173 par politique.
+    \item Écart comptable maximal sur ces valorisations : $5{,}68\times10^{-14}$.
+  \end{itemize}
+  \takeaway{Le replay reproduit les décisions archivées et leurs conséquences comptables.}
+  \source{\ghfile{results/allocation_experiment/AUDIT.json}{AUDIT.json}, section 5.6.4 du mémoire.}
+  \oral{50 s. Les tests couvrent notamment l'absence d'accès aux rendements futurs dans les entrées, l'exécution différée et le maintien des quantités après rejet. Les 31 fichiers antérieurs sont inchangés selon leur manifeste. Le replay ne garantit pas que le service LLM générerait à nouveau les mêmes réponses. Il vérifie la cohérence du calcul à partir des réponses conservées.}{\ghfile{results/allocation_experiment/AUDIT.json}{AUDIT.json}, section 5.6.4 du mémoire.}
+\end{frame}
+
+\begin{frame}{Les frais de portefeuille ne couvrent pas tout le coût}
+
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\linewidth}{@{}Xrrr@{}}
+  \toprule
+   & \textbf{Équipondéré} & \textbf{Inverse vol.} & \textbf{DeepSeek}\\
+  \midrule
+  Frais cumulés, base 100 & 0,0476 & 0,0708 & 0,0682\\
+  \bottomrule
+  \end{tabularx}\par
+  \vspace{0.7em}
+  \begin{itemize}\raggedright
+    \item \textbf{54 639 jetons} pour la campagne de 56 réponses.
+    \item \textbf{11 375 jetons} connus pour les essais techniques antérieurs.
+    \item Total connu : \textbf{66 014 jetons}, plus une requête interrompue sans usage reçu.
+    \item Le PnL exclut \textbf{l'API, l'infrastructure et la revue humaine}.
+  \end{itemize}
+  \takeaway{La consommation archivée ne fournit pas une facture complète.}
+  \source{\ghfile{results/allocation_experiment/ANALYSE.md}{ANALYSE.md}, tableaux 5.10 et 5.11.}
+  \oral{65 s. Le taux de transaction est de 10 points de base par unité de turnover. La somme des frais n'est pas la perte de richesse finale attribuable aux coûts. Sur les quatre premiers essais, trois réponses sans JSON atteignent le plafond de 3 000 jetons et la quatrième requête est interrompue. Les 56 appels suivants désactivent explicitement le mode thinking. Ils consomment 86,02 secondes de latence cumulée, une médiane de 1,43 seconde, sans mesurer le temps total de développement ou de revue. Aucun prix API non vérifié n'est transformé en coût observé.}{\ghfile{results/allocation_experiment/ANALYSE.md}{ANALYSE.md}, tableaux 5.10 et 5.11.}
+\end{frame}
+
+\begin{frame}{Une expérience historique à portée limitée}
+
+  \begin{itemize}\raggedright
+    \item \textbf{Préentraînement :} appels en septembre 2026 sur des décisions datées de 2021--2025.
+    \item \textbf{Données :} cours ajustés disponibles aujourd'hui, sans versions historiques point-in-time.
+    \item \textbf{Échantillon :} quatre ETF et une seule trajectoire de 56 réponses.
+    \item \textbf{Simulation :} clôture suivante, frais fixes, sans modèle de spread ni d'impact.
+  \end{itemize}
+  \takeaway{Le résultat technique est vérifiable. La généralisation financière reste à tester.}
+  \source{Mémoire, sections 5.6.5 et 6.2.}
+  \oral{60 s. La coupure temporelle des indicateurs protège les entrées numériques, mais pas des connaissances futures acquises par le modèle pendant son préentraînement. Aucun test de significativité n'établit un alpha. Les rejets influencent le PnL, et aucune étude d'analystes ne mesure encore la productivité. La simulation ne documente ni une approbation humaine ni une permission d'ordre réel.}{Mémoire, sections 5.6.5 et 6.2.}
+\end{frame}
+
+\begin{frame}{Deux suites prioritaires}
+
+  \begin{enumerate}
+    \item \textbf{Renforcer la fiabilité des sorties}\\[0.3em]
+      Notes : tolérances par champ, citations exactes, cohérence du texte.\\
+      Allocation : choix parmi des portefeuilles déjà admissibles.\\
+      Comparaison prospective avec une règle utilisant les mêmes indicateurs.
+    \vspace{0.7em}
+    \item \textbf{Mesurer l'utilité auprès d'analystes}\\[0.3em]
+      Comparer exactitude, détection d'alertes et temps de revue.\\
+      Rapprocher les gains éventuels des coûts API et humains.
+  \end{enumerate}
+  \source{Mémoire, section 6.3.}
+  \oral{55 s. Fixer le protocole avant d'observer les rendements. La sélection dans un ensemble admissible dissocie le jugement financier du calcul des contraintes. Pour les notes, varier l'ordre de présentation, utiliser plusieurs dates et conserver les mêmes questions pour les lecteurs.}{Mémoire, section 6.3.}
+\end{frame}
+
+\begin{frame}{Ce que je retiens du prototype}
+
+  \begin{itemize}\raggedright
+    \item Le multifactoriel reste derrière SPY sur le backtest initial.
+    \item Le validateur de synthèse accepte certains contenus faux construits pour le tester.
+    \item L'allocation DeepSeek reste derrière les règles simples, avec \textbf{34 rejets sur 56 propositions}.
+  \end{itemize}
+  \vspace{0.7em}
+  \textbf{Mon principal enseignement :} ce que le système vérifie avant d'utiliser une sortie LLM est central dans son intégration.
+  \vspace{0.8em}
+  \begin{center}\large\color{wcprimary}Merci pour votre attention.\end{center}
+  \source{Mémoire, conclusion.}
+  \oral{40 s. Distinguer la réussite technique et le résultat financier. La chaîne transforme des propositions en positions vérifiables et bloque des erreurs. Cette expérience ne montre pas d'avantage financier de l'agent. Revenir à la question initiale puis ouvrir les questions du jury.}{Mémoire, conclusion.}
 \end{frame}
 
 \appendix
 \section{Annexes}
+\begin{frame}{Annexe : coûts du backtest initial}
+  \[
+    r_t^{\mathrm{net}}=\sum_i w_{i,t-1}r_{i,t}-c\tau_t,
+    \qquad \tau_t=\frac{1}{2}\sum_i\left|w^{\mathrm{cible}}_{i,t}-w^{\mathrm{après}}_{i,t}\right|
+  \]
+  \begin{itemize}\raggedright
+    \item Trois coûts unitaires : \textbf{0, 10 et 30 points de base}.
+    \item Turnover « one-way » : achats ou ventes, sans double comptage.
+    \item Prix de fin de mois théoriques ; coût initial exclu.
+    \item Sharpe calculé avec un taux sans risque fixé à zéro.
+  \end{itemize}
+  \takeaway{Les hypothèses d'exécution limitent la portée du backtest.}
+  \source{Mémoire, équations et hypothèses du protocole expérimental.}
+  \oral{60 s. Expliquer le demi-somme : achats et ventes sont deux faces du même rééquilibrage. Un coût de 10 pb n'est pas retranché chaque mois au portefeuille entier. Le modèle ne simule ni bid-ask spread séparé ni impact de marché.}{Mémoire, chapitre 3 ; backtest.py.}
+\end{frame}
+
+\begin{frame}{Annexe : richesse du backtest initial}
+  \centering
+  \includegraphics[width=0.91\linewidth,height=0.64\textheight,keepaspectratio]{assets/cumulative\_wealth.png}
+  \par\small\color{wcprimary}Base 100 : 411,73 pour SPY contre 345,10 pour le multifactoriel à 10 pb.
+  \source{Figure du mémoire ; results/wealth.csv et results/metrics.csv.}
+  \oral{50 s. Commenter l'évolution d'ensemble et l'écart final. Les courbes multifactoriels aux trois coûts se superposent presque, en raison du faible turnover. La figure illustre une performance historique sous les hypothèses annoncées, sans prévision de rendement futur.}{latex/figures/cumulative\_wealth.png ; results/wealth.csv ; results/metrics.csv.}
+\end{frame}
+
+\begin{frame}{Annexe : contrôle temporel 2021--2025}
+  \begin{columns}[T]
+  \column{0.51\textwidth}
+    \begin{block}{2021--2025 : rendement annualisé}
+      \textbf{11,25\,\%} : multifactoriel à 10 pb\\[0.4em]
+      \textbf{14,34\,\%} : SPY
+    \end{block}
+  \column{0.44\textwidth}
+    \begin{itemize}\raggedright
+      \item Volatilité : 14,37\,\% contre 15,14\,\%.
+      \item Aucun paramètre entraîné avant 2021.
+      \item Le contrôle teste une autre période.
+    \end{itemize}
+  \end{columns}
+  \vspace{0.7em}
+  \textbf{Sensibilité aux coûts, 2015--2025 :} le rendement annualisé passe de 12,02\,\% à 12,00\,\% entre 0 et 30 pb.
+  \source{results/period\_metrics.csv et results/metrics.csv.}
+  \oral{55 s. Souligner le même classement sur 2021--2025. La faible sensibilité aux coûts tient au turnover mensuel moyen de 0,63 pour cent sur la période complète. Elle ne démontre pas qu'une stratégie plus active serait insensible aux coûts.}{results/period\_metrics.csv ; results/metrics.csv ; mémoire, chapitre 5.}
+\end{frame}
+
 \begin{frame}{Annexe · Les pertes maximales restent proches}
   \centering
   \includegraphics[width=0.92\linewidth,height=0.66\textheight,keepaspectratio]{assets/drawdown.png}
@@ -358,23 +452,23 @@
     |0-0{,}000005362| < 0{,}0001
   \]
   \takeaway{La précision attendue doit dépendre de l'échelle du champ.}
-  \source{results/complementary\_analysis.json ; code du validateur.}
-  \oral{Annexe. Les comparaisons portent sur des fractions, pas sur les pourcentages affichés. Une tolérance raisonnable pour un rendement peut être excessive pour un coût très faible. Préciser la convention d'arrondi et la précision propre à chaque champ.}{results/complementary\_analysis.json ; deepseek\_agent\_workflow.py ; evaluate\_deepseek.py.}
+  \source{\ghfile{results/complementary_analysis.json}{complementary_analysis.json} ; code du validateur.}
+  \oral{Annexe. Les comparaisons portent sur des fractions, pas sur les pourcentages affichés. Une tolérance raisonnable pour un rendement peut être excessive pour un coût très faible. Préciser la convention d'arrondi et la précision propre à chaque champ.}{\ghfile{results/complementary_analysis.json}{complementary_analysis.json} ; deepseek\_agent\_workflow.py ; evaluate\_deepseek.py.}
 \end{frame}
 
-\begin{frame}{Annexe · Sources et reproductibilité}
-  \small
+\begin{frame}{Annexe : fichiers et reproduction}
+
   \begin{itemize}\raggedright
-    \item \textbf{Mémoire :} chapitres 3 à 6, protocole et analyse critique.
-    \item \textbf{Finance :} \texttt{metrics.csv}, \texttt{period\_metrics.csv}.
-    \item \textbf{Archive LLM :} \texttt{deepseek\_evaluation.json}.
-    \item \textbf{Notes :} \texttt{note\_comparison.md}.
-    \item \textbf{Contre-exemples :} \texttt{complementary\_analysis.json}.
+    \item \textbf{Protocole et interprétation :} \ghfile{results/allocation_experiment/PROTOCOLE.md}{PROTOCOLE.md}, \ghfile{results/allocation_experiment/ANALYSE.md}{ANALYSE.md}.
+    \item \textbf{Réponses LLM :} \ghfile{results/allocation_experiment/deepseek_decisions.json}{deepseek_decisions.json}.
+    \item \textbf{Contrôles :} \ghfile{results/allocation_experiment/AUDIT.json}{AUDIT.json}.
+    \item \textbf{Synthèse initiale :} \ghfile{results/note_comparison.md}{note_comparison.md}, \ghfile{results/complementary_analysis.json}{complementary_analysis.json}.
   \end{itemize}
-  \vspace{0.6em}
-  \textbf{Rejouer l'analyse complémentaire, sans appel API :}\\[0.35em]
-  \texttt{experience/.venv/bin/python analyze\_note\_comparison.py}
-  \source{Fichiers du projet ; valeurs issues des résultats archivés.}
-  \oral{Annexe. Montrer les artefacts pour inspecter les preuves. Les fichiers de résultats sont dans results/. Le script complémentaire conserve les transformations, les scores et les empreintes des sources. La note complète permet de dépasser les extraits montrés pendant l'oral.}{README.md ; analyze\_note\_comparison.py ; results/.}
+  \vspace{0.4em}
+  \small\textbf{Reproduction hors réseau : commandes complètes dans le \ghfile{README.md}{README}.}\\[0.4em]
+  \texttt{experience/.venv/bin/python analyze\_allocation\_results.py}\\[0.3em]
+  \texttt{experience/.venv/bin/python -m pytest -q}
+  \source{Dépôt GitHub du projet, artefacts publiés au commit be691b4.}
+  \oral{0 s. Annexe à utiliser pendant les questions. Cliquer sur les noms pour consulter les fichiers sur GitHub. Le README donne la commande de replay et son chemin d'archive. Les liens pointent sur le commit contenant les résultats de l'expérience, ce qui stabilise les preuves citées.}{Dépôt GitHub du projet, artefacts publiés au commit be691b4.}
 \end{frame}
 \end{document}

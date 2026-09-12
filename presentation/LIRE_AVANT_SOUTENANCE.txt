@@ -1,19 +1,29 @@
 PRÉSENTATION DU MÉMOIRE — SANOU Abou Dramane
 
-soutenance_agentique_multi.pdf : 18 diapositives principales et 3 annexes.
-Durée indicative : 15 à 20 minutes, hors questions. Les durées de notes
-constituent des repères de préparation, pas une durée mesurée.
-notes_orales.pdf : notes de préparation, avec rappel des sources.
+soutenance_agentique_multi.pdf : 20 diapositives principales et 6 annexes.
+Durée indicative : 18 à 20 minutes, hors questions. Les durées des notes
+sont des repères de préparation et ne constituent pas une durée mesurée.
+notes_orales.pdf : notes de préparation actualisées, avec rappel des sources.
 soutenance_agentique_multi.tex : source modifiable utilisant le thème Wildcat.
 
-Le modèle main.tex et son PDF d'origine sont conservés.
-Les chiffres et graphiques proviennent du mémoire et de ses résultats archivés.
-Les contre-exemples du validateur sont construits, pas des erreurs spontanées
-mesurées chez le modèle. Aucun nouvel appel LLM n'a été réalisé pour ces slides.
+Cette version couvre la synthèse LLM et l'allocation de portefeuille :
+- comparaison des trois politiques sur mai 2021–décembre 2025 ;
+- 22 propositions exécutées, 34 rejetées, et 36 motifs de rejet ;
+- exemple réel de turnover de 20 % malgré une limite de 10 % ;
+- replay, vérifications, frais, coûts API incomplets et biais historiques.
 
-COMPILATION (depuis ce dossier ; XeLaTeX, latexmk et polices Fira Sans requis)
+Le modèle main.tex et son PDF d'origine sont conservés.
+Les chiffres proviennent du mémoire et des résultats archivés.
+Les contre-exemples du validateur de synthèse sont construits. La proposition
+de turnover excessif est, elle, une réponse effectivement reçue de DeepSeek.
+La préparation de ce support réutilise les archives sans nouvel appel LLM.
+Les noms de fichiers cités comportent des liens GitHub vers les preuves publiées.
+
+COMPILATION (depuis ce dossier ; XeLaTeX, latexmk, PGFPlots et Fira Sans requis)
 latexmk -xelatex -interaction=nonstopmode -halt-on-error soutenance_agentique_multi.tex
 latexmk -xelatex -interaction=nonstopmode -halt-on-error notes_orales.tex
 
-Les fichiers du thème et les images du sous-dossier assets doivent rester
-avec les sources. L'archive ZIP contient cet ensemble pour le transfert.
+Les fichiers du thème et le dossier assets doivent rester avec les sources.
+Le graphique d'allocation se recalcule dans LaTeX depuis assets/allocation_equity.csv,
+copie exacte du fichier results/allocation_experiment/deepseek/equity.csv.
+L'archive ZIP contient les sources, le thème, les données du graphique et les images.
