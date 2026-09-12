@@ -3,46 +3,43 @@
 
 \section{Contexte général}
 
-Le trading multifactoriel consiste à construire des décisions d'investissement à partir de plusieurs familles de signaux : valorisation, momentum, qualité, faible volatilité, liquidité, portage, révisions d'analystes, signaux macroéconomiques ou signaux issus de nouvelles. Cette logique prolonge la tradition académique des modèles factoriels, depuis les facteurs de marché, taille et valeur de \citet{famaFrench1993} jusqu'au facteur momentum formalisé par \citet{carhart1997}. Dans un contexte professionnel, ces facteurs ne suffisent pas à eux seuls : ils doivent être nettoyés, normalisés, neutralisés, testés hors échantillon, combinés avec des contraintes de risque, puis traduits en ordres compatibles avec la liquidité et le mandat du portefeuille.
+Le trading multifactoriel combine plusieurs expositions pour construire un portefeuille. Les modèles de marché, taille et valeur de \citet{famaFrench1993}, puis l'introduction du momentum par \citet{carhart1997}, fournissent des repères pour cette démarche. Pour mon étude, j'ai retenu quatre expositions -- value, momentum, quality et low volatility -- représentées par des ETF. Je voulais partir de portefeuilles observables et consacrer l'expérience au rôle du LLM, plutôt qu'à la reconstruction des facteurs titre par titre.
 
-Les avancées récentes des grands modèles de langage ont introduit une nouvelle brique dans cette chaîne. Un agent ne se limite pas à produire du texte : il peut appeler des outils, lire des documents, interroger une base de données, déléguer des tâches à d'autres agents et enregistrer les raisons d'une décision. Les travaux sur ReAct \citep{yao2023react}, Toolformer \citep{schick2023toolformer}, Reflexion \citep{shinn2023reflexion} et AutoGen \citep{wu2023autogen} ont montré que le raisonnement, l'utilisation d'outils et l'interaction multi-agents peuvent être assemblés en workflows plus robustes qu'un simple prompt isolé.
+À partir de ce socle, j'ai cherché à préciser ce que je pouvais confier à un modèle de langage. Les travaux sur ReAct, Toolformer et AutoGen décrivent différentes façons d'associer un LLM à des outils ou à d'autres agents \citep{yao2023react,schick2023toolformer,wu2023autogen}. Dans la première expérience, j'ai limité son rôle à la préparation d'une note à partir des sorties du backtest. Une extension évalue ensuite ses propositions de poids ; les contrôles, les rendements et les coûts restent calculés par Python.
 
-Pour un desk de trading, cette évolution ouvre des cas d'usage concrets : veille de marché, qualification de nouvelles, synthèse de recherche, génération de scénarios, préparation de revues de risque, documentation des décisions, contrôle de cohérence d'une stratégie et assistance au backtesting. En revanche, elle ne supprime pas les exigences fondamentales de la finance de marché : contrôle du risque, séparation des responsabilités, validation indépendante, explicabilité, auditabilité et surveillance continue.
+J'ai choisi ce périmètre afin de comparer deux restitutions construites à partir des mêmes résultats quantitatifs : une note déterministe et une synthèse DeepSeek. Mon objectif était de suivre les valeurs reprises par le modèle et de repérer les erreurs que les contrôles laissent passer. J'ai ensuite étendu la comparaison au PnL d'un portefeuille issu de ses propositions, face à deux règles simples.
 
 \section{Problématique}
 
-La question centrale de ce rapport est la suivante : comment utiliser une approche agentique dans un environnement de trading multifactoriel sans transformer un outil d'aide à la décision en boîte noire opérationnelle ? Cette question est plus exigeante que la simple automatisation d'un script de trading. Un agent fondé sur un LLM peut produire une justification plausible sans que cette justification soit causalement liée au signal réellement utilisé. Il peut aussi confondre une corrélation historique avec une relation exploitable, ignorer une limite de risque ou synthétiser une nouvelle de marché sans mesurer son impact probabiliste.
+Ma question de travail est la suivante : comment intégrer un LLM à une chaîne multifactorielle tout en gardant la possibilité de vérifier ses chiffres, ses sources et les décisions qui en découlent ? La synthèse fournit un premier cas de contrôle ; l'allocation simulée engage ensuite les poids du portefeuille et leur effet sur le PnL.
 
-Le domaine est fortement réglementé. En Europe, les exigences relatives au trading algorithmique imposent des systèmes résilients, des contrôles de risque et des limites permettant d'éviter des conditions de marché désordonnées \citep{mifidArticle17}. Le règlement DORA renforce les obligations liées au risque informatique et à la résilience opérationnelle des entités financières \citep{dora2022}. Les cadres de gestion des risques liés à l'IA, comme le NIST AI Risk Management Framework, insistent sur la gouvernance, la mesure, la cartographie des risques et le monitoring \citep{nistAirmf2023}. Même lorsque l'usage n'entre pas automatiquement dans une catégorie d'IA à haut risque au sens de l'AI Act \citep{euAiAct2024}, les principes de contrôle, de documentation et de surveillance restent indispensables dans une institution financière.
+Dans mon prototype, j'examine les valeurs du JSON, les champs cités et la recommandation rédigée. Conserver les bons chiffres n'empêche pas une réponse d'omettre une alerte ou de formuler un avis incompatible avec les permissions. J'évalue donc aussi le validateur, en recherchant les erreurs qu'il accepte.
 
-La problématique peut donc être formulée ainsi : quelles architectures agentiques disponibles aujourd'hui, notamment sur GitHub, peuvent contribuer à un desk de trading multifactoriel explicable, rationnel et monitorable, et quelles limites empêchent encore leur déploiement autonome en production ?
+La revue de MiFID II, de DORA et des cadres NIST et AI Act éclaire les questions de contrôle et de documentation abordées dans ce mémoire \citep{mifidArticle17,dora2022,nistAirmf2023,euAiAct2024}. Elle est détaillée au chapitre~\ref{cap:methodologie}. J'en ai retenu une séparation des responsabilités : le LLM prépare la synthèse ou propose des poids ; le code conserve les calculs et les contrôles avant toute transaction simulée. Le modèle de synthèse n'a pas accès à la modification des poids.
 
 \section{Objectifs du rapport}
 
-Ce rapport poursuit cinq objectifs :
+J'ai organisé ce rapport autour de trois objectifs :
 \begin{enumerate}
-    \item établir un état de l'art des architectures agentiques pertinentes pour la finance de marché ;
-    \item recenser les projets GitHub qui peuvent être mobilisés pour analyser l'état actuel des architectures agentiques en finance de marché ;
-    \item comparer ces projets selon des critères observables : gestion de l'état, persistance, supervision humaine, permissions d'outils, reprise après incident, mémoire, backtesting et traçabilité ;
-    \item proposer une architecture cible dans laquelle les agents assistent la décision sans remplacer les contrôles quantitatifs et humains nécessaires ;
-    \item expérimenter un socle quantitatif et une couche agentique supervisée afin d'évaluer la reproductibilité des calculs, la fidélité des synthèses et le respect des permissions.
+    \item décrire un état de l'art ciblé des briques d'orchestration et de contrôle utiles à ce cas d'usage ;
+    \item construire un socle ETF déterministe, reproductible et suffisamment simple pour isoler le rôle de la couche agentique ;
+    \item évaluer les sorties DeepSeek : conformité d'une synthèse, puis admissibilité et performance de propositions d'allocation simulées.
 \end{enumerate}
+
+J'ai ainsi construit un cas d'étude dont les sorties peuvent être réexaminées : backtest ETF, notes, propositions d'allocation, rejets et coûts. L'évaluation porte sur ces artefacts ; le gain de compréhension ou de temps pour un analyste demanderait une étude auprès d'utilisateurs.
 
 \section{Périmètre}
 
-Le rapport se concentre sur les actions liquides, ETF, futures et crypto-actifs comme univers d'étude pour les solutions ouvertes. Les produits complexes, l'optimisation fiscale, le trading haute fréquence et les infrastructures propriétaires d'exécution ne sont pas étudiés en détail.
+Le périmètre empirique est limité à quatre ETF factoriels américains et à \texttt{SPY}. Les ETF servent de proxies investissables des expositions value, momentum, quality et low volatility ; les facteurs ne sont pas reconstruits titre par titre. Les futures, les crypto-actifs et les univers d'actions individuelles sont évoqués dans l'état de l'art, mais ne sont pas expérimentés.
 
-Le travail ne vise pas à construire une plateforme de trading prête pour la production, à démontrer une capacité à générer de l'alpha ou à proposer un dispositif réglementaire complet. Il valide certains principes architecturaux à travers un prototype expérimental : séparation entre calcul et interprétation, contrôle hors échantillon, journalisation structurée, permissions limitées et validation humaine. Les résultats financiers sont donc des résultats de démonstration et non une recommandation d'investissement.
+J'ai limité le travail à une démonstration expérimentale de la séparation entre calcul, interprétation et contrôle des sorties du LLM. L'objectif n'est pas de démontrer un alpha, mais d'évaluer cette organisation sur un cas reproductible. Aucun ordre réel n'est envoyé.
 
-L'analyse distingue trois niveaux :
+L'analyse distingue deux niveaux :
 \begin{description}
-    \item[Agents généralistes :] frameworks permettant de coordonner des rôles, outils, mémoires et workflows.
-    \item[Briques quantitatives :] bibliothèques de données, backtesting, recherche factorielle, apprentissage par renforcement et exécution simulée.
-    \item[Applications financières agentiques :] dépôts combinant LLM, analyse financière et décision d'investissement.
+    \item[Socle quantitatif déterministe :] données, rendements, portefeuille, coûts, risque et diagnostics.
+    \item[Orchestration et gouvernance LLM :] workflow, contrat JSON, permissions, rejet et journalisation.
 \end{description}
 
 \section{Organisation du rapport}
 
-Le chapitre~\ref{cap:etat-art} présente l'état de l'art et la cartographie des solutions GitHub. Le chapitre~\ref{cap:methodologie} décrit la méthode de sélection et d'évaluation. Le chapitre~\ref{cap:architecture} propose une architecture cible multi-agents adaptée au trading multifactoriel. Le chapitre~\ref{cap:discussion} discute les risques, les limites et les conditions de mise en production. Le chapitre~\ref{cap:conclusion} conclut et propose des pistes d'approfondissement.
-
-% Texte d'exemple du template conservé hors compilation.
+La revue des solutions et la méthodologie expliquent les choix qui précèdent l'architecture. Le chapitre~\ref{cap:discussion} rassemble les résultats, depuis la comparaison des notes jusqu'au PnL d'allocation, avec leurs coûts et leurs biais. Je termine par les enseignements que j'en retiens et deux suites prioritaires.

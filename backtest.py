@@ -266,6 +266,8 @@ def main() -> None:
             "risk_free_rate": 0.0,
             "turnover_definition": "one_way_half_sum_absolute_weight_changes",
             "annualization": "monthly_periods_per_year_12",
+            "execution_timing": "theoretical_month_end_close",
+            "initial_investment_cost": "excluded_portfolio_assumed_at_target_weights",
         },
         "last_observation": returns.index[-1].date().isoformat(),
     }

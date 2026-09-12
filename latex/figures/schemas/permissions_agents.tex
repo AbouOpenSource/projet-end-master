@@ -27,16 +27,28 @@
 }
 
 \begin{document}
-\begin{tikzpicture}[node distance=6mm and 8mm]
-\node[agent] (read) {Agents données, facteurs\\et actualités};
-\node[agent, below=of read] (recommend) {Agents portefeuille\\et superviseur};
-\node[control, right=of read] (allowed) {Actions autorisées\\lire, calculer via outil,\\expliquer, journaliser};
-\node[control, right=of recommend] (escalate) {Escalade obligatoire\\anomalie, désaccord,\\limite ou source absente};
-\node[control, below right=13mm and 8mm of allowed] (forbidden) {Actions interdites\\modifier silencieusement les poids\\ou envoyer un ordre};
-\draw[arrow] (read) -- (allowed);
-\draw[arrow] (recommend) -- (escalate);
-\draw[danger] (read.east) to[bend left=22] (forbidden.north west);
-\draw[danger] (recommend.east) to[bend right=22] (forbidden.south west);
+\begin{tikzpicture}[node distance=14mm and 9mm]
+\node[agent, text width=2.7cm] (read)
+  {Agents données, facteurs\\et actualités};
+\node[agent, text width=2.7cm, below=of read] (recommend)
+  {Agents portefeuille\\et superviseur};
+
+\node[control, font=\scriptsize, text width=3.0cm, right=18mm of read] (allowed)
+  {Actions autorisées\\lire, calculer via outil,\\expliquer, journaliser};
+\node[control, font=\scriptsize, text width=3.0cm, right=18mm of recommend] (escalate)
+  {Escalade obligatoire\\anomalie, désaccord,\\limite ou source absente};
+\node[control, font=\scriptsize, text width=3.0cm, right=18mm of escalate] (forbidden)
+  {Actions interdites\\modifier silencieusement les poids\\ou envoyer un ordre};
+
+\draw[arrow] (read.east) -- (allowed.west);
+\draw[arrow] (recommend.east) -- (escalate.west);
+
+% Les accès interdits sont routés au-dessus et au-dessous des contrôles.
+\draw[danger] (read.north east) -- ++(0,0.65cm)
+  -| node[pos=0.5,above]{accès interdit} (forbidden.north west);
+\draw[danger] (recommend.south east)
+  to[out=-30,in=210] (forbidden.south west);
+
 \node[label, below=5mm of forbidden] {Principe du moindre privilège};
 \end{tikzpicture}
-\end{document}
+\end{document}\n

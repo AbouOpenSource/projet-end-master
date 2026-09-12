@@ -1,0 +1,223 @@
+% Font theme for the Wildcat Beamer theme.
+% Controlled by the font= option passed to \usetheme{wildcat}:
+%
+%   font= (omitted)  DEFAULT: Fira Sans (ships with MiKTeX/TeX Live, no bundling)
+%   font=noto        Noto Sans (ships with Overleaf/TeX Live, no bundling)
+%   font=poppins     Poppins + IBM Plex Sans (free Google Fonts, files required)
+%   font=nu          Official NU brand fonts: Campton + Akkurat Pro (files required)
+%   font=installed   Campton + Akkurat Pro loaded from system-installed fonts
+%
+\mode<presentation>
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DEFAULT - Fira Sans
+%%
+%% Ships with MiKTeX and TeX Live as the "fira" package; pre-installed on
+%% Overleaf. No font files need to be bundled with your presentation.
+%%
+%% MiKTeX:  auto-installs on first compile.
+%% TeX Live: run  tlmgr install fira  if not already installed.
+%% Overleaf: works out of the box.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\wc@tmp{nu}\ifx\wc@fontopt\wc@tmp\else
+\def\wc@tmp{poppins}\ifx\wc@fontopt\wc@tmp\else
+\def\wc@tmp{installed}\ifx\wc@fontopt\wc@tmp\else
+\def\wc@tmp{noto}\ifx\wc@fontopt\wc@tmp\else
+
+\newfontfamily\FiraRegular{FiraSans-Regular}[
+    Extension      = .otf,
+    ItalicFont     = FiraSans-Italic,
+    BoldFont       = FiraSans-SemiBold,
+    BoldItalicFont = FiraSans-SemiBoldItalic,
+]
+\newfontfamily\FiraLight{FiraSans-Light}[
+    Extension      = .otf,
+    ItalicFont     = FiraSans-LightItalic,
+    BoldFont       = FiraSans-Regular,
+    BoldItalicFont = FiraSans-Italic,
+]
+\newfontfamily\FiraExtraLight{FiraSans-ExtraLight}[
+    Extension      = .otf,
+    ItalicFont     = FiraSans-ExtraLightItalic,
+    BoldFont       = FiraSans-Light,
+    BoldItalicFont = FiraSans-LightItalic,
+]
+
+\setbeamerfont{title}{family=\FiraRegular, size=\LARGE}
+\setbeamerfont{author}{family=\FiraLight, size=\small}
+\setbeamerfont{frametitle}{family=\FiraLight, size=\Large}
+\setbeamerfont{section}{family=\FiraExtraLight, size=\LARGE}
+\setsansfont{FiraSans-ExtraLight}[
+    Extension      = .otf,
+    ItalicFont     = FiraSans-ExtraLightItalic,
+    BoldFont       = FiraSans-Light,
+    BoldItalicFont = FiraSans-LightItalic,
+]
+
+\fi\fi\fi\fi  % end default block
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% font=noto - Noto Sans
+%%
+%% Broad Unicode sans-serif family distributed with TeX Live/Overleaf.
+%% Weight usage mirrors the default Fira setup:
+%%   title      -> Regular
+%%   author     -> Light
+%%   frametitle -> Light
+%%   section    -> ExtraLight
+%%   body       -> ExtraLight
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\wc@tmp{noto}\ifx\wc@fontopt\wc@tmp
+\RequirePackage[sf]{noto}
+
+\newfontfamily\NotoRegular{NotoSans}[
+    UprightFont    = *-Regular,
+    ItalicFont     = *-Italic,
+    BoldFont       = *-SemiBold,
+    BoldItalicFont = *-SemiBoldItalic,
+]
+\newfontfamily\NotoLight{NotoSans}[
+    UprightFont    = *-Light,
+    ItalicFont     = *-LightItalic,
+    BoldFont       = *-Regular,
+    BoldItalicFont = *-Italic,
+]
+\newfontfamily\NotoExtraLight{NotoSans}[
+    UprightFont    = *-ExtraLight,
+    ItalicFont     = *-ExtraLightItalic,
+    BoldFont       = *-Light,
+    BoldItalicFont = *-LightItalic,
+]
+
+\setbeamerfont{title}{family=\NotoRegular, size=\LARGE}
+\setbeamerfont{author}{family=\NotoLight, size=\small}
+\setbeamerfont{frametitle}{family=\NotoLight, size=\Large}
+\setbeamerfont{section}{family=\NotoExtraLight, size=\LARGE}
+\setsansfont{NotoSans}[
+    UprightFont    = *-ExtraLight,
+    ItalicFont     = *-ExtraLightItalic,
+    BoldFont       = *-Light,
+    BoldItalicFont = *-LightItalic,
+]
+
+\fi  % end noto block
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% font=poppins - Poppins + IBM Plex Sans (free Google Fonts)
+%%
+%% Northwestern-recommended free substitutes for the proprietary NU fonts.
+%% Font files must be bundled with your presentation:
+%%
+%%   your-presentation/
+%%     your-slides.tex
+%%     fonts/
+%%       Poppins/
+%%         Poppins-Medium.ttf
+%%         Poppins-MediumItalic.ttf
+%%         Poppins-SemiBold.ttf
+%%         Poppins-SemiBoldItalic.ttf
+%%         Poppins-Light.ttf
+%%         Poppins-LightItalic.ttf
+%%         Poppins-Regular.ttf
+%%         Poppins-Italic.ttf
+%%       IBM_Plex_Sans/
+%%         IBMPlexSans-Light.ttf
+%%         IBMPlexSans-LightItalic.ttf
+%%         IBMPlexSans-Regular.ttf
+%%         IBMPlexSans-Italic.ttf
+%%
+%% Download: https://fonts.google.com/specimen/Poppins
+%%           https://fonts.google.com/specimen/IBM+Plex+Sans
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\wc@tmp{poppins}\ifx\wc@fontopt\wc@tmp
+
+\newfontfamily\PoppinsMedium[
+    Path           = fonts/Poppins/,
+    Extension      = .ttf,
+    UprightFont    = *-Medium,
+    ItalicFont     = *-MediumItalic,
+    BoldFont       = *-SemiBold,
+    BoldItalicFont = *-SemiBoldItalic,
+]{Poppins}
+\newfontfamily\PoppinsLight[
+    Path           = fonts/Poppins/,
+    Extension      = .ttf,
+    UprightFont    = *-Light,
+    ItalicFont     = *-LightItalic,
+    BoldFont       = *-Regular,
+    BoldItalicFont = *-Italic,
+]{Poppins}
+\setbeamerfont{title}{family=\PoppinsMedium, size=\LARGE}
+\setbeamerfont{author}{family=\PoppinsLight, size=\small}
+\setbeamerfont{frametitle}{family=\PoppinsMedium, size=\Large}
+\setbeamerfont{section}{family=\PoppinsLight, size=\LARGE}
+\setsansfont[
+    Path           = fonts/IBM_Plex_Sans/,
+    Extension      = .ttf,
+    UprightFont    = IBMPlexSans-Light,
+    ItalicFont     = IBMPlexSans-LightItalic,
+    BoldFont       = IBMPlexSans-Regular,
+    BoldItalicFont = IBMPlexSans-Italic,
+]{IBMPlexSans}
+
+\fi  % end poppins block
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% font=nu - Official NU brand fonts: Campton + Akkurat Pro
+%%
+%% Proprietary fonts available to Northwestern affiliates from:
+%%   https://www.northwestern.edu/brand/visual-identity/typography/
+%%
+%%   your-presentation/
+%%     your-slides.tex
+%%     fonts/
+%%       Campton/
+%%         Campton Medium.otf
+%%         Campton Light.otf
+%%       Akkurat/
+%%         AkkuratProLight-Regular.otf
+%%         AkkuratProLight-Italic.otf
+%%         AkkuratPro-Regular.otf
+%%         AkkuratPro-Bold.otf
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\wc@tmp{nu}\ifx\wc@fontopt\wc@tmp
+
+\newfontfamily\CamptonMedium[Path=fonts/Campton/, Extension=.otf]{Campton Medium}
+\newfontfamily\CamptonLight[Path=fonts/Campton/, Extension=.otf]{Campton Light}
+\setbeamerfont{title}{family=\CamptonMedium, size=\LARGE}
+\setbeamerfont{author}{family=\CamptonLight, size=\small}
+\setbeamerfont{frametitle}{family=\CamptonMedium, size=\Large}
+\setbeamerfont{section}{family=\CamptonLight, size=\LARGE}
+\setsansfont[
+    Path           = fonts/Akkurat/,
+    UprightFont    = *Light-Regular,
+    ItalicFont     = *Light-Italic,
+    BoldFont       = *-Regular,
+    BoldItalicFont = *-Bold,
+    Extension      = .otf,
+]{AkkuratPro}
+
+\fi  % end nu block
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% font=installed - Campton + Akkurat Pro (system-installed)
+%%
+%% For users who have installed Campton and Akkurat Pro as system fonts.
+%% No fonts/ directory needed - fontspec loads them by name from the OS.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\def\wc@tmp{installed}\ifx\wc@fontopt\wc@tmp
+
+\newfontfamily\CamptonMedium{Campton Medium}
+\newfontfamily\CamptonLight{Campton Light}
+\setbeamerfont{title}{family=\CamptonMedium, size=\LARGE}
+\setbeamerfont{author}{family=\CamptonLight, size=\small}
+\setbeamerfont{frametitle}{family=\CamptonMedium, size=\Large}
+\setbeamerfont{section}{family=\CamptonLight, size=\LARGE}
+\setsansfont[BoldFont={Akkurat Pro}]{Akkurat Light Pro}
+
+\fi  % end installed block
+
+% Mono font: no explicit setting - fontspec falls back to Latin Modern Mono,
+% which is universally available across TeX Live, MiKTeX, and Overleaf.
+
+\mode<all>

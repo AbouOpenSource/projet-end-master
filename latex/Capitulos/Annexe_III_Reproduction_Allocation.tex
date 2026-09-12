@@ -1,0 +1,34 @@
+\chapter{Reproduction de l'expérience d'allocation}\label{ann:allocation}
+
+L'expérience du 12 septembre 2026 est conservée dans \path{results/allocation_experiment/}. Le code, le prompt et les données utilisés sont identifiés par les empreintes de \path{deepseek/report.json}. Les réponses restent consultables dans \path{deepseek_decisions.json}. La reproduction locale ne nécessite ni clé API ni connexion réseau.
+
+\section{Fichiers et vérifications}
+
+\begin{description}
+\item[Propositions et exécution :] \path{deepseek/decisions.json} contient les entrées, propositions, quantités avant/après, dates d'exécution, frais et rejets des trois politiques.
+\item[Valeurs et indicateurs :] \path{deepseek/equity.csv}, \path{deepseek/metrics.csv} et \path{yearly_returns.csv} fournissent les séries et résultats numériques.
+\item[Essais techniques :] \path{technical_pilot_default_thinking.json} conserve les quatre tentatives précédant la campagne corrigée ; elles ne sont pas fusionnées avec ses 56 décisions.
+\item[Audit :] \path{AUDIT.json} conserve les écarts comptables, l'identité du replay et le contrôle des 31 fichiers antérieurs. Le manifeste correspondant est \path{original_inputs_sha256.json}.
+\item[Documentation :] \path{PROTOCOLE.md} et \path{ANALYSE.md} détaillent conventions, résultats et limites.
+\end{description}
+
+\section{Commandes de reproduction sans appel API}
+
+Depuis la racine du projet, la commande suivante relit les réponses archivées et calcule les positions :
+
+\begin{quote}\small\ttfamily
+experience/.venv/bin/python agent\_allocation\_backtest.py\\
+\hspace*{1em}--mode replay --start 2021-05-01\\
+\hspace*{1em}--archive results/allocation\_experiment/deepseek\_decisions.json\\
+\hspace*{1em}--max-output-tokens 3000\\
+\hspace*{1em}--output results/allocation\_experiment/replay
+\end{quote}
+Les lignes sont présentées séparément pour la lecture ; la commande s'exécute sur une seule ligne. Les paramètres de coûts et de fin de période prennent leurs valeurs par défaut, 10 points de base et le 31 décembre 2025. Toute différence de contexte par rapport à une requête archivée interrompt le replay.
+
+La vérification comptable et la suite de tests s'exécutent ensuite avec :
+\begin{quote}\small\ttfamily
+experience/.venv/bin/python analyze\_allocation\_results.py\\[0.3em]
+experience/.venv/bin/python -m pytest -q
+\end{quote}
+
+Le mode \texttt{live}, décrit dans le README, nécessite une clé et un budget explicite. Il réutilise les dates de son archive et compte toutes les tentatives, y compris les interruptions. Rejouer les archives n'envoie pas de nouvel appel ; une nouvelle expérience avec un autre prompt ou d'autres contraintes doit utiliser une archive distincte et un budget identifié.

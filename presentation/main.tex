@@ -1,0 +1,386 @@
+
+\documentclass[aspectratio=169]{beamer}
+
+\usetheme[
+  pattern=network,
+  color=nudarkblue,
+  numbering=progressbar,
+  sectionpage=none,
+  agendastyle=plain
+]{wildcat}
+
+\usepackage[french]{babel}
+\usepackage{booktabs}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+
+\title{Insurance Agents}
+\subtitle{Plateforme web d'agents IA pour l'assurance}
+\date{Juin 2026}
+\author{Abou Dramane SANOU \& Sah Yacouba Faisale TRAORE}
+\institute{CNAM - Projet d'apprentissage automatique}
+\titlegraphic{\includegraphics[height=1.15cm]{../report/logo_cnam.png}}
+
+\newcommand{\smallmuted}[1]{{\footnotesize\textcolor{black!55}{#1}}}
+\newcommand{\metricbox}[2]{%
+  \begin{block}{#1}\centering\Large\textbf{#2}\end{block}%
+}
+
+\begin{document}
+
+% 1
+\begin{frame}
+  \titlepage
+  \note{Timing: 30 secondes. Présenter le projet comme un prototype complet: interface, API, agents et RAG documentaire.}
+\end{frame}
+
+% 2
+\begin{frame}{Message clé}
+  \begin{block}{Objectif du prototype}
+    Construire une plateforme web où un utilisateur peut interroger des agents spécialisés assurance, avec routage automatique, contrôles métier, recherche documentaire et traçabilité.
+  \end{block}
+
+  \vspace{0.6em}
+  \begin{columns}[T]
+    \column{0.33\textwidth}
+      \metricbox{Interface}{React + Vite}
+    \column{0.33\textwidth}
+      \metricbox{Backend}{FastAPI}
+    \column{0.33\textwidth}
+      \metricbox{Recherche}{Qdrant + RAG}
+  \end{columns}
+  \note{Timing: 45 secondes. Donner la phrase de synthèse: ce n'est pas seulement un chatbot, c'est une chaîne agentique contrôlée.}
+\end{frame}
+
+% 3
+\begin{frame}{Plan de la présentation}
+  \begin{enumerate}
+    \item Problème métier et périmètre
+    \item Architecture applicative
+    \item Agents, RAG et orchestration
+    \item Démonstration et scénarios de test
+    \item Résultats, limites et perspectives
+  \end{enumerate}
+  \note{Timing: 30 secondes. Annoncer que la présentation suit le flux utilisateur puis le flux technique.}
+\end{frame}
+
+% 4
+\begin{frame}{Problème métier}
+  \begin{columns}[T]
+    \column{0.52\textwidth}
+      \begin{itemize}
+        \item Les équipes assurance consultent des règles, documents et historiques dispersés.
+        \item Les réponses doivent être rapides mais aussi justifiables.
+        \item Les décisions sensibles nécessitent une validation humaine.
+      \end{itemize}
+    \column{0.42\textwidth}
+      \begin{alertblock}{Risque si l'IA est isolée}
+        Une réponse fluide mais non sourcée peut être inutilisable dans un contexte contractuel ou réglementaire.
+      \end{alertblock}
+  \end{columns}
+  \note{Timing: 1 minute. Motiver le besoin de spécialisation, de sources et de garde-fous.}
+\end{frame}
+
+% 5
+\begin{frame}{Objectifs du projet}
+  \begin{itemize}
+    \item Fournir une API et une interface simples pour interagir avec des agents métier.
+    \item Séparer clairement frontend, backend, orchestration, outils métier et recherche documentaire.
+    \item Rendre chaque réponse plus traçable grâce aux sources, aux contrôles et à l'historique.
+    \item Conserver un repli déterministe si le fournisseur LLM est indisponible.
+  \end{itemize}
+  \note{Timing: 45 secondes. Insister sur le côté prototype robuste: le système doit continuer à répondre même sans LLM.}
+\end{frame}
+
+% 6
+\begin{frame}{Périmètre fonctionnel}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{block}{Inclus}
+        \begin{itemize}
+          \item Authentification utilisateur
+          \item Catalogue d'agents
+          \item Chat et historique
+          \item Invocation agentique
+          \item RAG sur documents assurance moto
+        \end{itemize}
+      \end{block}
+    \column{0.48\textwidth}
+      \begin{block}{Hors périmètre actuel}
+        \begin{itemize}
+          \item Décision automatique finale
+          \item Déploiement production
+          \item Module \texttt{system\_jobs}
+          \item Évaluation statistique complète du RAG
+        \end{itemize}
+      \end{block}
+  \end{columns}
+  \note{Timing: 45 secondes. Clarifier que l'application est une aide opérationnelle, pas un moteur de décision autonome.}
+\end{frame}
+
+% 7
+\begin{frame}{Architecture globale}
+  \centering
+  \resizebox{0.95\linewidth}{!}{%
+  \begin{tikzpicture}[
+    node distance=16mm and 13mm,
+    block/.style={draw, rounded corners=4pt, fill=wcprimary10, minimum width=31mm, minimum height=9mm, align=center, font=\small},
+    store/.style={draw, rounded corners=4pt, fill=nubrightgreen!18, minimum width=31mm, minimum height=9mm, align=center, font=\small},
+    flow/.style={-Latex, thick}
+  ]
+    \node[block] (ui) {Frontend React\\\footnotesize Vite};
+    \node[block, right=of ui] (api) {API FastAPI\\\footnotesize \texttt{/api/v1}};
+    \node[block, right=of api] (orch) {Orchestrateur\\\footnotesize A0 + services};
+    \node[store, right=of orch] (qdrant) {Qdrant\\\footnotesize vecteurs + payload};
+    \node[store, below=of qdrant] (docs) {Documents\\\footnotesize PDF assurance};
+    \node[block, below=of orch] (tools) {Outils métier\\\footnotesize contrôles + RAG};
+    \node[block, above=of orch] (llm) {Provider LLM\\\footnotesize DeepSeek / OpenAI / Ollama};
+
+    \draw[flow] (ui) -- node[above]{requête} (api);
+    \draw[flow] (api) -- (orch);
+    \draw[flow] (orch) -- (tools);
+    \draw[flow] (tools) -- (orch);
+    \draw[flow] (orch) -- (qdrant);
+    \draw[flow] (docs) -- node[right]{ingestion} (qdrant);
+    \draw[flow] (orch) -- (llm);
+    \draw[flow] (llm) -- (orch);
+    \draw[flow] (orch) -- ++(0,-1.0) -| node[pos=0.25,below]{réponse tracée} (api);
+    \draw[flow] (api) -- ++(-1.0,0) |- (ui);
+  \end{tikzpicture}}
+  \note{Timing: 1 minute 15. Décrire le chemin complet: utilisateur, API, orchestrateur, outils, Qdrant, LLM puis réponse.}
+\end{frame}
+
+% 8
+\begin{frame}{Flux d'une requête}
+  \begin{enumerate}
+    \item L'utilisateur envoie une question depuis le frontend.
+    \item L'API authentifie la requête et transmet message + contexte.
+    \item A0 route vers l'agent métier le plus adapté.
+    \item Les outils métier exécutent les contrôles et récupèrent les sources.
+    \item Le LLM synthétise si le provider est disponible.
+    \item La réponse et la trace sont persistées dans l'historique.
+  \end{enumerate}
+  \note{Timing: 1 minute. Faire le lien avec une question concrète: délai de déclaration d'un sinistre.}
+\end{frame}
+
+% 9
+\begin{frame}{Catalogue d'agents}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{itemize}
+        \item \textbf{A0} - Orchestrateur
+        \item \textbf{A1} - Distribution / conseil
+        \item \textbf{A2} - Souscription
+        \item \textbf{A3} - Gestion contrats
+        \item \textbf{A4} - Sinistres
+        \item \textbf{A6} - Fraude
+      \end{itemize}
+    \column{0.48\textwidth}
+      \begin{itemize}
+        \item \textbf{A10} - Conformité
+        \item \textbf{A11} - Service client
+        \item \textbf{A12} - Data quality / BI
+        \item \textbf{A13} - Investissements / ALM
+        \item Autres agents: actuariat, réassurance, finance, risk
+      \end{itemize}
+  \end{columns}
+  \vspace{0.4em}
+  \begin{block}{Principe}
+    Chaque agent regroupe des outils adaptés à son domaine, mais conserve une validation humaine finale.
+  \end{block}
+  \note{Timing: 1 minute. Ne pas détailler tous les agents, insister sur la modularité du catalogue.}
+\end{frame}
+
+% 10
+\begin{frame}{RAG documentaire avec Qdrant}
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item Extraction du texte des PDF.
+        \item Découpage en fragments chevauchants.
+        \item Embedding multilingue MiniLM.
+        \item Stockage dans \texttt{insurance\_documents}.
+        \item Recherche + reranking selon la question.
+      \end{itemize}
+    \column{0.44\textwidth}
+      \begin{exampleblock}{Bénéfice}
+        Les réponses peuvent citer des passages, pages et documents, au lieu de s'appuyer uniquement sur la mémoire du modèle.
+      \end{exampleblock}
+  \end{columns}
+  \note{Timing: 1 minute. Expliquer que Qdrant stocke vecteur + payload documentaire.}
+\end{frame}
+
+% 11
+\begin{frame}{Interface utilisateur}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+      \includegraphics[width=\linewidth]{\detokenize{../report/screens/page discussion avec contenu.png}}
+    \column{0.39\textwidth}
+      \begin{itemize}
+        \item Discussion guidée par agent ou en mode auto.
+        \item Provider LLM laissé au serveur via \texttt{.env}.
+        \item Historique conservé par utilisateur.
+        \item Réponses sourcées et relisibles.
+      \end{itemize}
+  \end{columns}
+  \note{Timing: 1 minute. Montrer l'expérience cible: une page de travail, pas une page marketing.}
+\end{frame}
+
+% 12
+\begin{frame}{Démonstration vidéo}
+  \begin{columns}[T]
+    \column{0.55\textwidth}
+      \includegraphics[width=\linewidth]{\detokenize{../report/screens/page discussion avec contenu.png}}
+    \column{0.39\textwidth}
+      \begin{block}{Lien de démonstration}
+        \small\url{https://youtu.be/efoV02cd5zg}
+      \end{block}
+      \begin{itemize}
+        \item Parcours depuis l'interface web.
+        \item Question métier envoyée au backend.
+        \item Réponse agentique avec extrait RAG et références.
+      \end{itemize}
+  \end{columns}
+  \note{Timing: 45 secondes. Utiliser cette slide comme support si la démonstration live n'est pas possible.}
+\end{frame}
+
+% 13
+\begin{frame}{Authentification et catalogue}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \includegraphics[width=\linewidth,height=0.55\textheight,keepaspectratio]{../report/screens/auth.png}
+      \smallmuted{Authentification et session utilisateur.}
+    \column{0.48\textwidth}
+      \includegraphics[width=\linewidth,height=0.55\textheight,keepaspectratio]{../report/screens/lists_agents.png}
+      \smallmuted{Catalogue des agents exposé par le backend.}
+  \end{columns}
+  \note{Timing: 45 secondes. Souligner que les discussions sont rattachées à un utilisateur, ce qui aide la traçabilité.}
+\end{frame}
+
+% 14
+\begin{frame}{Scénario clé: délai de déclaration}
+  \begin{block}{Question}
+    \textit{Quel est le délai limite de déclaration d'un sinistre ?}
+  \end{block}
+
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{itemize}
+        \item Routage automatique vers \textbf{A4 - Sinistres}.
+        \item Recherche documentaire dans les conditions générales.
+        \item Synthèse par le provider LLM configuré.
+      \end{itemize}
+    \column{0.46\textwidth}
+      \begin{exampleblock}{Réponse attendue}
+        Déclaration par écrit au plus tard dans les \textbf{5 jours ouvrés} à partir de la date de connaissance du sinistre.
+      \end{exampleblock}
+  \end{columns}
+  \note{Timing: 1 minute. Cette slide est le scénario de démonstration principal: elle montre routage, RAG et réponse sourcée.}
+\end{frame}
+
+% 15
+\begin{frame}{Scénarios de démonstration}
+  \scriptsize
+  \begin{tabular}{@{}p{0.12\linewidth}p{0.38\linewidth}p{0.26\linewidth}p{0.15\linewidth}@{}}
+    \toprule
+    \textbf{ID} & \textbf{Cas métier} & \textbf{Agent attendu} & \textbf{Mode} \\
+    \midrule
+    D01 & Délai de déclaration & A4 Sinistres & Auto \\
+    D02 & Vol moto: pièces manquantes & A4 Sinistres & Auto \\
+    D03 & Conseil commercial moto & A1 Distribution & Auto \\
+    D04 & Risque livreur urbain & A2 Souscription & Auto \\
+    D05 & Attestation changement véhicule & A3 Gestion contrats & Auto \\
+    D06 & Suspicion de fraude & A6 Fraude & Auto / Agent \\
+    D07 & RGPD et DDA & A10 Conformité & Agent \\
+    D08 & Réclamation client & A11 Service client & Auto \\
+    \bottomrule
+  \end{tabular}
+  \note{Timing: 1 minute. Présenter ce tableau comme le plan de validation métier pour la soutenance.}
+\end{frame}
+
+% 16
+\begin{frame}{Évaluation fonctionnelle}
+  \begin{columns}[T]
+    \column{0.33\textwidth}
+      \metricbox{Tests backend}{30 OK}
+    \column{0.33\textwidth}
+      \metricbox{Services}{API + Front + Qdrant}
+    \column{0.33\textwidth}
+      \metricbox{Scénarios}{D01-D08}
+  \end{columns}
+
+  \vspace{0.6em}
+  \begin{itemize}
+    \item Authentification, discussions et historique persistés en SQLite.
+    \item Routage automatique et invocation manuelle validés.
+    \item Repli déterministe explicite si le LLM n'est pas disponible.
+    \item Test spécifique sur le délai de déclaration et les sources RAG.
+  \end{itemize}
+  \note{Timing: 1 minute. Faire comprendre que l'évaluation est fonctionnelle, pas encore une benchmark quantitative du RAG.}
+\end{frame}
+
+% 17
+\begin{frame}[fragile]{Lancer le projet}
+  \begin{block}{Démarrage}
+\begin{verbatim}
+make up
+\end{verbatim}
+  \end{block}
+
+  \begin{columns}[T]
+    \column{0.5\textwidth}
+      \begin{itemize}
+        \item Frontend: \texttt{localhost:15173}
+        \item API: \texttt{localhost:18000/api}
+        \item Swagger: \texttt{localhost:18000/docs}
+      \end{itemize}
+    \column{0.45\textwidth}
+      \begin{itemize}
+        \item \texttt{make ingest-recreate}
+        \item \texttt{make qdrant-vectors}
+        \item \texttt{make logs}
+        \item \texttt{make down}
+      \end{itemize}
+  \end{columns}
+  \note{Timing: 45 secondes. Cette slide sert si l'auditoire demande comment reproduire.}
+\end{frame}
+
+% 18
+\begin{frame}{Limites et perspectives}
+  \begin{columns}[T]
+    \column{0.48\textwidth}
+      \begin{alertblock}{Limites}
+        \begin{itemize}
+          \item Évaluation métier encore limitée.
+          \item Qualité RAG à mesurer plus finement.
+          \item Pas de décision automatique finale.
+        \end{itemize}
+      \end{alertblock}
+    \column{0.48\textwidth}
+      \begin{exampleblock}{Perspectives}
+        \begin{itemize}
+          \item Jeu de questions métier élargi.
+          \item Métriques de rappel et fidélité aux sources.
+          \item Meilleure observabilité des traces agentiques.
+        \end{itemize}
+      \end{exampleblock}
+  \end{columns}
+  \note{Timing: 1 minute. Rester lucide: le projet est un socle fonctionnel, pas un produit final.}
+\end{frame}
+
+% 19
+\begin{frame}{Conclusion}
+  \begin{block}{Contribution principale}
+    \textit{insurance\_agents} transforme un prototype de chat en une plateforme modulaire combinant interface web, API, agents spécialisés, contrôles métier, RAG documentaire et historique de discussion.
+  \end{block}
+
+  \vspace{0.45em}
+  \small Vidéo de démonstration: \url{https://youtu.be/efoV02cd5zg}
+
+  \vspace{0.55em}
+  \centering
+  \Large Merci. Questions ?
+  \note{Timing: 30 secondes. Reprendre les trois mots clés: modularité, traçabilité, validation humaine.}
+\end{frame}
+
+\end{document}

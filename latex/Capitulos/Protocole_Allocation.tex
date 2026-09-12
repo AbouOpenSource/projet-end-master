@@ -1,0 +1,49 @@
+\section{Extension : décisions d'allocation et PnL simulé}\label{sec:protocole-allocation}
+
+L'expérience de synthèse ne peut pas modifier le PnL puisqu'elle reprend une allocation déjà calculée. Pour étudier l'effet d'une décision du modèle, j'ai ajouté une seconde expérience : DeepSeek propose des poids cibles, puis un moteur Python indépendant les accepte ou les rejette et calcule les positions. Cette extension utilise le module \path{agent_allocation_backtest.py}. Elle n'exécute pas les sept agents de l'architecture cible et ne passe pas par le graphe LangGraph de restitution. Elle teste un rôle d'allocation LLM encadré par des règles déterministes, sans connexion à un courtier.
+
+\subsection{Période, références et informations disponibles}
+
+La collecte a été réalisée le 12 septembre 2026 sur 56 décisions mensuelles, pour les mois de mai 2021 à décembre 2025. Chaque portefeuille débute avec 100 unités, déjà investies à 25\,\% dans chaque ETF à la clôture du 30 avril 2021. Les anciennes positions supportent la variation jusqu'à la première exécution. Les coûts d'entrée initiale et de liquidation finale sont exclus.
+
+Trois politiques utilisent les mêmes cours ajustés, le même calendrier, les mêmes contraintes et le même moteur de frais : une cible équipondérée de 25\,\% ; une allocation proportionnelle à l'inverse de la volatilité historique, plafonnée à 40\,\% ; et les poids proposés par DeepSeek. Pour la règle inverse volatilité, le poids dépassant le plafond est fixé à 40\,\%, puis le solde est réparti proportionnellement entre les actifs encore libres. La procédure est répétée si nécessaire. Les trois politiques restent soumises au contrôle de turnover, sans ajustement discrétionnaire après un rejet.
+
+À la dernière séance du mois précédent, les entrées comprennent les rendements des quatre ETF sur 21, 63, 126 et 252 séances, la volatilité des 252 derniers rendements quotidiens annualisée avec $\sqrt{252}$, le drawdown sur les 253 derniers cours, les poids courants et les contraintes. Ces horizons sont des approximations en séances de un, trois, six et douze mois. Les prix sont coupés à la date d'observation avant le calcul des indicateurs. Le modèle ne reçoit ni cours d'exécution futur, ni rendement du mois à venir, ni actualité. Un test modifie les cours futurs et vérifie que les entrées demeurent identiques. Cette propriété du programme ne résout pas le biais de préentraînement discuté en section~\ref{sec:biais-allocation}.
+
+\subsection{Contrat, contraintes et traitement d'un rejet}
+
+La sortie doit contenir exactement quatre champs : \path{decision_date}, \path{target_weights}, \path{reason} et \path{cited_fields}. La date doit correspondre à celle des entrées. Les quatre ETF sont obligatoires ; les poids doivent être des nombres finis, non négatifs, dont la somme vaut 1, sans levier ni poche de liquidités. La concentration maximale est de 40\,\% par poids cible. Une tolérance de $10^{-9}$ est admise sur la somme ; la normalisation dans cette seule tolérance est enregistrée. Les poids effectivement appliqués figurent dans le journal.
+
+Le turnover proposé est calculé par $\frac{1}{2}\sum_i|w_i^*-w_i^{\mathrm{courant}}|$ et limité à 10\,\%. Les chemins cités doivent exister exactement dans l'objet transmis, et la justification doit être un texte non vide. Ce validateur d'allocation est distinct de celui des 33 synthèses : il contrôle les contraintes numériques et les chemins complets, mais pas la pertinence économique du raisonnement ni la véracité de chaque phrase.
+
+Une proposition rejetée conserve les \emph{quantités} déjà détenues, sans facturer de transaction. Les poids continuent alors à varier avec les prix ; ils ne sont pas réinitialisés à 25\,\%. Le moteur ne corrige pas les poids hors limites et ne demande pas une autre réponse pour remplacer le rejet. Le plafond de concentration s'applique aux poids cibles, sans garantir que les mouvements de marché le respectent entre deux rééquilibrages. Le choix de conserver les positions fait partie de la politique évaluée.
+
+\subsection{Exécution différée et frais autofinancés}
+
+La proposition est produite à partir de la clôture du mois précédent ; l'exécution simulée intervient à la première clôture disponible du mois suivant. Le turnover est revérifié à ce cours, avant puis après prise en compte des frais. Un dépassement provoque également la conservation des positions. Une proposition admissible à l'observation peut ainsi être inexécutable sous les contraintes retenues.
+
+Soient $q_i$ les quantités avant transaction, $P_i$ les cours ajustés d'exécution, $N_i=q_iP_i$ et $V=\sum_i N_i$. Avec les poids cibles $w_i^*$ et le taux $c=0{,}001$, soit 10 points de base, les frais $F$ satisfont :
+\begin{equation}
+F=\frac{c}{2}\sum_i\left|w_i^*(V-F)-N_i\right|,
+\qquad q_i'=\frac{w_i^*(V-F)}{P_i}.
+\label{eq:frais-allocation}
+\end{equation}
+Le moteur résout cette équation par dichotomie. Le turnover réellement échangé vaut $\frac{1}{2V}\sum_i|q_i'P_i-N_i|$. La valeur des nouvelles positions et les frais doivent vérifier $\sum_i q_i'P_i+F=V$. Les frais sont donc financés par le portefeuille et portent sur la moitié du volume effectivement échangé. Avec ces frais, les montants achetés et vendus ne sont plus exactement égaux.
+
+Les unités fractionnaires obtenues à partir de cours ajustés représentent une comptabilité de rendement total. Elles ne constituent pas des quantités directement utilisables auprès d'un courtier. Aucune simulation séparée du spread, de l'impact de marché, de la liquidité ou de la fiscalité n'est réalisée. Le taux de 10 points de base est une hypothèse expérimentale, sans calibrage empirique sur des transactions réelles.
+
+Les valeurs sont suivies chaque séance. Pour $D$ jours calendaires entre le capital initial et la dernière valorisation, le rendement annualisé est $(V_T/V_0)^{365{,}25/D}-1$. La volatilité et le Sharpe utilisent les rendements quotidiens avec facteur $\sqrt{252}$ et taux sans risque nul ; le drawdown inclut la valeur initiale. Ces conventions diffèrent du backtest initial : période plus courte, exécution différée, frais autofinancés et mesures de risque quotidiennes. Les chiffres des deux expériences ne doivent donc pas être comparés comme s'il s'agissait d'un même protocole. Aucun nouveau scénario LLM à 0 ou 30 points de base n'a été collecté ; ces taux servent uniquement aux tests comptables de cette extension.
+
+\subsection{Configuration du modèle et budget de collecte}
+
+Le modèle demandé est \texttt{deepseek-v4-flash} ; les 56 réponses retournent l'identifiant \texttt{deepseek-flash}. Les deux noms sont archivés, sans possibilité de vérifier la version exacte des poids internes du fournisseur. La campagne utilise une température nulle, le mode JSON, un plafond de 3\,000 jetons de sortie et le réglage explicite \texttt{thinking: disabled}, documenté par DeepSeek \citep{deepseekThinking2026}. La température ne suffit pas à garantir des réponses identiques lors de futurs appels.
+
+La période avait d'abord été envisagée sur les 60 mois de 2021--2025. Quatre tentatives techniques ont précédé la collecte : trois réponses sans JSON ont atteint le plafond de 3\,000 jetons de raisonnement, puis une quatrième requête a été interrompue. Après désactivation de ce mode, les 56 appels restants ont été consacrés à une période commune de mai 2021 à décembre 2025. Ce changement répond à la limite de 60 tentatives et a été décidé avant examen des performances de la campagne corrigée. Les quatre tentatives initiales sont conservées séparément et exclues de ses décisions ; elles restent incluses dans le bilan des ressources consommées.
+
+Il n'y a qu'une réponse par date, sans sélection entre répétitions, ni nouvelle génération après rejet. Chaque tentative est écrite sur disque avant l'appel HTTP et consomme une place du budget, même en cas d'erreur ou d'interruption. Une erreur API arrête la collecte ; une reprise conserve cette tentative comme une absence de proposition. Le protocole ne mesure donc pas la variabilité du PnL entre plusieurs générations.
+
+\subsection{Journalisation et reproduction}
+
+L'archive contient le prompt, les indicateurs, les poids courants, les paramètres, leurs empreintes SHA-256, la réponse brute, les identifiants de requête et de modèle, le statut de fin, les jetons rapportés et la durée. Le journal d'exécution ajoute les quantités avant et après décision, les poids appliqués, les frais, le turnover et les motifs de rejet. Les empreintes du fichier de prix, du code et de l'archive sont également enregistrées.
+
+Le mode de reproduction hors réseau vérifie la correspondance exacte de la requête avant de réutiliser la réponse. Modifier les frais, les poids courants ou le prompt invalide cette correspondance. Il s'agit d'une reproductibilité des calculs à décisions archivées, pas d'une garantie de stabilité du service LLM. Les commandes et fichiers nécessaires figurent en annexe~\ref{ann:allocation}. Un test technique sans LLM utilise une règle de momentum sur 60 mois ; ses performances ne sont pas assimilées à celles de DeepSeek.

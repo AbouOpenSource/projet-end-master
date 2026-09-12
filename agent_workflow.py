@@ -66,6 +66,8 @@ def quality_gate(state: WorkflowState) -> dict[str, Any]:
         ("duplicate_dates", "dates dupliquees"),
         ("missing_values_by_ticker", "valeurs manquantes"),
         ("non_positive_values_by_ticker", "prix non positifs"),
+        ("calendar_gaps_over_7_days", "gaps calendaires"),
+        ("daily_return_flags_over_25pct", "mouvements quotidiens extrêmes"),
     ):
         value = quality.get(key, 0)
         if isinstance(value, dict):

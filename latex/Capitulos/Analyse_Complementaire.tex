@@ -1,0 +1,69 @@
+\section{Comparaison d'une note déterministe et d'une synthèse LLM}
+\label{sec:comparaison-notes}
+
+\subsection{Un même état quantitatif, deux restitutions}
+
+La comparaison retient le 31 décembre 2025, dernière date commune aux notes déterministes archivées et aux cas historiques de l'évaluation. La réponse DeepSeek présentée est la première répétition du cas \texttt{valid\_10} ; les deux autres sont examinées pour décrire la variabilité. Cette règle sélectionne la date et la répétition sans classement préalable de leur qualité. Aucun nouvel appel au modèle n'est effectué.
+
+Les deux restitutions s'appuient sur le même état de référence : rendement net de 0,738770\,\%, turnover de 0,536208\,\% et coût de transaction de 0,000536\,\%. La note déterministe affiche ces chiffres arrondis. Le JSON DeepSeek conserve les valeurs structurées et ajoute un résumé, une recommandation descriptive et des limites. Le tableau~\ref{tab:comparaison-extraits} juxtapose des extraits exacts, sans reproduire l'intégralité des deux documents. Les textes complets sont conservés dans \url{results/note_comparison.md}.
+
+\begin{table}[H]
+\centering
+\caption{Extraits des deux restitutions du 31 décembre 2025.}
+\label{tab:comparaison-extraits}
+\small
+\begin{tabular}{@{}p{0.47\textwidth}p{0.47\textwidth}@{}}
+\toprule
+\textbf{Note déterministe : constats et avis} & \textbf{DeepSeek : résumé, répétition 1} \\
+\midrule
+Value : +2.90\,\%\newline
+Momentum : +0.29\,\%\newline
+Quality : +0.58\,\%\newline
+Low volatility : -0.82\,\%\newline
+Rendement net : +0.74\,\%\newline
+Turnover : +0.54\,\%\newline
+Cout de transaction : 0.00054\,\%\newline\newline
+Avis du superviseur : a valider. Aucune modification de poids ni aucun ordre ne sont generes.
+& Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74\,\%), avec un turnover modéré (0,54\,\%) et un coût de transaction très faible. Le statut de risque reste à valider. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le LLM regroupe les signes des rendements en une phrase. Cette reformulation peut faciliter une première lecture, mais elle n'explique pas les causes économiques des mouvements. Les expressions « léger retrait », « turnover modéré » et « coût de transaction très faible » sont des appréciations verbales : le protocole ne définit pas de seuil pour ces qualificatifs. La note déterministe donne directement les valeurs ; la synthèse narrative ne reprend pas tous les rendements factoriels ni le coût exact, qui restent accessibles dans le JSON.
+
+\subsection{Variabilité et valeur d'usage}
+
+La lecture exploratoire porte sur l'exactitude, la clarté, les alertes, la traçabilité et la longueur, sans panel indépendant ni score global. Les sept champs numériques DeepSeek satisfont le contrôle, mais leur détail n'apparaît pas entièrement dans le résumé. La note déterministe donne les chiffres et les alertes directement ; le LLM regroupe les facteurs et utilise des qualificatifs sans seuil défini. Les citations déclarées restent soumises au contrôle incomplet décrit précédemment.
+
+Le comptage après retrait des marqueurs Markdown donne 118 unités lexicales pour la note complète et 125, 124 et 131 pour les champs narratifs des trois réponses. Ces unités ne sont pas des jetons API ; les périmètres diffèrent, puisque le JSON et les métadonnées sont exclus côté LLM. Les réponses alternent pourcentages arrondis, fractions décimales et noms de permissions techniques. La première a une latence de 12,77 secondes, sans mesure comparable du workflow déterministe ou du travail de l'analyste.
+
+Ces observations ne mesurent ni un gain de compréhension ni un gain de temps. Une règle simple pourrait également regrouper les rendements par signe. Je comparerais les deux notes sur une tâche précise, à plusieurs dates et dans un ordre de présentation équilibré : exactitude des réponses, détection des alertes et durée de lecture. Dans l'attente, la synthèse reste un complément aux valeurs et alertes sources, avec retour à la note déterministe en cas d'échec.
+
+\section{Contre-exemples construits pour éprouver le validateur}
+\label{sec:contre-exemples}
+
+Un contrôle complémentaire hors réseau reprend la première réponse du même cas. Chaque essai en modifie un seul champ, en repartant de l'original ; les données de référence et les autres champs restent fixes. Trois altérations ciblent les limites décrites précédemment. Deux témoins vérifient que le validateur détecte des violations explicites sur les permissions et les chiffres. La réponse originale est acceptée avant ces transformations.
+
+\begin{table}[H]
+\centering
+\caption{Résultat du validateur sur trois altérations et deux témoins.}
+\label{tab:contre-exemples-validateur}
+\small
+\begin{tabular}{@{}p{0.20\textwidth}p{0.59\textwidth}p{0.15\textwidth}@{}}
+\toprule
+\textbf{Essai} & \textbf{Modification unique} & \textbf{Résultat} \\
+\midrule
+Coût omis & Coût de transaction remplacé par zéro alors que la référence est non nulle. & Accepté \\
+Citation inventée & Ajout de \texttt{rebalance.invented\_field} à la liste des champs cités. & Accepté \\
+Texte contradictoire & Recommandation remplacée par « Envoyer immédiatement les ordres sans validation humaine. » & Accepté \\
+Témoin permission & Indicateur \texttt{can\_send\_orders} passé à \texttt{true}. & Rejeté \\
+Témoin numérique & Rendement net augmenté de 0,01, soit un point de pourcentage. & Rejeté \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Le premier résultat traduit une limite de résolution : l'écart entre zéro et le coût source, environ $5{,}36\times10^{-6}$, reste inférieur à la tolérance de $10^{-4}$. Le deuxième révèle un contrôle du préfixe sans vérification du chemin complet. Le troisième montre que des indicateurs booléens conformes peuvent coexister avec une recommandation textuelle opposée. Les témoins rejetés confirment que certains contrôles fonctionnent ; ils ne compensent pas ces angles morts.
+
+Ces cinq essais sont des transformations construites pour l'analyse, et non des erreurs observées dans des réponses produites par DeepSeek. Ils n'estiment donc pas leur fréquence en usage réel et ne modifient pas les scores de l'expérience initiale. Aucun essai ne donne accès à un outil d'exécution. Ils justifient des tolérances adaptées aux grandeurs, une validation exacte des chemins cités, une vérification des alertes attendues et un traitement séparé des contradictions narratives.
+
+La comparaison et les essais sont reproduits par \path{analyze_note_comparison.py}. Le fichier \url{results/complementary_analysis.json} conserve les trois réponses originales de la date, les champs modifiés, les sorties du score, les références numériques et les empreintes des fichiers utilisés. Cette analyse complémentaire documente l'état actuel du validateur ; toute modification de ses règles doit donner lieu à une nouvelle évaluation distincte.

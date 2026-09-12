@@ -27,6 +27,7 @@
 - [ ] Remplacer les ETF par un univers historique titres avec données point-in-time pour réduire le survivorship bias.
 - [ ] Vérifier séparément dividendes, splits, corporate actions et délais de publication auprès d'un fournisseur institutionnel.
 - [ ] Modéliser le slippage, l'impact de marché, les contraintes de liquidité et les limites d'exposition.
-- [ ] Ajouter des tests de stress, une validation indépendante et une vraie évaluation de la couche LLM.
+- [ ] Ajouter des tests de stress et une validation indépendante.
+- [x] Ajouter une première évaluation reproductible de la couche LLM.
 - [ ] Compléter la due diligence par un audit juridique des licences, des dépendances et de la sécurité.
 - [ ] Faire valider toute trajectoire de production par les fonctions risque, conformité, juridique et IT.

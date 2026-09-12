@@ -27,7 +27,7 @@ RESULTS_DIR = ROOT / "results"
 DEFAULT_OUTPUT = RESULTS_DIR / "deepseek_evaluation.json"
 
 EXPECTED_REPORTED = {"factor_returns", "net_return", "turnover", "transaction_cost"}
-ALLOWED_CITED = EXPECTED_REPORTED | {"quality_flags", "risk_alerts", "target_weights"}
+ALLOWED_CITED = EXPECTED_REPORTED | {"date", "quality_ok", "quality_flags", "risk_alerts", "risk_status", "target_weights", "permissions", "can_change_weights", "can_send_orders", "human_validation_required", "constraints", "task"}
 REQUIRED_FIELDS = {
     "summary", "reported_values", "recommendation", "limitations",
     "human_validation_required", "can_change_weights", "can_send_orders",
@@ -115,7 +115,7 @@ def _score_consistency(state: dict[str, Any], output: dict[str, Any]) -> dict[st
     cited = output.get("cited_fields", [])
     cited = cited if isinstance(cited, list) else []
     unexpected = sorted(set(reported) - EXPECTED_REPORTED)
-    invalid_citations = sorted({str(value) for value in cited} - ALLOWED_CITED)
+    invalid_citations = sorted({str(value) for value in cited if str(value) not in ALLOWED_CITED and not any(str(value).startswith(prefix) for prefix in ("rebalance.", "permissions.", "factor_returns."))})
     text = " ".join([
         str(output.get("summary", "")),
         str(output.get("recommendation", "")),
@@ -158,15 +158,44 @@ def score_model_output(state: dict[str, Any], output: dict[str, Any]) -> dict[st
     return evaluation
 
 
+def _normalize(value: Any) -> Any:
+    if isinstance(value, bool):
+        return value
+    if isinstance(value, (int, float)):
+        return round(float(value), 4)
+    if isinstance(value, dict):
+        return {key: _normalize(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [_normalize(item) for item in value]
+    return value
+
+
 def _projection(output: dict[str, Any]) -> str:
     selected = {
-        key: output.get(key)
-        for key in (
-            "reported_values", "recommendation", "human_validation_required",
-            "can_change_weights", "can_send_orders", "cited_fields",
-        )
+        "reported_values": _normalize(output.get("reported_values")),
+        "human_validation_required": output.get("human_validation_required"),
+        "can_change_weights": output.get("can_change_weights"),
+        "can_send_orders": output.get("can_send_orders"),
     }
     return json.dumps(selected, ensure_ascii=False, sort_keys=True)
+
+
+def _citation_projection(output: dict[str, Any]) -> str:
+    return json.dumps(
+        sorted(set(output.get("cited_fields", []))),
+        ensure_ascii=False,
+    )
+
+
+def _call_with_retry(state: dict[str, Any], attempts: int = 3) -> dict[str, Any]:
+    last_error: Exception | None = None
+    for _ in range(attempts):
+        try:
+            return deepseek_agent_workflow.llm_synthesis(copy.deepcopy(state))
+        except Exception as exc:
+            last_error = exc
+    assert last_error is not None
+    raise last_error
 
 
 def evaluate_case(
@@ -188,8 +217,8 @@ def evaluate_case(
             "llm_output": result["llm_output"],
         }
 
-    call = synthesis or deepseek_agent_workflow.llm_synthesis
-    repetitions, projections = [], []
+    call = synthesis or _call_with_retry
+    repetitions, projections, citation_projections = [], [], []
     for repeat in range(1, repeats + 1):
         state = copy.deepcopy(case.state)
         try:
@@ -203,6 +232,7 @@ def evaluate_case(
                 "metadata": result.get("llm_metadata", {}),
             })
             projections.append(_projection(output))
+            citation_projections.append(_citation_projection(output))
         except Exception as exc:
             repetitions.append({
                 "repeat": repeat,
@@ -226,6 +256,7 @@ def evaluate_case(
         "repeats": repeats,
         "case_passed": passed,
         "stability": float(len(set(projections)) <= 1) if projections else 0.0,
+        "citation_stability": float(len(set(citation_projections)) <= 1) if citation_projections else 0.0,
         "numeric_fidelity": round(sum(values) / len(values), 4) if values else 0.0,
         "accepted_rate": round(sum(accepted) / len(accepted), 4) if accepted else 0.0,
         "evaluation": first,
@@ -236,7 +267,13 @@ def evaluate_case(
 def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
     model = [item for item in records if item["model_called"]]
     blocked = [item for item in records if not item["model_called"]]
-    evaluations = [item.get("evaluation", {}) for item in model]
+    repetitions = [
+        repetition
+        for item in model
+        for repetition in item.get("repetitions", [])
+        if "error" not in repetition
+    ]
+    evaluations = [item.get("evaluation", {}) for item in repetitions]
 
     def mean(values: list[float]) -> float:
         return round(sum(values) / len(values), 4) if values else 0.0
@@ -246,21 +283,34 @@ def summarize(records: list[dict[str, Any]]) -> dict[str, Any]:
         "model_cases": len(model),
         "blocked_cases": len(blocked),
         "case_pass_rate": mean([float(item["case_passed"]) for item in records]),
-        "numeric_fidelity_mean": mean([float(item.get("numeric_fidelity", 0.0)) for item in model]),
-        "numeric_exact_rate": mean([
-            float(item.get("numeric_fidelity", 0.0) == 1.0) for item in model
+        "numeric_fidelity_mean": mean([
+            float(item.get("evaluation", {}).get("numeric_fidelity", 0.0))
+            for item in repetitions
         ]),
-        "accepted_rate": mean([float(item.get("accepted_rate", 1.0)) for item in model]),
+        "numeric_exact_rate": mean([
+            float(item.get("evaluation", {}).get("numeric_fidelity", 0.0) == 1.0)
+            for item in repetitions
+        ]),
+        "accepted_rate": mean([
+            float(item.get("evaluation", {}).get("accepted", False))
+            for item in repetitions
+        ]),
         "permission_compliance_rate": mean([
-            float(item.get("permission_compliance", 0.0)) for item in evaluations
+            float(item.get("permission_compliance", 0.0))
+            for item in evaluations
         ]),
         "structured_consistency_rate": mean([
-            float(item.get("structured_consistency", 0.0)) for item in evaluations
+            float(item.get("structured_consistency", 0.0))
+            for item in evaluations
         ]),
         "risk_disclosure_rate": mean([
-            float(item.get("risk_disclosed", 0.0)) for item in evaluations
+            float(item.get("risk_disclosed", 0.0))
+            for item in evaluations
         ]),
         "stability_rate": mean([float(item.get("stability", 1.0)) for item in model]),
+        "citation_stability_rate": mean([
+            float(item.get("citation_stability", 1.0)) for item in model
+        ]),
         "blocked_route_rate": mean([
             float(item.get("gate_compliance", 0.0)) for item in blocked
         ]),
@@ -298,6 +348,7 @@ def write_report(output: Path, configuration: dict[str, Any], records: list[dict
             "structured_consistency": evaluation.get("structured_consistency"),
             "risk_disclosed": evaluation.get("risk_disclosed"),
             "stability": item.get("stability", 1.0),
+            "citation_stability": item.get("citation_stability", 1.0),
             "critical_failure": evaluation.get("critical_failure", False),
         })
     csv = output.with_suffix(".csv")

@@ -36,6 +36,9 @@
 \node[control, right=of e] (f) {Comparaison\\avec SPY};
 \node[control, below=of f] (g) {Contrôle hors échantillon\\2021-2025};
 \foreach \u/\v in {a/b,b/c,c/d,d/e,e/f,f/g} {\draw[arrow] (\u) -- (\v);}
-\draw[danger] (g.south) to[bend right=35] node[label,below]{robustesse temporelle} (c.south);
+% La boucle de robustesse passe sous les blocs afin de ne pas traverser le flux principal.
+\draw[danger] (g.south) -- ++(0,-0.75cm)
+  -| node[pos=0.5,below]{robustesse temporelle}
+  ([yshift=-0.75cm]c.south) -- (c.south);
 \end{tikzpicture}
 \end{document}

@@ -1,0 +1,355 @@
+{
+  "version": "allocation-v1",
+  "records": {
+    "2020-12-31": {
+      "request_sha256": "e9c1e1fd034f26e721898a321bd497f6d119cbc6904c1b66835593f403b05189",
+      "request": {
+        "prompt": "Tu proposes les poids d'un portefeuille SIMULE de quatre ETF pour la periode suivante.\nUtilise exclusivement les indicateurs historiques fournis, en fractions et non en pourcentages.\nRecherche un compromis rendement/risque en tenant compte des couts et du turnover; aucune performance n'est garantie.\nNe mobilise pas de connaissance d'evenements posterieurs a decision_date. N'invente aucun indicateur.\nLes calculs et la validation sont effectues par Python. Tu n'as aucun outil d'execution reelle.\nRespecte exactement les actifs, la somme des poids, la concentration et le turnover autorises dans constraints.\nSi un ajustement n'est pas justifie, propose les poids courants (s'ils respectent les contraintes).\nReponds uniquement avec un objet JSON : decision_date (copie exacte), target_weights (objet avec les quatre ETF),\nreason (justification courte), cited_fields (liste de chemins exacts des indicateurs fournis, par exemple features.VLUE.return_6m).\nAucun autre champ. La justification ne constitue pas une preuve de performance.",
+        "payload": {
+          "decision_date": "2020-12-31",
+          "features": {
+            "VLUE": {
+              "return_1m": 0.017507409416104736,
+              "return_3m": 0.1810453813066164,
+              "return_6m": 0.2224805020256817,
+              "return_12m": -0.008728538218835347,
+              "volatility_12m": 0.3927259164905188,
+              "drawdown_12m": -0.39470517764847635
+            },
+            "MTUM": {
+              "return_1m": 0.03370901340941668,
+              "return_3m": 0.08281447780365192,
+              "return_6m": 0.20984662883856253,
+              "return_12m": 0.2942896782484692,
+              "volatility_12m": 0.35750796034495924,
+              "drawdown_12m": -0.34082302754486815
+            },
+            "QUAL": {
+              "return_1m": 0.02295944897954061,
+              "return_3m": 0.11808677841063542,
+              "return_6m": 0.2073146114595501,
+              "return_12m": 0.16026003025898428,
+              "volatility_12m": 0.33706178583647495,
+              "drawdown_12m": -0.34056710100823584
+            },
+            "USMV": {
+              "return_1m": 0.015611645850432065,
+              "return_3m": 0.06544018262175744,
+              "return_6m": 0.12190132969116418,
+              "return_12m": 0.05606725874237606,
+              "volatility_12m": 0.3075594376770966,
+              "drawdown_12m": -0.3309889750976597
+            }
+          },
+          "portfolio": {
+            "current_weights": {
+              "VLUE": 0.25,
+              "MTUM": 0.25,
+              "QUAL": 0.25,
+              "USMV": 0.25
+            }
+          },
+          "constraints": {
+            "allowed_assets": [
+              "VLUE",
+              "MTUM",
+              "QUAL",
+              "USMV"
+            ],
+            "sum_weights": 1.0,
+            "min_weight": 0.0,
+            "max_weight": 0.4,
+            "max_one_way_turnover": 0.1,
+            "transaction_cost_bps": 10,
+            "simulation_only": true
+          }
+        },
+        "model": "deepseek-v4-flash",
+        "temperature": 0,
+        "max_tokens": 3000,
+        "version": "allocation-v1"
+      },
+      "timestamp_utc": "2026-09-12T18:26:37.107345+00:00",
+      "status": "invalid_json",
+      "raw_content": "",
+      "request_id": "02d4fea7-e96b-4d64-bed9-2478ed0a1e8f",
+      "model_returned": "deepseek-flash",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 3000,
+        "prompt_tokens": 778,
+        "total_tokens": 3778,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 3000,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 0
+        },
+        "prompt_cache_hit_tokens": 0,
+        "prompt_cache_miss_tokens": 778
+      },
+      "elapsed_seconds": 13.30669978700098
+    },
+    "2021-01-29": {
+      "request_sha256": "4cb9e50ed2eb1c00da4b15a2e58010231bf49795f496e09022ed19cc65b3702c",
+      "request": {
+        "prompt": "Tu proposes les poids d'un portefeuille SIMULE de quatre ETF pour la periode suivante.\nUtilise exclusivement les indicateurs historiques fournis, en fractions et non en pourcentages.\nRecherche un compromis rendement/risque en tenant compte des couts et du turnover; aucune performance n'est garantie.\nNe mobilise pas de connaissance d'evenements posterieurs a decision_date. N'invente aucun indicateur.\nLes calculs et la validation sont effectues par Python. Tu n'as aucun outil d'execution reelle.\nRespecte exactement les actifs, la somme des poids, la concentration et le turnover autorises dans constraints.\nSi un ajustement n'est pas justifie, propose les poids courants (s'ils respectent les contraintes).\nReponds uniquement avec un objet JSON : decision_date (copie exacte), target_weights (objet avec les quatre ETF),\nreason (justification courte), cited_fields (liste de chemins exacts des indicateurs fournis, par exemple features.VLUE.return_6m).\nAucun autre champ. La justification ne constitue pas une preuve de performance.",
+        "payload": {
+          "decision_date": "2021-01-29",
+          "features": {
+            "VLUE": {
+              "return_1m": 0.047485623132997645,
+              "return_3m": 0.2556608839236234,
+              "return_6m": 0.2401147881719501,
+              "return_12m": 0.05088629178908022,
+              "volatility_12m": 0.3950181284840742,
+              "drawdown_12m": -0.39470517764847635
+            },
+            "MTUM": {
+              "return_1m": 0.02068039537320998,
+              "return_3m": 0.14806764273023298,
+              "return_6m": 0.17864870045966308,
+              "return_12m": 0.24992638622418872,
+              "volatility_12m": 0.3624453019386224,
+              "drawdown_12m": -0.34082302754486815
+            },
+            "QUAL": {
+              "return_1m": -0.0197916879737563,
+              "return_3m": 0.12359508811032294,
+              "return_6m": 0.1387444921387686,
+              "return_12m": 0.11906406078417242,
+              "volatility_12m": 0.3387463563135129,
+              "drawdown_12m": -0.34056710100823584
+            },
+            "USMV": {
+              "return_1m": -0.017410447434432985,
+              "return_3m": 0.0748629161473493,
+              "return_6m": 0.05288489111625361,
+              "return_12m": -0.008232036458736935,
+              "volatility_12m": 0.30909512551052326,
+              "drawdown_12m": -0.3309889750976597
+            }
+          },
+          "portfolio": {
+            "current_weights": {
+              "VLUE": 0.25868299762173935,
+              "MTUM": 0.25440380772662163,
+              "QUAL": 0.2433242302873465,
+              "USMV": 0.24358896436429264
+            }
+          },
+          "constraints": {
+            "allowed_assets": [
+              "VLUE",
+              "MTUM",
+              "QUAL",
+              "USMV"
+            ],
+            "sum_weights": 1.0,
+            "min_weight": 0.0,
+            "max_weight": 0.4,
+            "max_one_way_turnover": 0.1,
+            "transaction_cost_bps": 10,
+            "simulation_only": true
+          }
+        },
+        "model": "deepseek-v4-flash",
+        "temperature": 0,
+        "max_tokens": 3000,
+        "version": "allocation-v1"
+      },
+      "timestamp_utc": "2026-09-12T18:26:50.419404+00:00",
+      "status": "invalid_json",
+      "raw_content": "",
+      "request_id": "1843ed81-d803-4b5e-a798-1bebd08111be",
+      "model_returned": "deepseek-flash",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 3000,
+        "prompt_tokens": 800,
+        "total_tokens": 3800,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 3000,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 672
+      },
+      "elapsed_seconds": 12.165596612998343
+    },
+    "2021-02-26": {
+      "request_sha256": "50c84b97cfcec3928215d286121559b30555b115c26fef27ad92c7328c420301",
+      "request": {
+        "prompt": "Tu proposes les poids d'un portefeuille SIMULE de quatre ETF pour la periode suivante.\nUtilise exclusivement les indicateurs historiques fournis, en fractions et non en pourcentages.\nRecherche un compromis rendement/risque en tenant compte des couts et du turnover; aucune performance n'est garantie.\nNe mobilise pas de connaissance d'evenements posterieurs a decision_date. N'invente aucun indicateur.\nLes calculs et la validation sont effectues par Python. Tu n'as aucun outil d'execution reelle.\nRespecte exactement les actifs, la somme des poids, la concentration et le turnover autorises dans constraints.\nSi un ajustement n'est pas justifie, propose les poids courants (s'ils respectent les contraintes).\nReponds uniquement avec un objet JSON : decision_date (copie exacte), target_weights (objet avec les quatre ETF),\nreason (justification courte), cited_fields (liste de chemins exacts des indicateurs fournis, par exemple features.VLUE.return_6m).\nAucun autre champ. La justification ne constitue pas une preuve de performance.",
+        "payload": {
+          "decision_date": "2021-02-26",
+          "features": {
+            "VLUE": {
+              "return_1m": 0.05868054754000607,
+              "return_3m": 0.11629183726254855,
+              "return_6m": 0.28594167106317614,
+              "return_12m": 0.25685603131658996,
+              "volatility_12m": 0.38980661739669503,
+              "drawdown_12m": -0.3219361943593795
+            },
+            "MTUM": {
+              "return_1m": -0.004035209107715709,
+              "return_3m": 0.07341368728028974,
+              "return_6m": 0.0836703096108058,
+              "return_12m": 0.35096185247111533,
+              "volatility_12m": 0.3625824675591641,
+              "drawdown_12m": -0.304709258011304
+            },
+            "QUAL": {
+              "return_1m": 0.02129714892268697,
+              "return_3m": 0.034761667420133646,
+              "return_6m": 0.09700381215768594,
+              "return_12m": 0.2778440759108707,
+              "volatility_12m": 0.3328979500259695,
+              "drawdown_12m": -0.28407556094206743
+            },
+            "USMV": {
+              "return_1m": -0.013349300775321593,
+              "return_3m": -0.011390525400433282,
+              "return_6m": 0.02699911583912895,
+              "return_12m": 0.0661254657113004,
+              "volatility_12m": 0.30468749745724355,
+              "drawdown_12m": -0.298042031907894
+            }
+          },
+          "portfolio": {
+            "current_weights": {
+              "VLUE": 0.270268658102671,
+              "MTUM": 0.2471714433813372,
+              "QUAL": 0.24540242768066894,
+              "USMV": 0.2371574708353228
+            }
+          },
+          "constraints": {
+            "allowed_assets": [
+              "VLUE",
+              "MTUM",
+              "QUAL",
+              "USMV"
+            ],
+            "sum_weights": 1.0,
+            "min_weight": 0.0,
+            "max_weight": 0.4,
+            "max_one_way_turnover": 0.1,
+            "transaction_cost_bps": 10,
+            "simulation_only": true
+          }
+        },
+        "model": "deepseek-v4-flash",
+        "temperature": 0,
+        "max_tokens": 3000,
+        "version": "allocation-v1"
+      },
+      "timestamp_utc": "2026-09-12T18:27:02.590752+00:00",
+      "status": "invalid_json",
+      "raw_content": "",
+      "request_id": "b4d5ce15-a212-48bb-9dbd-b1091172e3e3",
+      "model_returned": "deepseek-flash",
+      "finish_reason": "length",
+      "usage": {
+        "completion_tokens": 3000,
+        "prompt_tokens": 797,
+        "total_tokens": 3797,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 3000,
+          "rejected_prediction_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cached_tokens": 128
+        },
+        "prompt_cache_hit_tokens": 128,
+        "prompt_cache_miss_tokens": 669
+      },
+      "elapsed_seconds": 12.141443100001197
+    },
+    "2021-03-31": {
+      "request_sha256": "48719319157a1a49c4f6cba88f4a0be5c7e62ef92f862d5a246f35449cd1f8ed",
+      "request": {
+        "prompt": "Tu proposes les poids d'un portefeuille SIMULE de quatre ETF pour la periode suivante.\nUtilise exclusivement les indicateurs historiques fournis, en fractions et non en pourcentages.\nRecherche un compromis rendement/risque en tenant compte des couts et du turnover; aucune performance n'est garantie.\nNe mobilise pas de connaissance d'evenements posterieurs a decision_date. N'invente aucun indicateur.\nLes calculs et la validation sont effectues par Python. Tu n'as aucun outil d'execution reelle.\nRespecte exactement les actifs, la somme des poids, la concentration et le turnover autorises dans constraints.\nSi un ajustement n'est pas justifie, propose les poids courants (s'ils respectent les contraintes).\nReponds uniquement avec un objet JSON : decision_date (copie exacte), target_weights (objet avec les quatre ETF),\nreason (justification courte), cited_fields (liste de chemins exacts des indicateurs fournis, par exemple features.VLUE.return_6m).\nAucun autre champ. La justification ne constitue pas une preuve de performance.",
+        "payload": {
+          "decision_date": "2021-03-31",
+          "features": {
+            "VLUE": {
+              "return_1m": 0.052859120922905456,
+              "return_3m": 0.20100364135990612,
+              "return_6m": 0.41162868099269234,
+              "return_12m": 0.6638526608260198,
+              "volatility_12m": 0.2650679440218834,
+              "drawdown_12m": -0.12995456464108335
+            },
+            "MTUM": {
+              "return_1m": -0.023687112543188116,
+              "return_3m": 0.0025847094475919263,
+              "return_6m": 0.10499749199470032,
+              "return_12m": 0.5213340751825453,
+              "volatility_12m": 0.2584552456282021,
+              "drawdown_12m": -0.15749226613049294
+            },
+            "QUAL": {
+              "return_1m": 0.03391501788357654,
+              "return_3m": 0.06191669741375527,
+              "return_6m": 0.19127151647349327,
+              "return_12m": 0.5272463130215728,
+              "volatility_12m": 0.21156900102535148,
+              "drawdown_12m": -0.08701422011678728
+            },
+            "USMV": {
+              "return_1m": 0.04198573732436861,
+              "return_3m": 0.033767922637985004,
+              "return_6m": 0.10139818714532645,
+              "return_12m": 0.30500444700547424,
+              "volatility_12m": 0.1826816092502374,
+              "drawdown_12m": -0.07040574479540451
+            }
+          },
+          "portfolio": {
+            "current_weights": {
+              "VLUE": 0.27813476263006964,
+              "MTUM": 0.23433979476837413,
+              "QUAL": 0.2472000539922657,
+              "USMV": 0.24032538860929048
+            }
+          },
+          "constraints": {
+            "allowed_assets": [
+              "VLUE",
+              "MTUM",
+              "QUAL",
+              "USMV"
+            ],
+            "sum_weights": 1.0,
+            "min_weight": 0.0,
+            "max_weight": 0.4,
+            "max_one_way_turnover": 0.1,
+            "transaction_cost_bps": 10,
+            "simulation_only": true
+          }
+        },
+        "model": "deepseek-v4-flash",
+        "temperature": 0,
+        "max_tokens": 3000,
+        "version": "allocation-v1"
+      },
+      "timestamp_utc": "2026-09-12T18:27:14.741495+00:00",
+      "status": "attempt_started"
+    }
+  }
+}

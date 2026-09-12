@@ -1,0 +1,32 @@
+{
+  "replay_files_identical": {
+    "equity.csv": true,
+    "metrics.csv": true,
+    "decisions.json": true
+  },
+  "replay_api_calls": 0,
+  "original_files_checked": 31,
+  "original_files_unchanged": true,
+  "maximum_accounting_errors": {
+    "capital_conservation": 3.622883243403763e-14,
+    "actual_fee": 5.421010862427522e-18,
+    "daily_mark_to_market": 5.684341886080802e-14
+  },
+  "daily_valuations_checked": 3519,
+  "decision_attempts": 56,
+  "technical_pilot_attempts": 4,
+  "reported_campaign_tokens": 54639,
+  "reported_pilot_tokens": 11375,
+  "pilot_attempts_without_usage": 1,
+  "model_returned": [
+    "deepseek-flash"
+  ],
+  "rejection_reasons": {
+    "decision_turnover_limit": 31,
+    "execution_turnover_limit_after_fees": 2,
+    "weights_do_not_sum_to_one": 1,
+    "weight_limit": 1,
+    "invalid_source_path": 1
+  },
+  "test_suite": "46 passed"
+}

@@ -126,3 +126,90 @@ Le rapport complet et ses figures sont dans `latex/`. Pour reconstruire le PDF :
 cd latex
 latexmk -g -xelatex -interaction=nonstopmode -halt-on-error rapport_agentique_multi.tex
 ```
+
+
+## Comparaison des notes et contre-exemples hors réseau
+
+```bash
+experience/.venv/bin/python analyze_note_comparison.py
+```
+
+Le script retient la dernière date commune aux notes déterministes et aux cas historiques archivés, puis la première répétition DeepSeek. Il conserve aussi les deux autres répétitions, compare les textes et applique trois altérations indépendantes à un seul champ ainsi que deux témoins de détection. Aucun appel API n'est effectué et les résultats originaux restent inchangés.
+
+Les sorties sont `results/note_comparison.md` et `results/complementary_analysis.json`. Ce dernier contient les textes, transformations, scores et empreintes des sources. Les contre-exemples sont construits : ils ne mesurent pas la fréquence des erreurs du modèle. La discussion est intégrée au chapitre 5 du mémoire.
+
+
+## Vérification du PnL simple et du workflow agentique
+
+```bash
+experience/.venv/bin/python verify_agentic_pnl.py
+```
+
+Ce contrôle hors réseau recalcule le portefeuille à 10 pb depuis les cours mensuels
+archivés, rejoue le workflow sur chaque mois sans réécrire ses notes et vérifie les
+rendements cités dans les réponses DeepSeek historiques. Il compare un même
+portefeuille avec et sans restitution agentique ; il ne mesure pas une stratégie
+d'allocation décidée par le LLM. Les dates LLM espacées et le stress synthétique ne
+sont pas assemblés en un historique de PnL.
+
+Les sorties sont `results/pnl_verification.md`, `results/pnl_verification.json`,
+`results/pnl_comparison_monthly.csv` et `results/pnl_llm_archive_checks.csv`.
+Les coûts API, d'infrastructure et de revue humaine sont exclus.
+
+## Portefeuille proposé par l’agent : expérience d’allocation
+
+`agent_allocation_backtest.py` permet au LLM de proposer des poids entre VLUE,
+MTUM, QUAL et USMV. Python valide le contrat JSON, les actifs, les poids et le
+turnover, puis simule l’exécution à la clôture de la séance suivante. Une décision
+invalide conserve les positions existantes. Les frais sont financés par le
+portefeuille. Deux références passent par le même moteur : équipondération et
+allocation inverse de la volatilité. Il n’existe aucune connexion à un courtier.
+
+Test du moteur sans appel réseau (la fixture est une règle, pas un LLM) :
+
+```bash
+experience/.venv/bin/python agent_allocation_backtest.py --mode offline --output results/allocation_experiment/offline
+experience/.venv/bin/python -m pytest -q
+```
+
+Campagne DeepSeek réalisée, bornée à 56 décisions de mai 2021 à décembre 2025 :
+
+```bash
+experience/.venv/bin/python agent_allocation_backtest.py --mode live --start 2021-05-01 --archive results/allocation_experiment/deepseek_decisions.json --max-api-calls 56 --max-output-tokens 3000 --output results/allocation_experiment/deepseek
+```
+
+Le mode `live` réutilise les dates déjà archivées. Le budget porte sur le nombre
+**total de tentatives de cette archive**, y compris les erreurs et interruptions.
+Une erreur réseau arrête la collecte ; une reprise conserve cette tentative comme
+une absence de proposition. Aucun nouvel appel n’est fait pour remplacer une
+proposition rejetée. La campagne utilise explicitement `thinking: disabled`.
+Quatre tentatives techniques antérieures, conservées séparément, portent le
+budget global de cette exécution à 60 appels au maximum.
+
+Reproduction exacte des décisions archivées, sans clé API ni réseau :
+
+```bash
+experience/.venv/bin/python agent_allocation_backtest.py --mode replay --start 2021-05-01 --archive results/allocation_experiment/deepseek_decisions.json --max-output-tokens 3000 --output results/allocation_experiment/replay
+```
+
+L’empreinte du prompt, des indicateurs, des poids courants et des paramètres doit
+correspondre à chaque requête archivée. Changer les coûts ou le prompt interdit
+la réutilisation silencieuse d’une décision. Les résultats, courbes quotidiennes,
+poids et justifications sont dans `results/allocation_experiment/`.
+Voir [le protocole](results/allocation_experiment/PROTOCOLE.md) et
+[les résultats](results/allocation_experiment/deepseek/RESULTATS.md).
+
+Cette expérience rétrospective ne démontre pas une capacité prédictive hors
+échantillon du LLM : son préentraînement peut inclure les événements étudiés.
+Les résultats du mémoire initial restent des résultats d’un autre protocole.
+
+Après le run et son replay, produire l’analyse et vérifier indépendamment les
+positions, frais et valeurs quotidiennes :
+
+```bash
+experience/.venv/bin/python analyze_allocation_results.py
+```
+
+Ce contrôle écrit [l’analyse détaillée](results/allocation_experiment/ANALYSE.md),
+`AUDIT.json` et `yearly_returns.csv`. Les empreintes des fichiers antérieurs
+correspondent à l’état précédant cette extension.

@@ -61,6 +61,8 @@ def test_quality_gate_accepts_archived_quality_report() -> None:
         ("duplicate_dates", 1, "dates dupliquees"),
         ("missing_values_by_ticker", {"VLUE": 1}, "valeurs manquantes"),
         ("non_positive_values_by_ticker", {"VLUE": 1}, "prix non positifs"),
+        ("calendar_gaps_over_7_days", ["2025-01-01"], "gaps calendaires"),
+        ("daily_return_flags_over_25pct", {"VLUE": 1}, "mouvements quotidiens extrêmes"),
     ],
 )
 def test_quality_gate_rejects_invalid_quality(

@@ -110,7 +110,34 @@ def test_deepseek_blocked_path_persists_without_calling_api(
     assert result["quality_ok"] is False
     assert result["evaluation"]["accepted"] is False
     assert result["llm_metadata"]["skipped"] is True
-    assert result["trace"]["risk_status"] == "bloque"
+    assert result["trace"]["risk_status"] == "bloqué"
     assert result["trace"]["rebalance"] is None
     assert (results_dir / "deepseek_decision_note_2025-12-31.md").exists()
     assert (results_dir / "deepseek_decision_trace_2025-12-31.json").exists()
+
+def test_invalid_llm_output_is_rejected_before_persistence(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    results_dir = prepare_deepseek_inputs(tmp_path, monkeypatch)
+
+    def invalid_synthesis(_: dict) -> dict:
+        return {
+            "llm_output": {"summary": "Sortie incomplète."},
+            "llm_metadata": {"provider": "fake", "model": "test"},
+        }
+
+    monkeypatch.setattr(deepseek_agent_workflow, "llm_synthesis", invalid_synthesis)
+
+    result = deepseek_agent_workflow.build_graph().invoke(
+        {"requested_date": "2025-12-31"}
+    )
+
+    assert result["validation_status"] == "rejected"
+    assert result["evaluation"]["accepted"] is False
+    assert result["trace"]["validation_status"] == "rejected"
+    assert result["trace"]["rejection_reasons"]
+    note = (
+        results_dir / "deepseek_decision_note_2025-12-31.md"
+    ).read_text(encoding="utf-8")
+    assert "Aucune recommandation exploitable" in note

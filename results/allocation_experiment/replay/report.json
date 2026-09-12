@@ -1,0 +1,77 @@
+{
+  "protocol_version": "allocation-v1",
+  "mode": "replay",
+  "config": {
+    "start": "2021-05-01",
+    "end": "2025-12-31",
+    "initial_capital": 100.0,
+    "cost_bps": 10,
+    "max_weight": 0.4,
+    "max_turnover": 0.1
+  },
+  "metrics": {
+    "equal_weight": {
+      "final_value": 153.55409875454262,
+      "cumulative_pnl": 53.55409875454262,
+      "annualized_return": 0.0961703893420327,
+      "annualized_daily_volatility": 0.15663483006544043,
+      "sharpe_zero_rf_daily": 0.6665949632850344,
+      "max_daily_drawdown": -0.24196199333826418,
+      "transaction_cost_units": 0.04761069681004594,
+      "average_monthly_one_way_turnover": 0.0075244064485948045,
+      "decisions": 56,
+      "accepted": 56,
+      "rejected": 0
+    },
+    "inverse_volatility": {
+      "final_value": 152.26155018305602,
+      "cumulative_pnl": 52.261550183056016,
+      "annualized_return": 0.09418833262037496,
+      "annualized_daily_volatility": 0.1508324231758516,
+      "sharpe_zero_rf_daily": 0.6743000985754111,
+      "max_daily_drawdown": -0.23435374176902557,
+      "transaction_cost_units": 0.07084862782430197,
+      "average_monthly_one_way_turnover": 0.01145891996996247,
+      "decisions": 56,
+      "accepted": 56,
+      "rejected": 0
+    },
+    "deepseek_allocation": {
+      "final_value": 148.38592828951306,
+      "cumulative_pnl": 48.38592828951306,
+      "annualized_return": 0.08816491414145378,
+      "annualized_daily_volatility": 0.14866576628422984,
+      "sharpe_zero_rf_daily": 0.6446736493128489,
+      "max_daily_drawdown": -0.2350282967445606,
+      "transaction_cost_units": 0.06824553328768748,
+      "average_monthly_one_way_turnover": 0.01187520486631061,
+      "decisions": 56,
+      "accepted": 22,
+      "rejected": 34
+    }
+  },
+  "provenance": {
+    "price_file": "/home/abou/Documents/CNAM/report_project/data/daily_prices.csv",
+    "price_sha256": "128b09b1557649e6d906d2cd8e35488d5eb7177845508aa1724ef289627eccc0",
+    "code_sha256": "00a1c546a0c7066da3543577fee73171c540b4ff0eec80a09e4a2f8d9080ad99",
+    "generated_at_utc": "2026-09-12T18:29:27.487901+00:00",
+    "new_api_calls": 0,
+    "archive": "results/allocation_experiment/deepseek_decisions.json",
+    "archive_sha256": "6eb5ca9b4d80b3420af50bd35bf099c6c6e7cc63f1d4ba7a203d6c49a5a7ec18",
+    "total_archived_attempts": 56,
+    "total_reported_tokens": 54639,
+    "model_requested": "deepseek-v4-flash"
+  },
+  "limitations": [
+    "Historical exploratory simulation; LLM pretraining may include future events.",
+    "Adjusted prices are total-return accounting proxies; point-in-time adjustment vintages unavailable.",
+    "Execution at first available close AFTER observation; no spread/impact/liquidity model.",
+    "Initial capital already invested 25% per ETF before first decision; initial entry and terminal exit fees excluded.",
+    "Concentration cap applies to target weights; market drift may exceed it between rebalances.",
+    "Invalid proposals and execution-time turnover breaches hold existing positions; no silent clipping.",
+    "One LLM response per date, no selection among repeated responses; rejection still consumes API budget.",
+    "API and infrastructure costs excluded from portfolio NAV; token usage is reported separately.",
+    "Simulation acceptance is not a recorded human approval or a permission to place real orders.",
+    "Original report metrics use a different execution schedule and monthly risk measures."
+  ]
+}

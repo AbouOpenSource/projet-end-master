@@ -1,0 +1,72 @@
+{
+  "protocol_version": "allocation-v1",
+  "mode": "offline",
+  "config": {
+    "start": "2021-01-01",
+    "end": "2025-12-31",
+    "initial_capital": 100.0,
+    "cost_bps": 10,
+    "max_weight": 0.4,
+    "max_turnover": 0.1
+  },
+  "metrics": {
+    "equal_weight": {
+      "final_value": 170.51117372303358,
+      "cumulative_pnl": 70.51117372303358,
+      "annualized_return": 0.11264575336261906,
+      "annualized_daily_volatility": 0.156318704025946,
+      "sharpe_zero_rf_daily": 0.7637153133039354,
+      "max_daily_drawdown": -0.24196199333826418,
+      "transaction_cost_units": 0.057574799041194585,
+      "average_monthly_one_way_turnover": 0.007772340237902286,
+      "decisions": 60,
+      "accepted": 60,
+      "rejected": 0
+    },
+    "inverse_volatility": {
+      "final_value": 168.58513535014436,
+      "cumulative_pnl": 68.58513535014436,
+      "annualized_return": 0.11012035686232857,
+      "annualized_daily_volatility": 0.15072956312360294,
+      "sharpe_zero_rf_daily": 0.771219736020137,
+      "max_daily_drawdown": -0.23435374176902546,
+      "transaction_cost_units": 0.07969505496108287,
+      "average_monthly_one_way_turnover": 0.01100283044567962,
+      "decisions": 60,
+      "accepted": 60,
+      "rejected": 0
+    },
+    "offline_fixture": {
+      "final_value": 168.09930272368985,
+      "cumulative_pnl": 68.09930272368985,
+      "annualized_return": 0.10947969613737607,
+      "annualized_daily_volatility": 0.15808203498878273,
+      "sharpe_zero_rf_daily": 0.7388547849025919,
+      "max_daily_drawdown": -0.24454308164366667,
+      "transaction_cost_units": 0.3615076482975238,
+      "average_monthly_one_way_turnover": 0.048729801800525864,
+      "decisions": 60,
+      "accepted": 60,
+      "rejected": 0
+    }
+  },
+  "provenance": {
+    "price_file": "/home/abou/Documents/CNAM/report_project/data/daily_prices.csv",
+    "price_sha256": "128b09b1557649e6d906d2cd8e35488d5eb7177845508aa1724ef289627eccc0",
+    "code_sha256": "3f16c52e71143248bc6a2b71be757c5e7773a88410b6922686b07c6f2e3b9443",
+    "generated_at_utc": "2026-09-12T18:26:17.471930+00:00",
+    "new_api_calls": 0
+  },
+  "limitations": [
+    "Historical exploratory simulation; LLM pretraining may include future events.",
+    "Adjusted prices are total-return accounting proxies; point-in-time adjustment vintages unavailable.",
+    "Execution at first available close AFTER observation; no spread/impact/liquidity model.",
+    "Initial capital already invested 25% per ETF before first decision; initial entry and terminal exit fees excluded.",
+    "Concentration cap applies to target weights; market drift may exceed it between rebalances.",
+    "Invalid proposals and execution-time turnover breaches hold existing positions; no silent clipping.",
+    "One LLM response per date, no selection among repeated responses; rejection still consumes API budget.",
+    "API and infrastructure costs excluded from portfolio NAV; token usage is reported separately.",
+    "Simulation acceptance is not a recorded human approval or a permission to place real orders.",
+    "Original report metrics use a different execution schedule and monthly risk measures."
+  ]
+}

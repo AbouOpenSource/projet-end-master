@@ -1,15 +1,10 @@
-\chapter{Architecture cible pour un desk multifactoriel agentique}\label{cap:architecture}
-%--------------------------------------
+\chapter{Architecture proposée et composants exécutés}\label{cap:architecture}
 
-\section{Principe directeur}
+\section{Répartition des responsabilités}
 
-L'architecture cible est hybride : les calculs financiers sont exécutés par des composants déterministes, tandis que les agents organisent l'information, interprètent les résultats, vérifient la cohérence et préparent une décision soumise à validation. Cette séparation est la condition pour relier la flexibilité des LLM à des contrôles reproductibles.
+J'ai retenu une règle : les métriques financières et les valeurs de portefeuille proviennent de fonctions déterministes. Dans la synthèse, LangGraph organise la lecture des résultats, les contrôles et la note DeepSeek. Dans l'allocation, un autre module transmet les indicateurs au LLM puis contrôle ses propositions avant toute transaction simulée. Aucun programme ne dispose d'un outil d'ordre réel.
 
-Le prototype ne constitue pas une plateforme opérationnelle. Il illustre la manière dont LangGraph peut coordonner des sorties quantitatives déjà calculées, appliquer des contrôles de permission et conserver une trace exploitable. Les mêmes principes pourraient être réalisés avec d'autres frameworks, mais les interfaces et les garde-fous doivent rester explicites.
-
-\section{Vue d'ensemble de l'architecture}
-
-La chaîne complète distingue les données, les calculs, les agents et la gouvernance. Les flèches représentent un passage d'état ; une sortie non conforme revient au composant qui doit la corriger et n'est pas transmise automatiquement à l'étape suivante.
+La figure~\ref{fig:architecture-globale} décrit le dispositif proposé pour un desk plus complet. Les données, calculs, agents et validations y ont des responsabilités séparées. Les flèches représentent un passage d'état ; une sortie non conforme serait renvoyée au composant responsable.
 
 \begin{figure}[H]
 \centering
@@ -18,22 +13,9 @@ La chaîne complète distingue les données, les calculs, les agents et la gouve
 \label{fig:architecture-globale}
 \end{figure}
 
-\section{Socle quantitatif déterministe}
+\section{Rôles proposés et périmètre réalisé}
 
-Le socle quantitatif prend en charge les calculs qui exigent exactitude, reproductibilité et validation indépendante : données de marché, facteurs, portefeuilles, risque, coûts et contraintes. Chaque outil reçoit des entrées versionnées et renvoie des valeurs numériques structurées, un horodatage, les paramètres utilisés et les éventuelles erreurs.
-
-Les agents ne calculent pas directement les métriques financières. Ils demandent à des outils déterministes de produire les mesures, puis les lisent, les comparent, les contextualisent et les documentent. Une sortie mal formée, une donnée absente ou une limite franchie doit interrompre le flux. L'agent ne peut pas transformer cette erreur en recommandation positive par une reformulation textuelle.
-
-Le contrat fonctionnel minimal du socle est le suivant :
-
-\begin{itemize}
-    \item entrée : source de données, univers, horizon, paramètres de marché et contraintes de portefeuille ;
-    \item traitement : calcul déterministe, versionné et rejouable ;
-    \item sortie : valeurs numériques structurées, horodatage, paramètres utilisés, hypothèses et éventuelles erreurs ;
-    \item contrôle : conservation des logs, séparation des droits et capacité à refaire le calcul avec les mêmes données.
-\end{itemize}
-
-\section{Agents proposés}
+Les rôles du tableau~\ref{tab:agents-proposes} décrivent l'architecture cible : tous n'ont pas été exécutés. Les composants testés sont précisés après le tableau.
 
 \begin{table}[H]
 \centering
@@ -57,55 +39,17 @@ Superviseur & Agréger les avis et préparer la revue humaine. & État complet, 
 \end{adjustbox}
 \end{table}
 
-La séparation des rôles devient un contrôle effectif seulement si elle est inscrite dans les permissions des outils. L'agent actualités peut enrichir le contexte, mais ne doit pas modifier les poids. L'agent portefeuille peut proposer une allocation, mais ne peut pas ignorer un rejet de l'agent risque. Le superviseur doit conserver les avis divergents dans le journal.
+Le workflow exécuté charge les fichiers, applique les gardes qualité et risque, puis associe un superviseur déterministe à la synthèse DeepSeek. Actualités et conformité restent proposées ; le rôle portefeuille est testé séparément dans l'extension d'allocation.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{figures/schemas/permissions_agents.pdf}
-\caption{Permissions, escalades et interdictions dans la couche agentique.}
-\label{fig:permissions-agents}
-\end{figure}
+Dans le workflow de synthèse, le rapport qualité est lu après le backtest : une anomalie bloque l'accès au LLM. Le dépassement du seuil de turnover de 10\,\% ajoute une alerte d'escalade, sans interrompre la synthèse. Une sortie non conforme aux contrôles disponibles est rejetée et archivée ; le statut reste « à valider ». Les indicateurs de permission ne constituent pas une décision humaine enregistrée.
 
-\section{Flux de décision et boucle de rejet}
+Le socle calcule rendements, poids après rendement, coûts, turnover et risque à partir de sources et paramètres identifiables, sans optimiseur institutionnel ni modèle de liquidité. Le dispositif complet prévoirait une validation humaine distincte du calcul et du contrôle qualité.
 
-Le flux de décision comporte sept étapes : ingestion, contrôle qualité, calcul factoriel, contextualisation, construction du portefeuille, contrôles indépendants, puis décision supervisée. Le passage à l'étape suivante dépend d'une condition explicite ; une anomalie bloque le graphe ou renvoie l'état vers le composant responsable.
+\section{Journal de décision et explicabilité}
 
-\begin{table}[H]
-\centering
-\caption{Séquence de décision et conditions de rejet.}
-\label{tab:sequence-decision}
-\scriptsize
-\begin{adjustbox}{width=\textwidth}
-\begin{tabular}{p{0.08\textwidth}p{0.18\textwidth}p{0.20\textwidth}p{0.46\textwidth}}
-\toprule
-\textbf{Étape} & \textbf{Émetteur} & \textbf{Destinataire} & \textbf{Échange et condition} \\
-\midrule
-1 & Données & Contrôle qualité & Les données et leur version sont chargées ; une anomalie bloque le flux. \\
-2 & Contrôle qualité & Moteur factoriel & Le calcul démarre seulement si les contrôles sont conformes. \\
-3 & Moteur factoriel & Optimiseur & Les signaux et paramètres sont transmis sous forme structurée. \\
-4 & Optimiseur & Moteur de risque & Les poids proposés sont contrôlés avec les coûts et les contraintes. \\
-5 & Moteur de risque & Optimiseur & En cas de rejet, l'état revient à l'optimiseur avec le motif ; aucune allocation n'est validée. \\
-6 & Risque et conformité & Superviseur & Les avis, alertes et permissions sont agrégés sans supprimer les désaccords. \\
-7 & Superviseur & Humain puis archive & La validation, la modification ou le rejet sont enregistrés dans le journal JSON. \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
+Pour examiner une note, je repars du journal qui conserve les valeurs sources, les alertes et les permissions. Trois niveaux doivent être distingués : l'explication quantitative des calculs ; la trace des entrées, outils et règles de l'agent ; puis l'identité de la règle ou de la personne ayant validé la décision. Le texte libre demande un contrôle séparé de sa cohérence avec ces éléments.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{figures/schemas/sequence_decision.pdf}
-\caption{Séquence de décision avec boucle de rejet par le contrôle risque.}
-\label{fig:sequence-decision}
-\end{figure}
-
-Cette séquence matérialise le \emph{human-in-the-loop}. L'automatisation est adaptée aux étapes reproductibles ; l'autonomie complète est exclue pour les étapes qui engagent le portefeuille ou la conformité.
-
-\section{Journal de décision explicable}
-
-Chaque recommandation doit produire un enregistrement structuré contenant l'horodatage, la version des données et du code, l'univers, les contraintes, les facteurs, les sources, l'allocation proposée, les coûts, les limites de risque, les avis des agents et la décision humaine. Le texte généré est une vue de lecture ; la preuve est le contenu structuré du journal.
-
-L'extrait suivant est issu de la trace du prototype du 30 novembre 2025. Il montre les rendements observés, le rendement net, le turnover, les poids cibles et les permissions effectives.
+L'extrait de la figure~\ref{fig:json-decision} provient du 30 novembre 2025. L'absence d'outil de modification des poids et d'envoi d'ordres se vérifie dans le code du workflow de synthèse ; les champs JSON en documentent la règle.
 
 \begin{figure}[H]
 \centering
@@ -118,13 +62,14 @@ L'extrait suivant est issu de la trace du prototype du 30 novembre 2025. Il mont
   "risk_status": "a valider",
   "rebalance": {
     "factor_returns": {
-      "Value": 0.024998,
-      "Momentum": -0.015616,
-      "Quality": 0.009068,
-      "Low volatility": 0.023074
+      "Value": 0.0249981345118395,
+      "Momentum": -0.0156164272534177,
+      "Quality": 0.0090677798205325,
+      "Low volatility": 0.0230736302539755
     },
-    "net_return": 0.010367,
-    "turnover": 0.013515,
+    "net_return": 0.0103740219288315,
+    "turnover": 0.0067574044008865,
+    "transaction_cost": 6.757404400886513e-06,
     "target_weights": {
       "VLUE": 0.25, "MTUM": 0.25,
       "QUAL": 0.25, "USMV": 0.25
@@ -141,46 +86,12 @@ L'extrait suivant est issu de la trace du prototype du 30 novembre 2025. Il mont
 \label{fig:json-decision}
 \end{figure}
 
-Ce format permet de revenir à l'état du système au moment de la recommandation. Il rend également vérifiable le fait que l'agent n'avait ni la permission de modifier les poids, ni celle d'envoyer un ordre.
+Les traces déterministes contiennent les valeurs, alertes et permissions. L'archive DeepSeek du 7 septembre 2026 ajoute le modèle et les identifiants de requête, mais pas les empreintes du prompt, des données ou le commit Git. Le code prévoit ces informations pour de nouvelles traces ; elles ne complètent pas rétroactivement l'archive. Aucune de ces sorties n'enregistre une approbation humaine effectivement réalisée.
 
-\section{Monitoring continu}
+\section{Allocation simulée et suivi des incidents}
 
-Le monitoring associe les indicateurs financiers à des métriques spécifiques aux agents. Les seuils ci-dessous sont indicatifs pour le prototype ; ils doivent être calibrés sur des données de production, un budget de latence et une politique de risque validée.
+L'extension suit une séquence explicite : indicateurs passés, proposition DeepSeek, validation indépendante, transaction simulée ou conservation des positions, puis valorisation quotidienne. Le modèle n'écrit jamais directement les quantités. Le code vérifie les poids, le turnover et les champs cités ; il revérifie les contraintes au cours d'exécution et finance les frais à partir du portefeuille.
 
-\begin{table}[H]
-\centering
-\caption{Métriques agentiques, seuils d'alerte et réactions.}
-\label{tab:monitoring-agent}
-\scriptsize
-\begin{adjustbox}{width=\textwidth}
-\begin{tabular}{p{0.22\textwidth}p{0.20\textwidth}p{0.34\textwidth}p{0.18\textwidth}}
-\toprule
-\textbf{Métrique} & \textbf{Seuil indicatif} & \textbf{Réaction} & \textbf{Responsable} \\
-\midrule
-Taux de citations valides & < 98\,\% sur un lot contrôlé & Bloquer la note et demander une nouvelle vérification des sources. & Conformité et superviseur \\
-Échec des appels d'outils & > 5\,\% sur une fenêtre glissante & Réessayer, passer en mode observation et ouvrir un incident si le taux persiste. & IT et propriétaire du workflow \\
-Désaccord entre agents & > 20\,\% des décisions & Imposer une revue humaine et conserver les avis divergents. & Superviseur et risque \\
-Intervention humaine & > 30\,\% des décisions & Analyser la charge, les motifs d'escalade et la qualité des règles. & Superviseur \\
-Temps moyen de réponse & > 30 secondes sur le périmètre cible & Ne pas contourner les contrôles ; réduire le périmètre ou repasser en mode observation. & IT \\
-Coût moyen par décision & Dépassement du budget validé & Limiter les appels, revoir le modèle et suspendre l'usage non essentiel. & Propriétaire du service \\
-\bottomrule
-\end{tabular}
-\end{adjustbox}
-\end{table}
+Un rejet conserve les quantités et son motif est archivé, sans correction automatique ni nouvel appel. Le renvoi à un optimiseur avant revue humaine appartient à l'architecture proposée, pas à cette expérience. Le protocole et les résultats figurent respectivement aux sections~\ref{sec:protocole-allocation} et~\ref{sec:resultats-allocation}.
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.92\textwidth]{figures/schemas/monitoring_escalade.pdf}
-\caption{Monitoring agentique et réactions en cas de dépassement de seuil.}
-\label{fig:monitoring-escalade}
-\end{figure}
-
-Ces métriques complètent le suivi du rendement, de la volatilité, du drawdown, du turnover, des coûts et de l'attribution factorielle. Une dérive financière ou agentique doit pouvoir déclencher une alerte, un blocage, un retour à une stratégie de référence ou une revue indépendante.
-
-\section{Exemple de scénario de rééquilibrage}
-
-Lors d'un rééquilibrage, l'agent données vérifie les cours et les paramètres. L'agent facteurs calcule les signaux, l'agent actualités contextualise les événements et l'agent portefeuille propose une allocation. L'agent risque contrôle alors les expositions et peut rejeter la proposition si une contrainte est violée. Dans ce cas, l'état revient à l'optimiseur avec le motif du rejet ; l'agent conformité intervient ensuite et le superviseur prépare une note pour la validation humaine.
-
-La valeur de la couche agentique réside dans la coordination, la détection d'anomalies, la contextualisation et la production d'une trace. Elle ne réside pas dans le remplacement des calculs ni dans l'exécution autonome.
-
-% Texte d'exemple du template conservé hors compilation.
+Un dispositif d'exploitation devrait suivre les citations invalides, échecs d'outils, désaccords, interventions humaines, latences et coûts, avec un responsable et une réaction définis pour chaque incident. Les seuils envisagés pour cette cible n'ont pas été calibrés sur le prototype. Les résultats mesurés de la collecte, ses rejets et ses limites sont discutés au chapitre~\ref{cap:discussion}.

@@ -7,10 +7,19 @@
 %==============================================================================
 \documentclass[12pt,letterpaper]{report}
 \usepackage{UCM}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\floatname{algorithm}{Algorithme}
+\algrenewcommand{\algorithmicrequire}{\textbf{Entrées :}}
+\algrenewcommand{\algorithmicensure}{\textbf{Sorties :}}
+\algrenewcommand{\algorithmicfor}{\textbf{pour}}
+\algrenewcommand{\algorithmicdo}{\textbf{faire}}
+\algrenewcommand{\algorithmicend}{\textbf{fin}}
 \AtBeginDocument{\renewcommand*{\FrenchLabelItem}{\textnormal{-}}\renewcommand*{\Frlabelitemi}{\textnormal{-}}\renewcommand{\labelitemi}{\textnormal{-}}}
 \captionsetup{labelsep=period}
 \setlength{\emergencystretch}{3em}
 \begin{document}
+\hypersetup{pageanchor=false}
 \pagestyle{empty}
 \begin{center}
     \parbox[c][\textheight][t]{\textwidth}{
@@ -24,14 +33,14 @@
             \vspace{2.2cm}
             {\Large \bf L'approche agentique dans un contexte de trading multifactoriel}\\
             \vspace{0.75cm}
-            {\large État de l'art, architectures ouvertes et exigences d'explicabilité}\\
+            {\large Synthèse LLM et allocation de portefeuille sous contraintes}\\
             \vspace{1.8cm}
             {\normalsize \bf Nom et prénom : SANOU Abou Dramane}\\
             {\normalsize \bf Encadrant : Bertrand DJEMBISSI}\\
             \vfill
             Rapport d'étude présenté dans le cadre du Master Finance de marché\\
             \vspace{0.5cm}
-            Paris, juin 2026
+            Paris, septembre 2026
         \end{center}
         }
 \end{center}
@@ -39,33 +48,36 @@
 \cleardoublepage
 %---------------------------------------------------------------------------
 % Preamble
+\hypersetup{pageanchor=true}
 \pagenumbering{roman} 				% Begin Roman page numbering (i,ii,...)
 % Résumé
 \chapter*{Résumé}
  \addcontentsline{toc}{chapter}{Résumé}
-Les desks de trading doivent industrialiser la recherche, le suivi des portefeuilles et la préparation des décisions tout en conservant un niveau élevé de contrôle, d'explicabilité et de traçabilité. Ce rapport étudie l'usage d'agents fondés sur des grands modèles de langage dans une architecture de trading multifactoriel, en distinguant ce qui peut être confié à un agent de ce qui doit rester déterministe.
+Ce mémoire étudie deux usages d'un LLM en trading multifactoriel : restituer des résultats et proposer une allocation simulée sous contraintes. Le prototype initial associe un backtest Python, LangGraph et une synthèse DeepSeek. Dans l'extension, Python valide les poids proposés et calcule le portefeuille. Aucun outil d'ordre réel n'est accessible.
 
-L'étude combine un état de l'art des frameworks et projets GitHub avec un prototype expérimental. Le socle quantitatif utilise quatre ETF comme proxies investissables des facteurs value, momentum, quality et low volatility : VLUE, MTUM, QUAL et USMV. Une allocation équipondérée est comparée à l'ETF \texttt{SPY} sur la période février 2015-décembre 2025, avec des scénarios de coûts de transaction de 0, 10 et 30 points de base ainsi qu'un contrôle hors échantillon sur 2021-2025. Sur l'échantillon complet, le portefeuille multifactoriel à 10 points de base obtient un rendement annualisé de 12,02\,\%, contre 13,84\,\% pour SPY ; hors échantillon, les rendements sont respectivement de 11,25\,\% et 14,34\,\%. Le prototype ne démontre donc pas une capacité à générer de l'alpha.
+Quatre ETF représentent les expositions value, momentum, quality et low volatility : VLUE, MTUM, QUAL et USMV. Sur février 2015--décembre 2025, leur allocation équipondérée à 10 points de base atteint 12,02\,\% de rendement annualisé, contre 13,84\,\% pour SPY. Le contrôle temporel sur 2021--2025 conserve ce classement.
 
-La couche agentique est démontrée avec LangGraph sur deux dates de rééquilibrage, les 30 novembre et 31 décembre 2025. Elle lit les sorties structurées du moteur quantitatif, vérifie les contrôles, produit une note sourcée et demande une validation humaine. Elle ne recalcule pas les métriques, ne modifie pas les pondérations et ne peut pas envoyer d'ordre. Le résultat principal est architectural : les agents sont utiles pour l'orchestration, l'interprétation et la documentation, tandis que les facteurs, le risque, les permissions et la décision finale doivent rester contrôlés par des règles vérifiables.
+L'évaluation de la synthèse comprend 12 cas, dont 11 répétés trois fois et un cas qualité bloqué. Les 33 réponses passent les contrôles automatisés. Toutefois, trois altérations construites sont également acceptées : un coût nul, une citation inexistante et une recommandation contradictoire. La conformité mesurée ne garantit donc pas la fiabilité générale des notes.
 
-\vspace{1cm}
-\noindent \textbf{Mots-clés :} \\
-\noindent agents intelligents, trading multifactoriel, finance de marché, LLM, explicabilité, gouvernance des modèles, GitHub, backtesting, LangGraph.
+L'extension d'allocation couvre mai 2021--décembre 2025 : 22 des 56 propositions sont exécutées et 34 rejetées, surtout pour dépassement du turnover. Pour 100 unités initiales, DeepSeek termine à 148,39, contre 153,55 pour l'équipondération et 152,26 pour l'inverse volatilité, après frais de transaction. Le replay reproduit ces résultats. Cette expérience rétrospective, exposée au biais de préentraînement et hors coûts API et humains, ne démontre pas d'avantage financier de l'agent.
+
+\vspace{0.4cm}
+\noindent \textbf{Mots-clés :} agents intelligents, trading multifactoriel, LLM, explicabilité, gouvernance, backtesting, LangGraph.
 
 \clearpage
 % Abstract
 \chapter*{Abstract}
  \addcontentsline{toc}{chapter}{Abstract}
-Trading desks seek to industrialize research, portfolio monitoring and decision preparation while preserving strong controls, explainability and auditability. This report studies large language model agents in a multifactor trading architecture and distinguishes tasks that may be delegated to an agent from tasks that must remain deterministic.
+This report examines two uses of an LLM in multifactor trading: summarizing results and proposing constrained allocations in simulation. The initial prototype combines a Python backtest, LangGraph and a DeepSeek summary. In the extension, Python validates proposed weights and computes portfolio values. No live order tool is available.
 
-The study combines a review of open-source frameworks and finance-oriented GitHub projects with an empirical prototype. The quantitative layer uses four exchange-traded funds as investable proxies for value, momentum, quality and low-volatility factors: VLUE, MTUM, QUAL and USMV. An equal-weighted portfolio is compared with \texttt{SPY} over February 2015-December 2025, under 0, 10 and 30 basis-point transaction-cost scenarios, with an out-of-sample check over 2021-2025. Over the full sample, the 10-basis-point multifactor portfolio achieves a 12.02\% annualized return versus 13.84\% for SPY; out of sample, the corresponding figures are 11.25\% and 14.34\%. The experiment therefore does not establish alpha generation.
+Four ETFs represent value, momentum, quality and low volatility: VLUE, MTUM, QUAL and USMV. Over February 2015--December 2025, their equal-weighted portfolio with 10-basis-point transaction costs achieves a 12.02\% annualized return, versus 13.84\% for SPY. A temporal check over 2021--2025 preserves this ranking.
 
-The agentic layer is demonstrated with LangGraph on two rebalancing dates, 30 November and 31 December 2025. It reads structured quantitative outputs, checks quality and risk gates, produces a traceable note and requests human validation. It does not recompute metrics, change portfolio weights or send orders. The main contribution is architectural: agents can support orchestration, interpretation and documentation, while factors, risk, permissions and final decisions must remain governed by verifiable rules.
+The summary evaluation covers 12 cases, including 11 repeated three times and one blocked data-quality case. All 33 responses pass automated checks. However, three constructed alterations also pass: a zero cost, a nonexistent citation and a contradictory recommendation. Measured compliance therefore does not guarantee general reliability.
 
-\vspace{1cm}
-\noindent \textbf{Keywords:} \\
-\noindent intelligent agents, multifactor trading, market finance, LLM, explainability, model governance, GitHub, backtesting, LangGraph.
+The allocation extension covers May 2021--December 2025: 22 of 56 proposals are executed and 34 rejected, mainly for excessive turnover. Starting from 100 units, DeepSeek ends at 148.39, versus 153.55 for equal weighting and 152.26 for inverse volatility, after transaction costs. Archived replay reproduces these results. This retrospective experiment is exposed to pretraining look-ahead bias and excludes API and human costs; it does not establish a financial advantage for the agent.
+
+\vspace{0.4cm}
+\noindent \textbf{Keywords:} intelligent agents, multifactor trading, LLM, explainability, governance, backtesting, LangGraph.
 
 \clearpage
 % Remerciements
@@ -73,25 +85,42 @@ The agentic layer is demonstrated with LangGraph on two rebalancing dates, 30 No
 \addcontentsline{toc}{chapter}{Remerciements}
 Je remercie mon encadrant, Bertrand DJEMBISSI, pour son accompagnement et ses orientations dans la préparation de ce rapport d'étude. Je remercie également l'équipe pédagogique du CNAM pour le cadre de formation fourni au sein du Master Finance de marché.
 
+\clearpage
+\chapter*{Déclaration relative à l'utilisation de l'intelligence artificielle}
+\addcontentsline{toc}{chapter}{Déclaration relative à l'utilisation de l'intelligence artificielle}
+Dans le cadre de la préparation de ce rapport, j'ai utilisé des outils d'intelligence artificielle générative comme assistants de rédaction, de programmation et de vérification. Ils m'ont notamment aidé à corriger des fautes d'orthographe et de grammaire, à améliorer certaines formulations, à repérer des incohérences de notation et à vérifier la cohérence apparente de formules, de pseudo-codes et de portions de code. Cette assistance a également été mobilisée pour développer l'extension d'allocation, préparer ses tests, exécuter les simulations et rédiger leur analyse. Les contrôles automatisés et le replay sont documentés à partir du code, des équations et des archives ; ils ne valent pas validation indépendante de toutes les hypothèses financières. L'intelligence artificielle n'a donc pas été considérée comme une source autonome de résultats : les choix méthodologiques, l'analyse, l'interprétation et la validation finale présentés dans ce mémoire relèvent de ma responsabilité.
+
 \cleardoublepage
 %---------------------------------------------------------------------------
 %The table of contents is automatically generated by the template
 \setcounter{secnumdepth}{4}
-\setcounter{tocdepth}{4}            % Sets the number of section levels in the table of contents to 4
+\setcounter{tocdepth}{1}            % Sets the number of section levels in the table of contents to 4
 \pagestyle{fancy}
-\tableofcontents                    % Creates the table of contents
+\begingroup
+\renewcommand{\baselinestretch}{1.1}\selectfont
+\tableofcontents
+\endgroup
 \cleardoublepage                    % Ends the current page
 
 \listoffigures
 \addcontentsline{toc}{chapter}{\listfigurename}
-%\cleardoublepage
+\cleardoublepage
+\begingroup
+\renewcommand{\baselinestretch}{1.05}\small
 \listoftables
-\clearpage
+\endgroup
 \addcontentsline{toc}{chapter}{\listtablename}
-%\cleardoublepage
-%---------------------------------------------------------------------------
 
+\makeatletter
+\@openrightfalse
+\makeatother
+\begingroup
+\renewcommand{\baselinestretch}{1.05}\selectfont
 \input{Capitulos/Glossaire.tex}
+\endgroup
+\makeatletter
+\@openrighttrue
+\makeatother
 \cleardoublepage
 
 % Chapitres
@@ -119,16 +148,14 @@ Je remercie mon encadrant, Bertrand DJEMBISSI, pour son accompagnement et ses or
 %---------------------------------------------------------------------------
 % Bibliographie
 \addcontentsline{toc}{chapter}{Bibliographie}
-\bibliographystyle{apalike} % Estilo APA
+\bibliographystyle{apalike-fr} % Variante locale : liaisons entre auteurs en français
 \bibliography{biblio.bib}       % Carga las referencias desde el archivo biblio.bib y crea la sección de Bibliografía
 %---------------------------------------------------------------------------
 % Annexes
 \appendix
 \clearpage
-\addappheadtotoc
-\appendixpage
 \renewcommand{\thechapter}{\Roman{chapter}}
 \input{Capitulos/Annexe_I_Matrice_GitHub.tex}
-\input{Capitulos/Annexe_II_Checklist_Gouvernance.tex}
+\input{Capitulos/Annexe_III_Reproduction_Allocation.tex}
 %---------------------------------------------------------------------------
 \end{document}

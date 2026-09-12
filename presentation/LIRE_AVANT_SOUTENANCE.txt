@@ -1,0 +1,19 @@
+PRÉSENTATION DU MÉMOIRE — SANOU Abou Dramane
+
+soutenance_agentique_multi.pdf : 18 diapositives principales et 3 annexes.
+Durée indicative : 15 à 20 minutes, hors questions. Les durées de notes
+constituent des repères de préparation, pas une durée mesurée.
+notes_orales.pdf : notes de préparation, avec rappel des sources.
+soutenance_agentique_multi.tex : source modifiable utilisant le thème Wildcat.
+
+Le modèle main.tex et son PDF d'origine sont conservés.
+Les chiffres et graphiques proviennent du mémoire et de ses résultats archivés.
+Les contre-exemples du validateur sont construits, pas des erreurs spontanées
+mesurées chez le modèle. Aucun nouvel appel LLM n'a été réalisé pour ces slides.
+
+COMPILATION (depuis ce dossier ; XeLaTeX, latexmk et polices Fira Sans requis)
+latexmk -xelatex -interaction=nonstopmode -halt-on-error soutenance_agentique_multi.tex
+latexmk -xelatex -interaction=nonstopmode -halt-on-error notes_orales.tex
+
+Les fichiers du thème et les images du sous-dossier assets doivent rester
+avec les sources. L'archive ZIP contient cet ensemble pour le transfert.

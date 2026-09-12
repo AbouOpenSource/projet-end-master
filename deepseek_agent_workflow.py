@@ -13,8 +13,10 @@ Variables d'environnement :
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
+import subprocess
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -37,7 +39,47 @@ from agent_workflow import (
 
 ROOT = Path(__file__).resolve().parent
 RESULTS_DIR = ROOT / "results"
+PROMPT_VERSION = "deepseek-synthesis-v2"
 load_dotenv(ROOT / ".env")
+
+
+def _sha256_file(path: Path) -> str | None:
+    if not path.exists():
+        return None
+    digest = hashlib.sha256()
+    with path.open("rb") as stream:
+        for chunk in iter(lambda: stream.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def _git_commit() -> str | None:
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    return result.stdout.strip() or None
+
+
+def reproducibility_metadata() -> dict[str, Any]:
+    return {
+        "git_commit": _git_commit(),
+        "data_hashes": {
+            "data/quality_report.json": _sha256_file(ROOT / "data/quality_report.json"),
+            "results/monthly_asset_returns.csv": _sha256_file(
+                ROOT / "results/monthly_asset_returns.csv"
+            ),
+            "results/rebalance_diagnostics_10bps.csv": _sha256_file(
+                ROOT / "results/rebalance_diagnostics_10bps.csv"
+            ),
+        },
+    }
 
 
 class DeepSeekState(WorkflowState, total=False):
@@ -46,6 +88,10 @@ class DeepSeekState(WorkflowState, total=False):
     llm_raw_content: str
     llm_metadata: dict[str, Any]
     evaluation: dict[str, Any]
+    validation_status: str
+    rejection_reasons: list[str]
+    note_output: dict[str, Any]
+    reproducibility: dict[str, Any]
     error: str
 
 
@@ -119,15 +165,24 @@ def llm_synthesis(state: DeepSeekState) -> dict[str, Any]:
         ],
         temperature=0,
         response_format={"type": "json_object"},
-        max_tokens=1200,
+        max_tokens=3000,
     )
     elapsed_ms = round((time.perf_counter() - started) * 1000, 2)
     content = response.choices[0].message.content or ""
+    parse_error = None
     try:
         parsed = json.loads(content)
     except json.JSONDecodeError as exc:
-        raise RuntimeError(f"La reponse DeepSeek n'est pas un JSON valide : {exc}") from exc
+        # The graph must persist and reject malformed model output instead of
+        # turning a contract violation into an untraceable workflow crash.
+        parsed = {}
+        parse_error = f"JSON invalide : {exc}"
     usage = getattr(response, "usage", None)
+    prompt_material = json.dumps(
+        {"system_prompt": system_prompt, "payload": payload},
+        ensure_ascii=False,
+        sort_keys=True,
+    ).encode("utf-8")
     metadata = {
         "provider": "deepseek",
         "model": getattr(response, "model", model),
@@ -138,6 +193,10 @@ def llm_synthesis(state: DeepSeekState) -> dict[str, Any]:
         "completion_tokens": getattr(usage, "completion_tokens", None),
         "total_tokens": getattr(usage, "total_tokens", None),
         "timestamp_utc": datetime.now(timezone.utc).isoformat(),
+        "prompt_version": PROMPT_VERSION,
+        "prompt_sha256": hashlib.sha256(prompt_material).hexdigest(),
+        "system_prompt": system_prompt,
+        "parse_error": parse_error,
     }
     return {
         "llm_output": parsed,
@@ -156,11 +215,14 @@ def _number_close(actual: Any, expected: float, tolerance: float = 1e-4) -> bool
 
 def validate_llm_output(state: DeepSeekState) -> dict[str, Any]:
     """Score the model against the deterministic source of truth."""
-    output = state.get("llm_output", {})
+    raw_output = state.get("llm_output")
+    output = raw_output if isinstance(raw_output, dict) else {}
     expected = state["rebalance"]
-    reported = output.get("reported_values", {}) if isinstance(output, dict) else {}
+    reported = output.get("reported_values", {})
+    reported = reported if isinstance(reported, dict) else {}
     expected_factors = expected["factor_returns"]
-    reported_factors = reported.get("factor_returns", {}) if isinstance(reported, dict) else {}
+    reported_factors = reported.get("factor_returns", {})
+    reported_factors = reported_factors if isinstance(reported_factors, dict) else {}
     factor_checks = {
         label: _number_close(reported_factors.get(label), value)
         for label, value in expected_factors.items()
@@ -172,14 +234,16 @@ def validate_llm_output(state: DeepSeekState) -> dict[str, Any]:
         *factor_checks.values(),
     ]
     numeric_fidelity = sum(numeric_values) / len(numeric_values)
+    limitations = output.get("limitations", [])
+    limitations = limitations if isinstance(limitations, list) else []
+    cited_fields = output.get("cited_fields", [])
+    cited_fields = cited_fields if isinstance(cited_fields, list) else []
     required_fields = {
         "summary": isinstance(output.get("summary"), str) and bool(output["summary"].strip()),
         "recommendation": isinstance(output.get("recommendation"), str)
         and bool(output["recommendation"].strip()),
-        "limitations": isinstance(output.get("limitations"), list)
-        and len(output["limitations"]) >= 2,
-        "cited_fields": isinstance(output.get("cited_fields"), list)
-        and len(output["cited_fields"]) >= 3,
+        "limitations": len(limitations) >= 2,
+        "cited_fields": len(cited_fields) >= 3,
     }
     completeness = sum(required_fields.values()) / len(required_fields)
     permissions_ok = (
@@ -187,10 +251,20 @@ def validate_llm_output(state: DeepSeekState) -> dict[str, Any]:
         and output.get("can_change_weights") is False
         and output.get("can_send_orders") is False
     )
-    limitations_text = " ".join(str(item).lower() for item in output.get("limitations", []))
+    limitations_text = " ".join(str(item).lower() for item in limitations)
     limitations_disclosed = any(
         marker in limitations_text for marker in ("limite", "liquid", "slippage", "validation")
     )
+    rejection_reasons: list[str] = []
+    if numeric_fidelity < 1:
+        rejection_reasons.append("valeurs numériques non conformes")
+    if completeness < 1:
+        rejection_reasons.append("contrat JSON incomplet")
+    if not permissions_ok:
+        rejection_reasons.append("permissions incompatibles avec le contrat")
+    if not limitations_disclosed:
+        rejection_reasons.append("limites ou validation humaine non divulguées")
+    accepted = not rejection_reasons
     evaluation = {
         "numeric_fidelity": round(numeric_fidelity, 4),
         "numeric_checks": factor_checks
@@ -202,23 +276,39 @@ def validate_llm_output(state: DeepSeekState) -> dict[str, Any]:
         "completeness": round(completeness, 4),
         "permission_compliance": float(permissions_ok),
         "limitations_disclosed": float(limitations_disclosed),
-        "accepted": bool(
-            numeric_fidelity == 1
-            and completeness == 1
-            and permissions_ok
-            and limitations_disclosed
-        ),
+        "rejection_reasons": rejection_reasons,
+        "accepted": accepted,
     }
-    return {"evaluation": evaluation}
+    return {
+        "evaluation": evaluation,
+        "validation_status": "accepted" if accepted else "rejected",
+    }
+
+
+def rejected_llm(state: DeepSeekState) -> dict[str, Any]:
+    """Create a rejected trace when the model output fails deterministic checks."""
+    reasons = list(state.get("evaluation", {}).get("rejection_reasons", []))
+    if not reasons:
+        reasons = ["sortie LLM non conforme"]
+    note_output = {
+        "summary": "La sortie DeepSeek est rejetée par le contrôle déterministe.",
+        "recommendation": "Aucune recommandation exploitable : une revue humaine est obligatoire.",
+        "limitations": reasons,
+    }
+    return {
+        "validation_status": "rejected",
+        "rejection_reasons": reasons,
+        "note_output": note_output,
+    }
 
 
 def blocked_llm(state: DeepSeekState) -> dict[str, Any]:
     """Create a blocked trace without calling the model when data quality fails."""
     date = state.get("requested_date") or "date inconnue"
     output = {
-        "summary": "La synthese DeepSeek est bloquee car le controle qualite a echoue.",
+        "summary": "La synthèse DeepSeek est bloquée car le contrôle qualité a échoué.",
         "reported_values": {},
-        "recommendation": "Aucune decision : corriger les donnees puis relancer.",
+        "recommendation": "Aucune décision : corriger les données puis relancer.",
         "limitations": state["quality_flags"],
         "human_validation_required": True,
         "can_change_weights": False,
@@ -234,38 +324,55 @@ def blocked_llm(state: DeepSeekState) -> dict[str, Any]:
             "completeness": 1.0,
             "permission_compliance": 1.0,
             "limitations_disclosed": 1.0,
+            "rejection_reasons": ["contrôle qualité bloqué"],
             "accepted": False,
         },
+        "validation_status": "blocked",
+        "note_output": output,
     }
 
 
 def persist_llm(state: DeepSeekState) -> dict[str, Any]:
     date = state.get("date") or state.get("requested_date") or "date inconnue"
+    note_output = state.get("note_output") or state.get("llm_output") or {}
+    if not isinstance(note_output, dict):
+        note_output = {}
+    limitations = note_output.get("limitations", [])
+    if not isinstance(limitations, list):
+        limitations = [str(limitations)]
     trace = {
         "workflow": "langgraph_deepseek_supervised",
         "date": date,
         "quality_ok": state["quality_ok"],
         "quality_flags": state["quality_flags"],
-        "risk_status": state.get("risk_status", "bloque"),
+        "risk_status": state.get("risk_status", "bloqué"),
         "risk_alerts": state.get("risk_alerts", []),
         "rebalance": state.get("rebalance"),
-        "llm_output": state["llm_output"],
-        "llm_metadata": state["llm_metadata"],
-        "evaluation": state["evaluation"],
+        "llm_output": state.get("llm_output"),
+        "llm_raw_content": state.get("llm_raw_content"),
+        "llm_metadata": state.get("llm_metadata", {}),
+        "prompt_payload": state.get("prompt_payload"),
+        "evaluation": state.get("evaluation", {}),
+        "validation_status": state.get("validation_status", "blocked"),
+        "rejection_reasons": state.get("rejection_reasons", []),
+        "reproducibility": reproducibility_metadata(),
         "permissions": {
             "can_change_weights": False,
             "can_send_orders": False,
             "human_validation_required": True,
         },
     }
+    summary = str(note_output.get("summary", "Aucune synthèse exploitable n'a été produite."))
+    recommendation = str(note_output.get("recommendation", "Aucune recommandation exploitable."))
     note = (
         f"# Note DeepSeek du {date}\n\n"
-        f"{state['llm_output']['summary']}\n\n"
-        f"**Recommandation :** {state['llm_output']['recommendation']}\n\n"
-        "**Limites signalees :**\n"
-        + "\n".join(f"- {item}" for item in state["llm_output"]["limitations"])
+        f"{summary}\n\n"
+        f"**Recommandation :** {recommendation}\n\n"
+        "**Limites signalées :**\n"
+        + "\n".join(f"- {item}" for item in limitations)
         + "\n\n"
-        f"**Evaluation automatique :** `{json.dumps(state['evaluation'], ensure_ascii=False)}`\n"
+        f"**Statut du contrôle :** {trace['validation_status']}\n\n"
+        f"**Évaluation automatique :** {json.dumps(state.get('evaluation', {}), ensure_ascii=False)}\n"
     )
     (RESULTS_DIR / f"deepseek_decision_trace_{date}.json").write_text(
         json.dumps(trace, ensure_ascii=False, indent=2), encoding="utf-8"
@@ -282,6 +389,7 @@ def build_graph():
     builder.add_node("risk_gate", risk_gate)
     builder.add_node("llm_synthesis", llm_synthesis)
     builder.add_node("validate_llm_output", validate_llm_output)
+    builder.add_node("rejected_llm", rejected_llm)
     builder.add_node("blocked_llm", blocked_llm)
     builder.add_node("persist_llm", persist_llm)
     builder.add_edge(START, "load_inputs")
@@ -294,7 +402,12 @@ def build_graph():
     builder.add_edge("rebalance_analyst", "risk_gate")
     builder.add_edge("risk_gate", "llm_synthesis")
     builder.add_edge("llm_synthesis", "validate_llm_output")
-    builder.add_edge("validate_llm_output", "persist_llm")
+    builder.add_conditional_edges(
+        "validate_llm_output",
+        lambda state: "persist" if state["validation_status"] == "accepted" else "rejected",
+        {"persist": "persist_llm", "rejected": "rejected_llm"},
+    )
+    builder.add_edge("rejected_llm", "persist_llm")
     builder.add_edge("blocked_llm", "persist_llm")
     builder.add_edge("persist_llm", END)
     return builder.compile()

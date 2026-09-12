@@ -1,7 +1,7 @@
 \chapter{Résultats expérimentaux et discussion}\label{cap:discussion}
 %--------------------------------------
 
-\section{Résultats du prototype expérimental}
+\section{Résultats du prototype expérimental initial}
 
 Le prototype présenté au chapitre~\ref{cap:methodologie} fournit une première mesure du comportement d'une combinaison équipondérée de quatre sleeves factoriels. Les résultats sont comparés à l'ETF \texttt{SPY} sur la période février 2015-décembre 2025, qui correspond aux rendements mensuels calculés à partir des cours ajustés.
 
@@ -22,9 +22,9 @@ Multifactoriel, 30 pb & 12,00\,\% & 14,17\,\% & 0,874 & -23,86\,\% & 344,54 & 0,
 \end{tabular}
 \end{table}
 
-Sur cette période, le benchmark \texttt{SPY} obtient le rendement annualisé le plus élevé et le meilleur ratio de Sharpe. Le portefeuille multifactoriel présente toutefois une volatilité et un drawdown légèrement inférieurs. Les coûts de transaction modifient peu le résultat dans cette configuration, car le turnover mensuel moyen reste limité.
+Le résultat que je retiens de cette période est double : \texttt{SPY} obtient le rendement annualisé et le ratio de Sharpe les plus élevés, tandis que le portefeuille multifactoriel conserve une volatilité et un drawdown légèrement inférieurs. Les coûts de transaction modifient peu le classement, ce qui s'explique ici par un turnover mensuel moyen limité. Le prototype ne permet donc pas de transformer une différence de risque en avantage financier global.
 
-Une vérification temporelle est également effectuée sur la période hors échantillon 2021-2025. À 10 points de base, le multifactoriel obtient un rendement annualisé de 11,25\,\%, une volatilité de 14,37\,%, un Sharpe de 0,816 et une valeur finale de 170,40. Sur la même période, SPY atteint 14,34\,%, 15,14\,%, 0,965 et 195,39. Cette comparaison confirme la prudence de l'interprétation : le prototype ne montre pas de supériorité du multifactoriel, mais fournit une base reproductible pour tester l'architecture.
+Une vérification temporelle est également effectuée sur la période hors échantillon 2021-2025. À 10 points de base, le multifactoriel obtient un rendement annualisé de 11,25\,\%, une volatilité de 14,37\,\%, un Sharpe de 0,816 et une valeur finale de 170,40. Sur la même période, SPY atteint 14,34\,\%, 15,14\,\%, 0,965 et 195,39. Cette comparaison confirme la prudence de l'interprétation : le prototype ne montre pas de supériorité du multifactoriel, mais fournit une base reproductible pour tester l'architecture.
 
 \begin{table}[H]
 \centering
@@ -55,16 +55,16 @@ Multifactoriel, 10 pb & 11,25\,\% & 14,37\,\% & 0,816 & -23,85\,\% & 170,40 & 0,
     \label{fig:drawdown}
 \end{figure}
 
-Ces résultats ne prouvent donc pas la supériorité financière de la stratégie multifactorielle. Ils montrent plutôt l'intérêt d'un socle quantitatif reproductible auquel un agent peut être relié. L'agent pourrait recevoir ces sorties structurées afin de produire une note de décision, mais il ne doit ni recalculer les métriques ni modifier les pondérations sans règle déterministe et validation humaine.
+Les résultats sont regroupés dans le tableau~\ref{tab:resultats-backtest} et le contrôle hors échantillon dans le tableau~\ref{tab:resultats-oos}. Les figures~\ref{fig:cumulative-wealth} et~\ref{fig:drawdown} montrent respectivement la richesse cumulée et le drawdown. Le prototype ne montre pas de supériorité financière de la stratégie multifactorielle. Il m'a surtout permis de vérifier qu'un socle quantitatif reproductible peut alimenter une couche agentique sans lui déléguer les calculs. Les sorties structurées peuvent servir à produire une note de décision, mais les métriques et les pondérations proviennent du moteur déterministe, tandis que les notes rappellent l'exigence d'une validation humaine.
 
 
 \section{Démonstration de la couche agentique}
 
-Le module \texttt{agent\_workflow.py} exécute désormais ce scénario avec LangGraph. Les deux exemples du 30 novembre et du 31 décembre 2025 sont générés à partir des sorties structurées du rééquilibrage, sans nouvel appel de données et sans accès aux ordres. Le premier exemple correspond au 30 novembre 2025 : les rendements de VLUE, MTUM, QUAL et USMV sont respectivement de +2,50\,\%, -1,56\,\%, +0,91\,\% et +2,31\,\%. Le rendement net du portefeuille est de +1,04\,\% pour un turnover de 0,68\,\%. La note conclut que la hausse de VLUE et USMV compense la baisse de MTUM et recommande de conserver les pondérations cibles de 25\,\%, sous réserve d'une validation humaine.
+Le module \texttt{agent\_workflow.py} produit des notes déterministes avec LangGraph. Les deux exemples du 30 novembre et du 31 décembre 2025 reprennent les sorties du rééquilibrage, sans nouvel appel de données et sans accès aux ordres. Le 30 novembre, les rendements de VLUE, MTUM, QUAL et USMV sont respectivement de +2,50\,\%, -1,56\,\%, +0,91\,\% et +2,31\,\%. Le rendement net est de +1,04\,\% pour un turnover de 0,68\,\%. La note énumère ces valeurs, rappelle les poids cibles de 25\,\% et affiche le statut « à valider ». À la lecture de ces résultats, j'observe que les contributions positives de VLUE, QUAL et USMV compensent la contribution négative de MTUM ; cette interprétation est la mienne, et non une phrase générée par la note.
 
-Le second exemple correspond au 31 décembre 2025 : VLUE progresse de +2,90\,\%, MTUM de +0,29\,\%, QUAL de +0,58\,\% et USMV recule de -0,82\,\%. Le rendement net du portefeuille atteint +0,74\,\% pour un turnover de 0,54\,\%. La note identifie VLUE comme principal facteur favorable, signale la contribution négative de USMV et ne propose aucun ajustement exceptionnel.
+Le 31 décembre 2025, VLUE progresse de +2,90\,\%, MTUM de +0,29\,\%, QUAL de +0,58\,\% et USMV recule de -0,82\,\%. Le rendement net atteint +0,74\,\% pour un turnover de 0,54\,\%. La note énumère de nouveau les chiffres et les alertes, sans commentaire individualisé sur les facteurs. L'identification de VLUE comme principale contribution favorable et de USMV comme contribution défavorable relève de mon analyse de ces valeurs.
 
-Ces notes sont comparées aux fichiers de sortie du prototype selon quatre critères : fidélité aux chiffres, complétude, respect des permissions et explicitation des limites. Le résultat est observable sur les deux exécutions ; cette évaluation manuelle constitue une première vérification qualitative et non une mesure statistique de la qualité d'un agent.
+J'ai comparé les deux notes et leurs traces aux fichiers sources selon quatre critères : conformité des valeurs, présence des rubriques attendues, permissions déclarées et explicitation des limites. Le tableau~\ref{tab:evaluation-agent} présente cette vérification. Les deux exemples satisfont ces critères de restitution. Ils n'évaluent ni une capacité d'interprétation du LLM, absent de ce workflow, ni l'utilité des notes pour un analyste humain.
 
 \begin{table}[H]
 \centering
@@ -74,27 +74,60 @@ Ces notes sont comparées aux fichiers de sortie du prototype selon quatre crit�
 \begin{adjustbox}{width=\textwidth}
 \begin{tabular}{p{0.15\textwidth}p{0.18\textwidth}p{0.18\textwidth}p{0.18\textwidth}p{0.20\textwidth}p{0.08\textwidth}}
 \toprule
-\textbf{Date} & \textbf{Fidélité aux chiffres} & \textbf{Complétude} & \textbf{Permissions} & \textbf{Limites explicitées} & \textbf{Résultat} \\
+\textbf{Date} & \textbf{Conformité des champs structurés} & \textbf{Complétude} & \textbf{Permissions} & \textbf{Limites explicitées} & \textbf{Résultat} \\
 \midrule
-30/11/2025 & Conforme : rendements, net et turnover cohérents avec le JSON. & Conforme : facteurs favorables et défavorables identifiés. & Conforme : aucun changement de poids ni ordre. & Conforme : validation humaine et limites du moteur signalées. & Conforme \\
-31/12/2025 & Conforme : rendements, net et turnover cohérents avec le JSON. & Conforme : VLUE et USMV sont correctement contextualisés. & Conforme : aucun changement de poids ni ordre. & Conforme : validation humaine et limites du moteur signalées. & Conforme \\
+30/11/2025 & Conforme : champs JSON cohérents avec les valeurs sources. & Conforme : quatre rendements, rendement net, turnover et coût présents. & Conforme : aucun changement de poids ni ordre. & Conforme : validation humaine et limites du moteur signalées. & Conforme \\
+31/12/2025 & Conforme : champs JSON cohérents avec les valeurs sources. & Conforme : quatre rendements, rendement net, turnover et coût présents. & Conforme : aucun changement de poids ni ordre. & Conforme : validation humaine et limites du moteur signalées. & Conforme \\
 \bottomrule
 \end{tabular}
 \end{adjustbox}
 \end{table}
 
 
-\section{Apports de l'approche agentique}
 
-L'approche agentique apporte une réponse crédible à plusieurs limites des chaînes quantitatives classiques. Une stratégie multifactorielle produit souvent des sorties numériques difficiles à contextualiser : scores, expositions, contraintes actives, turnover et attribution. Les agents peuvent transformer ces sorties en une note compréhensible, relier les mouvements du portefeuille à des événements de marché et signaler les cas où le modèle statistique semble en contradiction avec l'information qualitative.
+\section{Évaluation automatisée de la couche LLM}
 
-Le deuxième apport est organisationnel. Une architecture multi-agents reproduit la séparation des responsabilités d'un desk : recherche, risque, conformité, exécution et supervision. Cette séparation rend le système plus auditable qu'un agent monolithique. Elle permet aussi de tester chaque agent séparément : exactitude des synthèses pour l'agent actualités, respect des limites pour l'agent risque, complétude documentaire pour l'agent conformité.
+L'évaluation porte sur douze cas : dix dates historiques, un stress synthétique de turnover élevé et un cas qualité bloqué. Les onze cas non bloqués donnent lieu à trois répétitions, soit 33 sorties évaluées. Le cas bloqué est traité localement sans appel API. Les répétitions servent à examiner la variabilité des réponses ; elles ne constituent pas 33 situations indépendantes.
 
-Le troisième apport concerne la mémoire. Des projets comme FinMem montrent qu'un agent peut conserver un historique structuré des événements et de ses propres décisions. Dans un contexte de marché, cette mémoire doit être contrôlée : elle peut aider à détecter les régimes récurrents, mais elle peut aussi renforcer des biais si elle n'est pas validée par des métriques objectives.
+\begin{table}[H]
+\centering
+\caption{Résultats selon les contrôles automatisés du protocole LLM.}
+\label{tab:evaluation-llm}
+\scriptsize
+\begin{tabular}{p{0.70\textwidth}r}
+\toprule
+\textbf{Indicateur} & \textbf{Résultat} \\
+\midrule
+Cas évalués & 12 \\
+Cas envoyés au LLM & 11 \\
+Répétitions par cas LLM & 3 \\
+Conformité numérique à la tolérance fixée & 100\,\% \\
+Conformité des indicateurs booléens de permission & 100\,\% \\
+Champs obligatoires et contrôles de structure & 100\,\% \\
+Présence de marqueurs d'alertes et de limites & 100\,\% \\
+Stabilité des chiffres normalisés et des permissions & 100\,\% \\
+Traitement du cas qualité bloqué sans appel LLM & 100\,\% \\
+Erreurs critiques détectées par ces contrôles & 0 \\
+Stabilité de l'ensemble exact des champs cités & 0\,\% \\
+\bottomrule
+\end{tabular}
+\end{table}
 
-\section{Risques spécifiques}
+Les 33 sorties satisfont les critères automatisés du protocole. Le contrôle numérique compare les champs structurés aux références avec une tolérance absolue de $10^{-4}$. Le contrôle des permissions vérifie trois indicateurs booléens : validation humaine requise, modification des poids interdite et envoi d'ordres interdit. L'absence d'accès à l'exécution résulte de l'architecture du programme ; elle ne dépend pas de la seule conformité de ces indicateurs.
 
-Les risques spécifiques sont reliés à des contrôles, à des responsables et à des décisions observables. Cette présentation évite de traiter une faiblesse agentique comme un simple problème de rédaction.
+Ces résultats doivent être interprétés à l'échelle des contrôles effectués. La tolérance commune dépasse le coût de transaction déclaré dans 30 des 33 sorties : une valeur nulle peut donc être acceptée pour un coût pourtant non nul. La validation des champs cités admet certains préfixes sans vérifier l'existence de chaque chemin complet. Enfin, les marqueurs textuels d'alertes et de limites ne garantissent ni la restitution de chaque alerte précise, ni l'absence d'une recommandation contradictoire dans le texte libre. Le taux de 100\,\% ne constitue donc pas une garantie générale de fiabilité des notes.
+
+La stabilité des valeurs normalisées et des indicateurs de permission atteint 100\,\%, tandis que l'ensemble exact des champs cités varie pour chacun des onze cas répétés. Ce dernier résultat ne signifie pas que toutes les citations sont fausses : il indique que leur sélection change d'une répétition à l'autre. Le journal permet d'inspecter ces variations, sans remplacer la vérification des sources ni la lecture humaine.
+
+Je lis ces scores comme une mesure de conformité aux contrôles retenus. Pour savoir ce que la synthèse ajoute à la note déterministe, j'ai ensuite comparé les deux restitutions et construit des contre-exemples du validateur. Le bénéfice financier, le gain de productivité et la valeur d'usage de la note restent hors de cette évaluation automatisée ; cette dernière question demanderait une étude auprès d'utilisateurs.
+
+\input{Capitulos/Analyse_Complementaire}
+
+\input{Capitulos/Resultats_Allocation}
+
+\section{Enseignements et conditions d'utilisation}
+
+J'ai relié les risques du tableau~\ref{tab:risques-agentiques} aux difficultés observées dans le prototype et aux extensions envisagées. La mémoire et les échanges libres entre agents, notamment, restent à évaluer.
 
 \begin{table}[H]
 \centering
@@ -116,55 +149,8 @@ Désaccord non traité & Agents risque et portefeuille produisent des avis incom
 \end{adjustbox}
 \end{table}
 
-\section{Explicabilité : trois niveaux}
+Le dépassement du turnover a été observé dans les propositions d'allocation et bloqué par Python. L'acceptation d'une citation inexistante provient, elle, d'un contre-exemple construit pour éprouver le validateur de synthèse. Ces deux cas justifient de conserver les chiffres sources et les motifs de validation.
 
-\subsection{Explicabilité quantitative}
+L'usage d'un fournisseur externe demande de classer les données transmises, d'examiner leur conservation, leur localisation et les conditions contractuelles. Un changement de modèle ou une interruption de l'API peut modifier le comportement ; le mode sans LLM et la conservation des positions fournissent ici des replis déterministes. Les instructions adverses présentes dans des documents ou données restent un risque à tester si de nouvelles sources sont intégrées.
 
-Elle relie la décision aux rendements, aux facteurs, aux pondérations, aux coûts, aux contraintes et aux métriques de risque. Les valeurs doivent provenir des sorties du moteur déterministe et pouvoir être recalculées avec la même version de données.
-
-\subsection{Explicabilité agentique}
-
-Elle décrit les sources consultées, les outils appelés, l'état parcouru, les règles appliquées, le niveau de confiance et les éventuels désaccords entre agents. Une synthèse ne peut être considérée comme fiable que si ses citations et ses entrées structurées sont vérifiables.
-
-\subsection{Explicabilité de la décision finale}
-
-Elle identifie l'avis du superviseur, la règle ou la personne qui a validé, modifié, rejeté ou différé la recommandation. Elle précise également si une permission d'exécution existait. Le journal JSON est donc l'élément de preuve ; la note en langage naturel en est l'interface de lecture.
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=\textwidth]{figures/schemas/explicabilite_trois_niveaux.pdf}
-\caption{Trois niveaux d'explicabilité reliés au journal d'audit.}
-\label{fig:explicabilite-trois-niveaux}
-\end{figure}
-
-\section{Positionnement des solutions GitHub}
-
-Les solutions GitHub identifiées peuvent être positionnées sur une échelle de maturité.
-
-Les frameworks comme LangGraph, AutoGen, CrewAI et Semantic Kernel sont matures pour orchestrer des workflows, mais ils ne connaissent pas le métier du trading. Ils sont adaptés à la couche agentique, pas au moteur financier.
-
-Les plateformes comme Qlib, Lean, OpenBB, FinRL et Freqtrade sont utiles pour construire le socle quantitatif. Elles apportent données, backtesting, simulation ou environnement d'apprentissage. Elles ne garantissent pas l'explicabilité agentique, mais elles permettent de rendre les calculs reproductibles.
-
-Les projets comme TradingAgents, FinRobot, FinMem et AI Hedge Fund sont les plus proches de l'intuition multi-agents. Leur valeur est exploratoire : ils montrent comment découper les rôles et produire des analyses financières. Leur faiblesse est le passage à l'échelle réglementaire : contrôle des données, validation indépendante, limites de risque, sécurité, audit et intégration à une infrastructure institutionnelle.
-
-\section{Conditions minimales de mise en production}
-
-Avant un déploiement réel, un système agentique de trading devrait satisfaire au minimum les conditions suivantes :
-\begin{itemize}
-    \item fonctionnement initial en mode observation, sans exécution automatique ;
-    \item jeux de tests sur données historiques et scénarios extrêmes ;
-    \item séparation stricte entre agents de recherche, agents de décision et outils d'exécution ;
-    \item limites de risque codées hors LLM et impossibles à contourner par prompt ;
-    \item registre d'audit complet et horodaté ;
-    \item validation indépendante par risque, conformité et IT ;
-    \item plan de repli en cas d'indisponibilité du modèle ou de dérive des sorties ;
-    \item revue périodique des performances financières et des erreurs agentiques.
-\end{itemize}
-
-La trajectoire raisonnable est donc graduelle : assistant de recherche, assistant de reporting, assistant de revue de risque, puis assistant de recommandation supervisée. Le passage à une autonomie d'exécution ne devrait être envisagé qu'après une longue période de monitoring et seulement pour des stratégies à périmètre limité.
-
-\section{Synthèse}
-
-L'approche agentique est pertinente pour un desk multifactoriel si elle est conçue comme une architecture de coordination et d'explicabilité. Elle devient fragile si elle est présentée comme un substitut au modèle quantitatif ou au contrôle humain. Le meilleur compromis consiste à combiner des agents spécialisés avec des moteurs déterministes, des règles non contournables et un journal de décision exploitable par un auditeur.
-
-% Texte d'exemple du template conservé hors compilation.
+Avant une utilisation réelle, je testerais d'abord le système en mode observation, avec une revue indépendante des contrôles de risque, des permissions et des journaux par les fonctions risque, conformité et IT. Il faudrait également mesurer le temps consacré à la revue humaine et son coût.

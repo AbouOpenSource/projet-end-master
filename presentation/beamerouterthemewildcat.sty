@@ -1,0 +1,86 @@
+\mode<presentation>
+
+% Default for standalone usage (without beamerthemewildcat.sty)
+\providecommand{\wc@numbering}{fraction}
+\providecommand{\wc@breadcrumb}{on}
+
+\makeatletter
+
+% Ensure hyperref package is included
+\usepackage{hyperref}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Set the frame title and footer
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Frame title
+\defbeamertemplate*{frametitle}{wildcat}[1][]
+{
+  \nointerlineskip%
+  \begin{beamercolorbox}[wd=\paperwidth,sep=0pt,leftskip=0.55cm,rightskip=0.55cm,#1]{frametitle}
+    \vskip0.32cm%
+    \def\wc@tmp{none}\ifx\wc@breadcrumb\wc@tmp\else
+      \ifnum\value{section}>0
+        {\tiny\color{wcprimary!20}\MakeUppercase{\insertsectionhead}%
+          \ifnum\value{subsection}>0
+            \space\space›\space\space\MakeUppercase{\insertsubsectionhead}%
+          \fi\par}%
+        \vskip0.14cm%
+      \fi
+    \fi
+    {\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle\par}%
+    \ifx\insertframesubtitle\@empty\else%
+      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\par}%
+    \fi%
+    \vskip0.12cm%
+  \end{beamercolorbox}%
+}
+
+% % Header (Navigation) - Uncomment if you want navigation symbols
+% \setbeamertemplate{headline}{
+%   % If page > 1 (don't diplsy for first page)
+%   \ifnum\thepage>1
+%     \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{palette quaternary}
+%       \insertnavigation{\paperwidth} % Add navigation symbols
+%     \end{beamercolorbox}
+%   \fi
+% }
+
+% Footer (Pages)
+%% NOTE: ON OVERLEAF USE ht=-2.5ex. Not sure why this is needed.
+\setbeamertemplate{footline}{
+  \ifbeamer@inappendix\else
+    \ifnum\insertframenumber>1
+      \def\wc@tmp{none}\ifx\wc@numbering\wc@tmp\else
+        \def\wc@tmp{progressbar}\ifx\wc@numbering\wc@tmp
+          \ifnum\insertmainframenumber>1
+            \begingroup
+              \dimen@=\paperwidth
+              \multiply\dimen@ by \numexpr\insertframenumber-1\relax
+              \divide\dimen@ by \numexpr\insertmainframenumber-1\relax
+              \leavevmode
+              \rlap{\color{wcprimary!10}\rule{\paperwidth}{1.8pt}}%
+              {\color{wcprimary}\rule{\dimen@}{1.8pt}}%
+            \endgroup
+          \fi
+        \else
+          \begin{beamercolorbox}[wd=\paperwidth,ht=-2.5ex,dp=1.125ex,right]{page number in head/foot}
+            \usebeamerfont{page number in head/foot}%
+            \color{black!20}%
+            \def\wc@tmp{number}\ifx\wc@numbering\wc@tmp
+              \the\numexpr\insertframenumber-1\relax
+            \else
+              \ifnum\insertmainframenumber>1
+                \the\numexpr\insertframenumber-1\relax/\the\numexpr\insertmainframenumber-1\relax
+              \fi
+            \fi
+            \hspace{1em}
+          \end{beamercolorbox}
+        \fi
+      \fi
+    \fi
+  \fi
+}
+
+\makeatother
+
+\mode<all>

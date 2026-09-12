@@ -40,9 +40,12 @@
 \draw[arrow] (quality) -- (factor);
 \draw[arrow] (factor) -- (optimizer);
 \draw[arrow] (optimizer) -- (risk);
-\draw[arrow] (risk.south) |- (agents.east);
+\draw[arrow] (risk.south) -- ++(0,-1.1cm) -| (agents.north);
 \draw[arrow] (agents) -- (supervisor);
 \draw[arrow] (supervisor) -- (human);
-\draw[danger] (risk.south) to[bend right=35] node[label,below]{rejet ou anomalie} (optimizer.south);
+% Le rejet suit un chemin séparé sous la ligne principale.
+\draw[danger] (risk.south east) -- ++(0,-0.45cm)
+  -| node[pos=0.5,below]{rejet ou anomalie}
+  ([yshift=-0.45cm]optimizer.south) -- (optimizer.south);
 \end{tikzpicture}
 \end{document}

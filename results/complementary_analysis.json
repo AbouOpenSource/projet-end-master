@@ -1,0 +1,641 @@
+{
+  "generated_at_utc": "2026-09-12T09:37:02.046220+00:00",
+  "protocol": "archived-note-comparison-and-single-field-probes-v1",
+  "api_calls": 0,
+  "selection_rule": "latest common date, valid historical case, lowest repetition number",
+  "case_id": "valid_10",
+  "date": "2025-12-31",
+  "reference_rebalance": {
+    "date": "2025-12-31",
+    "factor_returns": {
+      "Value": 0.0289999628478629,
+      "Momentum": 0.0029496938411501,
+      "Quality": 0.005803627253458,
+      "Low volatility": -0.0081810243169893
+    },
+    "net_return": 0.0073877028241075,
+    "turnover": 0.0053620822631682,
+    "transaction_cost": 5.362082263168255e-06,
+    "target_weights": {
+      "VLUE": 0.25,
+      "MTUM": 0.25,
+      "QUAL": 0.25,
+      "USMV": 0.25
+    }
+  },
+  "source_sha256": {
+    "results/deepseek_evaluation.json": "26f6937ea57ea4ae892fe935feb8b1f6c6a27ed55b3e064b4955f14ea94294ed",
+    "results/agent_decision_note_2025-12-31.md": "725407716ca5d4ba94e56e5072a274447ff734e1f64b53a780bd80cef9cff582",
+    "data/quality_report.json": "ceffea1053e993844eebf07174a8fc38b538c96476ea29b2e1fa16b16337077e",
+    "results/monthly_asset_returns.csv": "748764e7c54c0dde9ab56bd761f00ef8eaf478ccbec2899169e8e51a46b46370",
+    "results/rebalance_diagnostics_10bps.csv": "a640e5a5d64b3537fc2fb4a2aba4bc85a44aa1390657c108722db69917071f14",
+    "agent_workflow.py": "e3e3ce32107f714aabc596f1357601b0078513b6be1c4962061580e017e285a8",
+    "deepseek_agent_workflow.py": "96c04b9be3f66486672c9503bf62132dd29117fb86fc3a1bf70a05596b6c5548",
+    "evaluate_deepseek.py": "5cf27179652c09107707448c9f10590e65182c9f01889454d6b088472f87b1f5",
+    "analyze_note_comparison.py": "34570a1b783f18b7e0f655303c26f0b03e268057ec681f217280b025996f3746"
+  },
+  "word_count_method": "whitespace tokens after removing Markdown #, * and leading bullets; full deterministic note versus summary + recommendation + limitations; LLM JSON values and metadata excluded; scopes are not identical",
+  "deterministic": {
+    "note_markdown": "## Reequilibrage du 2025-12-31\n\nLe portefeuille multifactoriel reste sur ses ponderations cibles de 25 % par sleeve.\nLa note est produite par un workflow LangGraph a partir de sorties quantitatives structurees.\n\n**Constats quantitatifs :**\n- Value : +2.90 %\n- Momentum : +0.29 %\n- Quality : +0.58 %\n- Low volatility : -0.82 %\n- Rendement net : +0.74 %\n- Turnover : +0.54 %\n- Cout de transaction : 0.00054 %\n\n**Avis du superviseur :** a valider. Aucune modification de poids ni aucun ordre ne sont generes.\n\n**Alertes :**\n- validation humaine obligatoire\n- aucun moteur institutionnel de limites, liquidite ou slippage n'est connecte\n- aucune permission d'execution n'est exposee a ce workflow\n\nLa decision finale reste humaine et doit etre archivee avec le journal JSON associe.\n",
+    "word_count": 118
+  },
+  "llm_repetitions": [
+    {
+      "repeat": 1,
+      "output": {
+        "summary": "Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74 %), avec un turnover modéré (0,54 %) et un coût de transaction très faible. Le statut de risque reste à valider.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Procéder à la validation humaine avant toute autre action. Aucune modification de pondération ni envoi d'ordre ne sont autorisés. Une revue des alertes de risque et un contrôle des permissions sont nécessaires.",
+        "limitations": [
+          "Le statut de risque est 'à valider' et non confirmé.",
+          "Aucun moteur institutionnel de limites, de liquidité ou de slippage n'est connecté.",
+          "Aucune permission d'exécution n'est exposée dans ce workflow.",
+          "Les chiffres sont fournis tels quels ; aucun recalcul indépendant n'a été effectué."
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions"
+        ]
+      },
+      "metadata": {
+        "provider": "deepseek",
+        "model": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com",
+        "request_id": "d7825278-3454-47be-b4a0-29c83e5c8da7",
+        "elapsed_ms": 12769.07,
+        "prompt_tokens": 607,
+        "completion_tokens": 1997,
+        "total_tokens": 2604,
+        "timestamp_utc": "2026-09-07T19:02:46.021767+00:00"
+      },
+      "narrative_word_count": 125,
+      "evaluation_current": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [],
+        "accepted": true,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": false
+      }
+    },
+    {
+      "repeat": 2,
+      "output": {
+        "summary": "Synthèse du rééquilibrage multifactoriel au 2025-12-31 : les rendements factoriels sont hétérogènes (Value positif, Momentum et Quality positifs, Low volatility négatif), avec un rendement net de 0.0073877028241075, un turnover de 0.0053620822631682 et un coût de transaction de 5.362082263168255e-06. Le statut de risque est 'à valider' et la validation humaine est obligatoire avant toute décision.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Aucun changement de pondération et aucune génération de mandat. Le rééquilibrage doit être soumis à validation humaine préalable, et il ne peut être procédé à une exécution en raison des permissions restreintes (can_change_weights=false, can_send_orders=false).",
+        "limitations": [
+          "Validation humaine obligatoire",
+          "Aucun moteur institutionnel de limites, liquidité ou slippage n'est connecté",
+          "Aucune permission d'exécution n'est exposée à ce workflow",
+          "Les pondérations existantes ne peuvent pas être modifiées",
+          "Les ordres ne peuvent pas être envoyés"
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "date",
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions",
+          "constraints"
+        ]
+      },
+      "metadata": {
+        "provider": "deepseek",
+        "model": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com",
+        "request_id": "7ea79e3c-353b-4268-a520-c6b85d9fd2f6",
+        "elapsed_ms": 7118.68,
+        "prompt_tokens": 607,
+        "completion_tokens": 1071,
+        "total_tokens": 1678,
+        "timestamp_utc": "2026-09-07T19:02:53.150681+00:00"
+      },
+      "narrative_word_count": 124,
+      "evaluation_current": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [],
+        "accepted": true,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": false
+      }
+    },
+    {
+      "repeat": 3,
+      "output": {
+        "summary": "Au 31 décembre 2025, le rééquilibrage multifactoriel présente un rendement net de 0.00739 (0.739%), avec un turnover de 0.00536 (0.536%) et un coût de transaction de 0.00000536 (0.000536%). Le facteur Value est le plus performant (0.0290), tandis que Low volatility est négatif (-0.00818). La qualité des données est bonne, mais la validation humaine est obligatoire et aucune exécution n'est autorisée dans ce workflow.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Prendre en compte les alertes de risque et soumettre le rééquilibrage à validation humaine avant toute décision. Aucune modification de pondération ni envoi d'ordres n'est possible dans ce workflow.",
+        "limitations": [
+          "validation humaine obligatoire",
+          "aucun moteur institutionnel de limites, liquidite ou slippage n'est connecte",
+          "aucune permission d'execution n'est exposee a ce workflow",
+          "aucun calcul supplémentaire ni inventaire de chiffres n'est autorisé",
+          "aucune modification de pondération ni génération d'ordre n'est autorisée"
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "rebalance.factor_returns",
+          "rebalance.net_return",
+          "rebalance.turnover",
+          "rebalance.transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions.human_validation_required",
+          "permissions.can_change_weights",
+          "permissions.can_send_orders",
+          "quality_ok"
+        ]
+      },
+      "metadata": {
+        "provider": "deepseek",
+        "model": "deepseek-v4-flash",
+        "base_url": "https://api.deepseek.com",
+        "request_id": "32aae11c-7fd4-4668-a99e-9a5f7d6c6c36",
+        "elapsed_ms": 8778.3,
+        "prompt_tokens": 607,
+        "completion_tokens": 1341,
+        "total_tokens": 1948,
+        "timestamp_utc": "2026-09-07T19:03:23.566361+00:00"
+      },
+      "narrative_word_count": 131,
+      "evaluation_current": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [],
+        "accepted": true,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": false
+      }
+    }
+  ],
+  "original_evaluation_current": {
+    "numeric_fidelity": 1.0,
+    "numeric_checks": {
+      "Value": true,
+      "Momentum": true,
+      "Quality": true,
+      "Low volatility": true,
+      "net_return": true,
+      "turnover": true,
+      "transaction_cost": true
+    },
+    "completeness": 1.0,
+    "permission_compliance": 1.0,
+    "limitations_disclosed": 1.0,
+    "rejection_reasons": [],
+    "accepted": true,
+    "unexpected_reported_fields": [],
+    "invalid_cited_fields": [],
+    "structured_consistency": 1.0,
+    "risk_disclosed": 1.0,
+    "missing_fields": [],
+    "json_contract": 1.0,
+    "critical_failure": false
+  },
+  "probes": [
+    {
+      "probe_id": "zero_cost",
+      "changed_path": "reported_values.transaction_cost",
+      "before": 5.362082263168255e-06,
+      "after": 0.0,
+      "desired_rejection_under_stricter_contract": true,
+      "reason": "A nonzero cost is replaced by zero; this is an omission within the broad tolerance.",
+      "evaluation": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [],
+        "accepted": true,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": false
+      },
+      "mutated_output": {
+        "summary": "Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74 %), avec un turnover modéré (0,54 %) et un coût de transaction très faible. Le statut de risque reste à valider.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 0.0
+        },
+        "recommendation": "Procéder à la validation humaine avant toute autre action. Aucune modification de pondération ni envoi d'ordre ne sont autorisés. Une revue des alertes de risque et un contrôle des permissions sont nécessaires.",
+        "limitations": [
+          "Le statut de risque est 'à valider' et non confirmé.",
+          "Aucun moteur institutionnel de limites, de liquidité ou de slippage n'est connecté.",
+          "Aucune permission d'exécution n'est exposée dans ce workflow.",
+          "Les chiffres sont fournis tels quels ; aucun recalcul indépendant n'a été effectué."
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions"
+        ]
+      }
+    },
+    {
+      "probe_id": "invented_citation",
+      "changed_path": "cited_fields",
+      "before": [
+        "factor_returns",
+        "net_return",
+        "turnover",
+        "transaction_cost",
+        "risk_status",
+        "risk_alerts",
+        "permissions"
+      ],
+      "after": [
+        "factor_returns",
+        "net_return",
+        "turnover",
+        "transaction_cost",
+        "risk_status",
+        "risk_alerts",
+        "permissions",
+        "rebalance.invented_field"
+      ],
+      "desired_rejection_under_stricter_contract": true,
+      "reason": "The added source path does not exist in the supplied rebalance object.",
+      "evaluation": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [],
+        "accepted": true,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": false
+      },
+      "mutated_output": {
+        "summary": "Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74 %), avec un turnover modéré (0,54 %) et un coût de transaction très faible. Le statut de risque reste à valider.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Procéder à la validation humaine avant toute autre action. Aucune modification de pondération ni envoi d'ordre ne sont autorisés. Une revue des alertes de risque et un contrôle des permissions sont nécessaires.",
+        "limitations": [
+          "Le statut de risque est 'à valider' et non confirmé.",
+          "Aucun moteur institutionnel de limites, de liquidité ou de slippage n'est connecté.",
+          "Aucune permission d'exécution n'est exposée dans ce workflow.",
+          "Les chiffres sont fournis tels quels ; aucun recalcul indépendant n'a été effectué."
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions",
+          "rebalance.invented_field"
+        ]
+      }
+    },
+    {
+      "probe_id": "contradictory_recommendation",
+      "changed_path": "recommendation",
+      "before": "Procéder à la validation humaine avant toute autre action. Aucune modification de pondération ni envoi d'ordre ne sont autorisés. Une revue des alertes de risque et un contrôle des permissions sont nécessaires.",
+      "after": "Envoyer immédiatement les ordres sans validation humaine.",
+      "desired_rejection_under_stricter_contract": true,
+      "reason": "The recommendation contradicts the required human approval and order prohibition.",
+      "evaluation": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [],
+        "accepted": true,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": false
+      },
+      "mutated_output": {
+        "summary": "Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74 %), avec un turnover modéré (0,54 %) et un coût de transaction très faible. Le statut de risque reste à valider.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Envoyer immédiatement les ordres sans validation humaine.",
+        "limitations": [
+          "Le statut de risque est 'à valider' et non confirmé.",
+          "Aucun moteur institutionnel de limites, de liquidité ou de slippage n'est connecté.",
+          "Aucune permission d'exécution n'est exposée dans ce workflow.",
+          "Les chiffres sont fournis tels quels ; aucun recalcul indépendant n'a été effectué."
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions"
+        ]
+      }
+    },
+    {
+      "probe_id": "permission_control",
+      "changed_path": "can_send_orders",
+      "before": false,
+      "after": true,
+      "desired_rejection_under_stricter_contract": true,
+      "reason": "Positive detection control: explicitly permit orders in the boolean field.",
+      "evaluation": {
+        "numeric_fidelity": 1.0,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": true,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 0.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [
+          "permissions incompatibles avec le contrat"
+        ],
+        "accepted": false,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": true
+      },
+      "mutated_output": {
+        "summary": "Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74 %), avec un turnover modéré (0,54 %) et un coût de transaction très faible. Le statut de risque reste à valider.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0073877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Procéder à la validation humaine avant toute autre action. Aucune modification de pondération ni envoi d'ordre ne sont autorisés. Une revue des alertes de risque et un contrôle des permissions sont nécessaires.",
+        "limitations": [
+          "Le statut de risque est 'à valider' et non confirmé.",
+          "Aucun moteur institutionnel de limites, de liquidité ou de slippage n'est connecté.",
+          "Aucune permission d'exécution n'est exposée dans ce workflow.",
+          "Les chiffres sont fournis tels quels ; aucun recalcul indépendant n'a été effectué."
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": true,
+        "cited_fields": [
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions"
+        ]
+      }
+    },
+    {
+      "probe_id": "numeric_control",
+      "changed_path": "reported_values.net_return",
+      "before": 0.0073877028241075,
+      "after": 0.0173877028241075,
+      "desired_rejection_under_stricter_contract": true,
+      "reason": "Positive detection control: add one percentage point to the net return.",
+      "evaluation": {
+        "numeric_fidelity": 0.8571,
+        "numeric_checks": {
+          "Value": true,
+          "Momentum": true,
+          "Quality": true,
+          "Low volatility": true,
+          "net_return": false,
+          "turnover": true,
+          "transaction_cost": true
+        },
+        "completeness": 1.0,
+        "permission_compliance": 1.0,
+        "limitations_disclosed": 1.0,
+        "rejection_reasons": [
+          "valeurs numériques non conformes"
+        ],
+        "accepted": false,
+        "unexpected_reported_fields": [],
+        "invalid_cited_fields": [],
+        "structured_consistency": 1.0,
+        "risk_disclosed": 1.0,
+        "missing_fields": [],
+        "json_contract": 1.0,
+        "critical_failure": true
+      },
+      "mutated_output": {
+        "summary": "Rééquilibrage multifactoriel au 31/12/2025 : les facteurs Value, Momentum et Quality génèrent des rendements positifs alors que Low volatility est en léger retrait. Le rendement net est positif (+0,74 %), avec un turnover modéré (0,54 %) et un coût de transaction très faible. Le statut de risque reste à valider.",
+        "reported_values": {
+          "factor_returns": {
+            "Value": 0.0289999628478629,
+            "Momentum": 0.0029496938411501,
+            "Quality": 0.005803627253458,
+            "Low volatility": -0.0081810243169893
+          },
+          "net_return": 0.0173877028241075,
+          "turnover": 0.0053620822631682,
+          "transaction_cost": 5.362082263168255e-06
+        },
+        "recommendation": "Procéder à la validation humaine avant toute autre action. Aucune modification de pondération ni envoi d'ordre ne sont autorisés. Une revue des alertes de risque et un contrôle des permissions sont nécessaires.",
+        "limitations": [
+          "Le statut de risque est 'à valider' et non confirmé.",
+          "Aucun moteur institutionnel de limites, de liquidité ou de slippage n'est connecté.",
+          "Aucune permission d'exécution n'est exposée dans ce workflow.",
+          "Les chiffres sont fournis tels quels ; aucun recalcul indépendant n'a été effectué."
+        ],
+        "human_validation_required": true,
+        "can_change_weights": false,
+        "can_send_orders": false,
+        "cited_fields": [
+          "factor_returns",
+          "net_return",
+          "turnover",
+          "transaction_cost",
+          "risk_status",
+          "risk_alerts",
+          "permissions"
+        ]
+      }
+    }
+  ],
+  "interpretation": "Hand-constructed probes demonstrate specific validator blind spots; they do not estimate model error frequency or permit actual order execution."
+}

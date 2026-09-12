@@ -32,11 +32,13 @@
 \node[control, right=of metrics] (threshold) {Seuils d'alerte\\98\,\%, 5\,\%, 20\,\%,\\30 s, budget};
 \node[agent, right=of threshold] (action) {Réaction\\réessai, revue humaine,\\mode observation, blocage};
 \node[calc, below=of threshold] (finance) {Suivi financier\\rendement, volatilité,\\drawdown, turnover};
-\node[control, below=of action] (owner) {Responsable\\superviseur, risque,\\conformité ou IT};
+\node[control, below=of action, xshift=20mm] (owner) {Responsable\\superviseur, risque,\\conformité ou IT};
 \draw[arrow] (metrics) -- (threshold);
 \draw[arrow] (finance) -- (threshold);
 \draw[arrow] (threshold) -- (action);
 \draw[arrow] (action) -- (owner);
-\draw[danger] (action.south) to[bend right=35] node[label,below]{retour stratégie de référence} (finance.south);
+% Le retour vers la stratégie de référence contourne le bloc financier.
+\draw[danger] (action.south west) -- ++(-0.5cm,0) |- (finance.east);
+\node[label,below=3mm of finance] {retour vers la stratégie de référence};
 \end{tikzpicture}
 \end{document}

@@ -1,0 +1,13 @@
+case_id,kind,model_called,case_passed,numeric_fidelity,accepted_rate,permission_compliance,structured_consistency,risk_disclosed,stability,citation_stability,critical_failure
+valid_01,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_02,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_03,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_04,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_05,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_06,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_07,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_08,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_09,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+valid_10,valid,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+risk_high_turnover,risk_stress,True,True,1.0,1.0,1.0,1.0,1.0,1.0,0.0,False
+quality_blocked,quality_blocked,False,True,0.0,,1.0,,,1.0,1.0,False
