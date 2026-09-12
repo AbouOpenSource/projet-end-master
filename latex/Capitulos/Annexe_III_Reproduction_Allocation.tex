@@ -1,15 +1,15 @@
 \chapter{Reproduction de l'expérience d'allocation}\label{ann:allocation}
 
-L'expérience du 12 septembre 2026 est conservée dans \path{results/allocation_experiment/}. Le code, le prompt et les données utilisés sont identifiés par les empreintes de \path{deepseek/report.json}. Les réponses restent consultables dans \path{deepseek_decisions.json}. La reproduction locale ne nécessite ni clé API ni connexion réseau.
+L'expérience du 12 septembre 2026 est conservée dans \path{results/allocation_experiment/}. Le code, le prompt et les données utilisés sont identifiés par les empreintes de \fichiergithub{results/allocation_experiment/deepseek/report.json}{deepseek/report.json}. Les réponses restent consultables dans \fichiergithub{results/allocation_experiment/deepseek_decisions.json}{deepseek_decisions.json}. La reproduction locale ne nécessite ni clé API ni connexion réseau.
 
 \section{Fichiers et vérifications}
 
 \begin{description}
-\item[Propositions et exécution :] \path{deepseek/decisions.json} contient les entrées, propositions, quantités avant/après, dates d'exécution, frais et rejets des trois politiques.
+\item[Propositions et exécution :] \fichiergithub{results/allocation_experiment/deepseek/decisions.json}{deepseek/decisions.json} contient les entrées, propositions, quantités avant/après, dates d'exécution, frais et rejets des trois politiques.
 \item[Valeurs et indicateurs :] \path{deepseek/equity.csv}, \path{deepseek/metrics.csv} et \path{yearly_returns.csv} fournissent les séries et résultats numériques.
-\item[Essais techniques :] \path{technical_pilot_default_thinking.json} conserve les quatre tentatives précédant la campagne corrigée ; elles ne sont pas fusionnées avec ses 56 décisions.
-\item[Audit :] \path{AUDIT.json} conserve les écarts comptables, l'identité du replay et le contrôle des 31 fichiers antérieurs. Le manifeste correspondant est \path{original_inputs_sha256.json}.
-\item[Documentation :] \path{PROTOCOLE.md} et \path{ANALYSE.md} détaillent conventions, résultats et limites.
+\item[Essais techniques :] \fichiergithub{results/allocation_experiment/technical_pilot_default_thinking.json}{technical_pilot_default_thinking.json} conserve les quatre tentatives précédant la campagne corrigée ; elles ne sont pas fusionnées avec ses 56 décisions.
+\item[Audit :] \fichiergithub{results/allocation_experiment/AUDIT.json}{AUDIT.json} conserve les écarts comptables, l'identité du replay et le contrôle des 31 fichiers antérieurs. Le manifeste correspondant est \fichiergithub{results/allocation_experiment/original_inputs_sha256.json}{original_inputs_sha256.json}.
+\item[Documentation :] \fichiergithub{results/allocation_experiment/PROTOCOLE.md}{PROTOCOLE.md} et \fichiergithub{results/allocation_experiment/ANALYSE.md}{ANALYSE.md} détaillent conventions, résultats et limites.
 \end{description}
 
 \section{Commandes de reproduction sans appel API}
@@ -19,7 +19,7 @@ Depuis la racine du projet, la commande suivante relit les réponses archivées 
 \begin{quote}\small\ttfamily
 experience/.venv/bin/python agent\_allocation\_backtest.py\\
 \hspace*{1em}--mode replay --start 2021-05-01\\
-\hspace*{1em}--archive results/allocation\_experiment/deepseek\_decisions.json\\
+\hspace*{1em}--archive \href{https://github.com/AbouOpenSource/projet-end-master/blob/be691b42772e9d223b1304fae597ba13ac62d505/results/allocation_experiment/deepseek_decisions.json}{results/allocation\_experiment/deepseek\_decisions.json}\\
 \hspace*{1em}--max-output-tokens 3000\\
 \hspace*{1em}--output results/allocation\_experiment/replay
 \end{quote}
@@ -31,4 +31,4 @@ experience/.venv/bin/python analyze\_allocation\_results.py\\[0.3em]
 experience/.venv/bin/python -m pytest -q
 \end{quote}
 
-Le mode \texttt{live}, décrit dans le README, nécessite une clé et un budget explicite. Il réutilise les dates de son archive et compte toutes les tentatives, y compris les interruptions. Rejouer les archives n'envoie pas de nouvel appel ; une nouvelle expérience avec un autre prompt ou d'autres contraintes doit utiliser une archive distincte et un budget identifié.
+Le mode \texttt{live}, décrit dans le \href{https://github.com/AbouOpenSource/projet-end-master/blob/be691b42772e9d223b1304fae597ba13ac62d505/README.md}{README}, nécessite une clé et un budget explicite. Il réutilise les dates de son archive et compte toutes les tentatives, y compris les interruptions. Rejouer les archives n'envoie pas de nouvel appel ; une nouvelle expérience avec un autre prompt ou d'autres contraintes doit utiliser une archive distincte et un budget identifié.
