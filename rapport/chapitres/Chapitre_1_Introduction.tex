@@ -3,7 +3,7 @@
 
 \section{Contexte général}
 
-Le trading multifactoriel combine plusieurs expositions pour construire un portefeuille. Les modèles de marché, taille et valeur de \citet{famaFrench1993}, puis l'introduction du momentum par \citet{carhart1997}, fournissent des repères pour cette démarche. Pour mon étude, j'ai retenu quatre expositions -- value, momentum, quality et low volatility -- représentées par des ETF. Je voulais partir de portefeuilles observables et consacrer l'expérience au rôle du LLM, plutôt qu'à la reconstruction des facteurs titre par titre.
+Le trading multifactoriel combine plusieurs expositions pour construire un portefeuille. Les modèles de marché, taille et valeur de \citet{famaFrench1993}, puis l'introduction du momentum par \citet{carhart1997}, fournissent des repères pour cette démarche. Pour mon étude, j'ai retenu quatre expositions représentées par des ETF : value, momentum, quality et low volatility. Je voulais partir de portefeuilles observables et consacrer l'expérience au rôle du LLM, plutôt qu'à la reconstruction des facteurs titre par titre.
 
 À partir de ce socle, j'ai cherché à préciser ce que je pouvais confier à un modèle de langage. Les travaux sur ReAct, Toolformer et AutoGen décrivent différentes façons d'associer un LLM à des outils ou à d'autres agents \citep{yao2023react,schick2023toolformer,wu2023autogen}. Dans la première expérience, j'ai limité son rôle à la préparation d'une note à partir des sorties du backtest. Une extension évalue ensuite ses propositions de poids ; les contrôles, les rendements et les coûts restent calculés par Python.
 
